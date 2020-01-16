@@ -8,3 +8,5 @@ data <- read.spss("Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.fram
 
 glimpse(data)
 summary(data)
+
+var.names <-colnames(data)
