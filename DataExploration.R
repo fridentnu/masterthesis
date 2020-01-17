@@ -6,7 +6,7 @@ library(DataExplorer)
 ##### OBS: HUSK Å LAGRE KILDER
 # https://towardsdatascience.com/exploratory-data-analysis-8fc1cb20fd15
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
-
+# https://hunt-db.medisin.ntnu.no/hunt-db/#/ 
 
 # OBS: husk at man må bruke ctrl isteden for cmd på hurtigtastene
 # use viridis colours, colour-blind and printer friendly
@@ -19,23 +19,47 @@ library(DataExplorer)
 data <- read.spss("Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.frame=T)
 # får feilmelding om duplicated levels men når jeg sjekker levels så er de unike
 
+# Data tillegg innehåller en extra variabel från HUNT3CVD som ni kan använda i kombination 
+# med en variabel från HUNT3BLQ1 för att se vilka som använder blodtrycksmedisin vid HUNT3
+# Er det bare BPMedSiEffEv (Hvis du bruker medisin mot høyt blodtrykk nå:
+# har du merket ubehag/bivirkninger av blodtrykksmedisinene), som er relevant her? 
+data.bp.med <- read.spss("Data/2019-12-19_108676_Data_tillegg.sav", to.data.frame=T)
 
-# Remove all variables from HUNT1
+
+############# REMOVE IRRELEVANT DATA ########
+
+
+#### Remove all variables from HUNT1
 indexNT1.data <- grepl('NT1',colnames(data))
 data <- data[!indexNT1.data]
 
+#### Remove all who are currently or previously been on bpmed at time of HUNT2
+indexNT2.bp.med <- data$BPMedCu.NT2BLQ1=="N\xe5" | data$BPMedCu.NT2BLQ1=="F\xf8r, men ikke n\xe5"
+data <- data[!(indexNT2.bp.med),]
+# Check that removed all who have ever taken bpmed
+sum(data$indexNT2.bp.med,na.rm=T)==0
 
-# Data tillegg innehåller en extra variabel från HUNT3CVD som ni kan använda i kombination 
-# med en variabel från HUNT3BLQ1 för att se vilka som använder blodtrycksmedisin vid HUNT3
-data.bp.med <- read.spss("Data/2019-12-19_108676_Data_tillegg.sav", to.data.frame=T)
+#### Sjekk om fortsatt noen som svarer ja her etter har fjernet cvd
+sum(data$BPMedCu.NT2CvdQ=="Ja",na.rm=T)
+
+#### Remove all who have self-reported history of CVD
+# CarInfEv@NT2BLQ1 (ever had heart attack), CarAngEv@NT2BLQ1 (hjertekrampe/chest pain), ApoplEv@NT2BLQ1 (stroke), 
+# MedCarMo@NT2BLQ2 (hvor mange måneder brukt hjertemedisin), eller kan bruke NA fra NT2CvdQ?
+
+##### Remove all who have missing or deviant bp measurements in HUNT2 eller HUNT3
+
+
+#### data.bp.med
 
 # Remove all variables from HUNT1
 indexNT1.data.bp.med <- grepl('NT1',colnames(data.bp.med))
 data.bp.med <- data.bp.med[!indexNT1.data.bp.med]
 
+
+
 ############# BASIC ANALYSIS #################
 
-# 78 962 observasjoner av 232 variabler
+# 232 variabler
 # factors and num 
 str(data)  
 head(data)
