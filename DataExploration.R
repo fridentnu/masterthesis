@@ -97,7 +97,7 @@ data <- data[!indexNT3.miss.dia,]
 sum(is.na(data$PID.108676))
 
 # all unique 
-unique(data$PID.108676)
+sum(!unique(data$PID.108676)==data$PID.108676)
 
 # all start with 108676
 sum(data$PID.108676[grepl(108676,data$PID.108676)]!=data$PID.108676)
@@ -131,7 +131,7 @@ sum(is.na(data$bmi))
 
 ######## PHYSICAL ACTIVITY VARIABLES ##########
 
-#
+# Check if missing values of PAI
 sum(is.na(data$PAI.NT2))
 indexNT2.miss.pai <- is.na(data$PAI.NT2) 
 data <- data[!indexNT2.miss.pai,]
@@ -150,29 +150,43 @@ sum(is.na(data$AlcWiL2WN.NT2BLQ1))
 sum(is.na(data$AlcLiL2WN.NT2BLQ1))
 indexNT2.miss.alc <- is.na(data$AlcBeL2WN.NT2BLQ1) | is.na(data$AlcWiL2WN.NT2BLQ1) | is.na(data$AlcLiL2WN.NT2BLQ1)
 sum(indexNT2.miss.alc, na.rm=T)
-data <- data[!indexNT2.miss.alc,]
+#data <- data[!indexNT2.miss.alc,]
 
 # Checking if missing values in total cholestrol
 sum(is.na(data$SeChol.NT2BLM))
+indexNT2.miss.chol <- is.na(data$SeChol.NT2BLM) 
+data <- data[!indexNT2.miss.chol,]
 
 # Checking if missing values in HDL cholestrol
 sum(is.na(data$SeHDLChol.NT2BLM))
+indexNT2.miss.hdlchol <- is.na(data$SeHDLChol.NT2BLM) 
+data <- data[!indexNT2.miss.hdlchol,]
 
 # Checking if missing values in non-fasting glucose
 # also want to exclude people with non fasting glucose above threshold value
 # probably undiagnosed diabetes
 sum(is.na(data$SeGluNonFast.NT2BLM))
+indexNT2.miss.glu <- is.na(data$SeGluNonFast.NT2BLM) 
+data <- data[!indexNT2.miss.glu,]
 
-# Checking if missing values in EGRF
+# Checking if missing values in gfre
 sum(is.na(data$GFREst.NT2BLM))
+indexNT2.miss.gfre <- is.na(data$GFREst.NT2BLM) 
+data <- data[!indexNT2.miss.gfre,]
 
 # Checking if missing values in Creatinine
 sum(is.na(data$SeCrea.NT2BLM))
 
 # Checking if missing values in education level
 sum(is.na(data$Educ.NT2BLQ1))
+indexNT2.miss.edu <- is.na(data$Educ.NT2BLQ1) 
+data <- data[!indexNT2.miss.edu,]
 
 
+# If remove people with missing values on alcohol, i am left with 14 998 participants
+# If don't consider alcohol, then left with 25 556 participants
+
+###########################
 # data
 na.vec <- is.na(data)
 colSums(na.vec) # vector containing number of missing values for each variable in data
