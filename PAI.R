@@ -1,14 +1,13 @@
 
 
 data <- read.spss("Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.frame=T)
-data.tillegg <- read.spss("Data/2019-12-19_108676_Data_tillegg.sav", to.data.frame=T)
-
 
 # PAI= personal activity intelligence
 
 ### CALCULATE PAI BASED ON LEISURE TIME PA ###
 
 ## HUNT2 ##
+
 
 Sex <- data$Sex
 

@@ -23,6 +23,13 @@ data <- read.spss("Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.fram
 indexNT23 <- data$Part.NT2BLQ1=="Deltatt" & data$Part.NT3BLM=="Deltatt" & data$Part.NT2BLM=="Deltatt"
 sum(indexNT23, na.rm=T)
 
+
+############### ADD PAI ##############
+
+source("R code/PAI.R")
+data$PAI.NT2 <- PAIlevel_NT2
+
+
 ############# REMOVE IRRELEVANT DATA ########
 
 
@@ -77,35 +84,14 @@ indexNT3.miss.dia <- is.na(data$DiaEv.NT3BLQ1)
 sum(indexNT3.miss.dia, na.rm=T)
 data <- data[!indexNT3.miss.dia,]
 
-############# BASIC ANALYSIS #################
-
-# 232 variabler
-# factors and num 
-str(data)  
-head(data)
-summary(data)
 
 
-
-# 106 426 observasjoner av 11 variabler
-# only factors
-glimpse(data.bp.med)
-summary(data.bp.med)
-
-# check meadian vs. mean to look for sign of extreme outliers
+################### MISSING VALUES ############
 
 
-####################################
+### First check that list of people does not contain NA and is unique
 
-# Look at names of the 232 variables
-var.names.data <-colnames(data)
-
-# Look at names of the 11 variables
-var.names.data.bp.med <- colnames(data.bp.med)
-
-# alle variabler som started med part handler om participation i forskjellige studier/questionares
-
-###################### Check if have unique list of persons
+### Check if have unique list of persons
 
 # No NA in project personidentification 
 sum(is.na(data$PID.108676))
@@ -118,8 +104,75 @@ sum(data$PID.108676[grepl(108676,data$PID.108676)]!=data$PID.108676)
 
 # remove the thing that is equal for everyone?
 test.pid <- sub("108676","",data$PID.108676)
+ 
+### Check colnames to find possible explanatory variables
+# Look at names of the 232 variables
+var.names.data <-colnames(data)
+# all variables that start with Part is about participation in the specific study part
 
-########################### MISSING VALUES ############3
+
+# alder, kjønn, PAI, mvpa score (hvor fysisk man er, kanskje binær, over/under anbefalt verdi),
+# bmi (evt. waist circumpherence, større usikkerhet i den), 
+# alkohol, røyking (smostat), totalt kolestrol, hdl-kolestrol, 
+# non-fasting glucose (cut-off >11.1, ta bort disse for det er kanskje udiagnostisert diabetes), 
+# egrf og kreatinin (assosiert med blodtrykk og nyresykdom),
+# sosioøkonomisk status (utdannigsnivå)
+
+# Check if missing values in birth year 
+sum(is.na(data$BirthYear))
+
+# Check if missing values in sex
+sum(is.na(data$Sex))
+
+# Check if missing values in bmi
+sum(is.na(data$bmi))
+
+
+
+######## PHYSICAL ACTIVITY VARIABLES ##########
+
+#
+sum(is.na(data$PAI.NT2))
+indexNT2.miss.pai <- is.na(data$PAI.NT2) 
+data <- data[!indexNT2.miss.pai,]
+
+#### MVPA
+
+# Check if missing values in variable measuring smoking 
+sum(is.na(data$SmoStat.NT2BLQ1))
+indexNT2.miss.smok <- is.na(data$SmoStat.NT2BLQ1) 
+data <- data[!indexNT2.miss.smok,]
+
+# Check if missing values in variable measuring alcohol
+# Alc2W.NT2BLQ1 the total number of units variable (the sum of the ones below)
+sum(is.na(data$AlcBeL2WN.NT2BLQ1))
+sum(is.na(data$AlcWiL2WN.NT2BLQ1))
+sum(is.na(data$AlcLiL2WN.NT2BLQ1))
+indexNT2.miss.alc <- is.na(data$AlcBeL2WN.NT2BLQ1) | is.na(data$AlcWiL2WN.NT2BLQ1) | is.na(data$AlcLiL2WN.NT2BLQ1)
+sum(indexNT2.miss.alc, na.rm=T)
+data <- data[!indexNT2.miss.alc,]
+
+# Checking if missing values in total cholestrol
+sum(is.na(data$SeChol.NT2BLM))
+
+# Checking if missing values in HDL cholestrol
+sum(is.na(data$SeHDLChol.NT2BLM))
+
+# Checking if missing values in non-fasting glucose
+# also want to exclude people with non fasting glucose above threshold value
+# probably undiagnosed diabetes
+sum(is.na(data$SeGluNonFast.NT2BLM))
+
+# Checking if missing values in EGRF
+sum(is.na(data$GFREst.NT2BLM))
+
+# Checking if missing values in Creatinine
+sum(is.na(data$SeCrea.NT2BLM))
+
+# Checking if missing values in education level
+sum(is.na(data$Educ.NT2BLQ1))
+
+
 # data
 na.vec <- is.na(data)
 colSums(na.vec) # vector containing number of missing values for each variable in data
@@ -129,6 +182,16 @@ mean(colSums(na.vec))
 sum(na.vec)
 
 plot_missing(data) # A lot of missing data
+
+
+
+############# BASIC ANALYSIS #################
+
+# 232 variabler
+# factors and num 
+str(data)
+
+
 
 
 
@@ -144,8 +207,9 @@ data.bp.med <- read.spss("Data/2019-12-19_108676_Data_tillegg.sav", to.data.fram
 
 data.bp.med <- data.frame("PID.108676"= data.bp.med$PID.108676, "BPMedSiEffEv.NT3CvdQ"=data.bp.med$BPMedSiEffEv.NT3CvdQ)
 
-# Find list of PID of people on blodd pressure medicine at HUNT3
-index.curr.bp.med <- !is.na(data.bp.med$BPMedSiEffEv.NT3CvdQ)
+# Find list of PID of people on blood pressure medicine at HUNT3
+indexNT3.curr.bp.med <- !is.na(data.bp.med$BPMedSiEffEv.NT3CvdQ) && data$BPMedEv.NT3BLQ1=="Ja"
+
 
 
 
