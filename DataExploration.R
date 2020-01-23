@@ -78,9 +78,6 @@ data <- data[!(indexNT2.bp.med),]
 # Check that removed all who have ever taken bpmed
 sum(data$indexNT2.bp.med,na.rm=T)==0
 
-#### Sjekk om fortsatt noen som svarer ja her etter har fjernet cvd
-sum(data$BPMedCu.NT2CvdQ=="Ja",na.rm=T)
-
 
 #### Remove all who are currently hypertensive at time of HUNT2
 # definition mean sys>140mmHg, or mean dia >90mmHg, or on bpmed (already excluded these)
@@ -101,14 +98,23 @@ sum(indexNT3.miss.CVD, na.rm=T)
 data <- data[!indexNT3.miss.CVD,]
 
 ### Remove all who have missing values for diabetes at HUNT3
+# self-reported
 indexNT3.miss.dia <- is.na(data$DiaEv.NT3BLQ1) 
 sum(indexNT3.miss.dia, na.rm=T)
 data <- data[!indexNT3.miss.dia,]
+
+# measured glucose 
+sum(data$SeGluNonFast.NT3BLM>=11.1,na.rm=T)
+indexNT3.miss.high.glu <- is.na(data$SeGluNonFast.NT3BLM) 
+data <- data[!indexNT3.miss.high.glu,]
+
+
 
 ### Remove all who have missing values for blood pressure medication at HUNT3
 indexNT3.miss.bpmed <- is.na(data$BPMedEv.NT3BLQ1) 
 sum(indexNT3.miss.bpmed, na.rm=T)
 data <- data[!indexNT3.miss.dia,]
+
 
 
 ################### MISSING VALUES ############
@@ -150,8 +156,9 @@ sum(is.na(data$BirthYear))
 sum(is.na(data$Sex))
 
 # Check if missing values in bmi
-sum(is.na(data$bmi))
-
+sum(is.na(data$Bmi.NT2BLM))
+indexNT2.miss.bmi <- is.na(data$Bmi.NT2BLM) 
+data <- data[!indexNT2.miss.bmi,]
 
 # Check if missing values of PAI
 sum(is.na(data$PAI.NT2))
@@ -228,34 +235,6 @@ data <- data[!indexNT2.miss.edu,]
 # If remove people with missing values on alcohol, i am left with 14 998 participants
 # If don't consider alcohol, then left with 25 556 participants
 
-
-
-
-
-
-
-###########################
-# data
-na.vec <- is.na(data)
-colSums(na.vec) # vector containing number of missing values for each variable in data
-mean(colSums(na.vec))
-
-# total number of missing values in data
-sum(na.vec)
-
-plot_missing(data) # A lot of missing data
-
-
-
-############# BASIC ANALYSIS #################
-
-# 234 variabler
-# factors and num 
-str(data)
-
-
-
-
 ###### FIND WHO IS ON BPMED AT HUNT3 AND CORRECT BLOOD PRESSURE
 
 # Data tillegg innehåller en extra variabel från HUNT3CVD som ni kan använda i kombination 
@@ -267,7 +246,7 @@ data.bp.med <- data.frame("PID.108676"= data.bp.med$PID.108676, "BPMedSiEffEv.NT
 
 # People who answered yes or no to BpMedSiEffEv
 indexNT3.curr.bp.med1 <- !is.na(data.bp.med$BPMedSiEffEv.NT3CvdQ)
-pid.curr.bp.med1 <- as.vector(data.bp.med$PID.108676)[indexNT3.curr.bp.med]
+pid.curr.bp.med1 <- as.vector(data.bp.med$PID.108676)[indexNT3.curr.bp.med1]
 
 # People who answered yes to BPMedEv
 indexNT3.curr.bp.med2 <- data$BPMedEv.NT3BLQ1=="Ja"
@@ -276,6 +255,16 @@ pid.curr.bp.med2 <- as.vector(data$PID.108676)[indexNT3.curr.bp.med2]
 # people who answered yes to BPMEdEv and either yes or no to BPM
 pid.curr.bp.med <- intersect(pid.curr.bp.med1,pid.curr.bp.med2)
 index.curr.bp.med <- match(pid.curr.bp.med, data$PID.108676)
+
+
+indexNT3.bp.med <- vector()
+for(i in 1:length(data$PID.108676)){
+  if(as.vector(data$PID.108676)[i] %in% pid.curr.bp.med){
+    indexNT3.bp.med[i]=TRUE}
+  else{indexNT3.bp.med[i]=FALSE}
+}
+data$BPMed.NT3 <- indexNT3.bp.med
+
 
 # Correct the blood pressure values
 data$BPSystMn23.NT3BLM[index.curr.bp.med] <- data$BPSystMn23.NT3BLM[index.curr.bp.med]+15
@@ -290,4 +279,44 @@ indexNT3.dia <- data$DiaEv.NT3BLQ1=="Ja"
 # Probably undiagnosed diabetes
 indexNT3.high.glu <- data$SeGluNonFast.NT3BLM>=11.1
 
+# true if have diabetes at HUNT3
+data$DiaCurr.NT3 <- indexNT3.dia | indexNT3.high.glu
 
+
+### PEOPLE WITH CVD at HUNT3
+
+#indexNT3.miss.CVD <- is.na(data$CarInfEv.NT3BLQ1) | is.na(data$CarAngEv.NT3BLQ1) | is.na(data$ApoplEv.NT3BLQ1)
+
+data$CVD.NT3  <- data$CarInfEv.NT3BLQ1=="Ja" | data$CarAngEv.NT3BLQ1=="Ja" | data$ApoplEv.NT3BLQ1=="Ja"
+ 
+############# BASIC ANALYSIS #################
+
+# 238 variabler, 21 285 observasjoner
+# factors and num 
+str(data)
+
+
+# Create data set with only relevant variables
+
+df <- data.frame("PID"=data$PID.108676,"BirthYear"=data$BirthYear, "Sex"=data$Sex, "BMI"=data$Bmi.NT2BLM, 
+                 "BPSys2"=data$BPSystMn23.NT2BLM, "BPDias2"=data$BPDiasMn23.NT2BLM, "PAI"=data$PAI.NT2, 
+                 "RecPA"=data$RecPA.NT2, "BPHigPar"=data$BPHigParEv.NT2, "SmoStat"=data$SmoStat.NT2BLQ1, 
+                 "SeChol"=data$SeChol.NT2BLM, "SeHDLChol"=data$SeHDLChol.NT2BLM, "SeGluNonFast"= data$SeGluNonFast.NT2BLM, 
+                 "GFRestStag"=data$GFREstStag.NT2BLM, "SeCreaCorr"=data$SeCreaCorr.NT2BLM, "Educ"=data$Educ.NT2BLQ1, 
+                 "BPSys3"=data$BPSystMn23.NT3BLM, "BPDias3"=data$BPDiasMn23.NT3BLM)
+
+# dataframe with information used to evaluate performance of model on certain subgroups
+df.eval.3 <- data.frame("Diabetes3"=data$DiaCurr.NT3, "CVD3"= data$CVD.NT3, "BPMed3"=data$BPMed.NT3)
+
+
+# 18 variables, where 15 are explanatory variables and, 2 are dependent variables?
+str(df)
+
+###########################
+
+
+# No missing  values 
+plot_missing(df) 
+
+# No missing values
+plot_missing(df.eval.3)
