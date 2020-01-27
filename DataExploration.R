@@ -18,11 +18,6 @@ library(DataExplorer) # EDA package in R
 data <- read.spss("Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.frame=T)
 # får feilmelding om duplicated levels men når jeg sjekker levels så er de unike
 
-sum(is.na(data$Sex))
-sum(is.na(data$PID.108676))
-sum(is.na(data$BirthYear))
-
-
 ### Quick overview
 str(data)
 
@@ -54,7 +49,17 @@ data$PAI.NT2 <- PAIlevel_NT2
 source("R code/MVPA.R")
 data$RecPA.NT2 <- MeetsPARecomed_NT2
 
-############################# REMOVE THIS LATER ############
+
+
+############# DATA REDUCTION AND CLEANING ########
+#### Remove all variables from HUNT1
+indexNT1.data <- grepl('NT1',colnames(data))
+data <- data[,!indexNT1.data]
+
+
+############################# MISSING VALUES DEPENDENT/INDEPENDENT ############
+
+# total number of units of alcohol within last two weeks
 alcohol.total.NT2 <-data$AlcBeL2WN.NT2BLQ1+data$AlcLiL2WN.NT2BLQ1+data$AlcWiL2WN.NT2BLQ1
 
 
@@ -66,15 +71,9 @@ df.dep.indep.var <- data.frame("PID"=data$PID.108676,"BirthYear"=data$BirthYear,
                                "BPSys3"=data$BPSystMn23.NT3BLM, "BPDias3"=data$BPDiasMn23.NT3BLM)
 
 # Plot showing the missing values in each independent and dependent variable
-### SOMETHING WRONG; SAYS THERE ARE MISSING VALUES FOR BIRTH YEAR AND SEX
+# not showing missing values in exclusion criteria
 plot_missing(df.dep.indep.var)
 ###############################################################################
-
-############# DATA REDUCTION AND CLEANING ########
-#### Remove all variables from HUNT1
-indexNT1.data <- grepl('NT1',colnames(data))
-data <- data[,!indexNT1.data]
-
 
 ######## EXCLUSION CRITERIA ###########
 #### Remove all who have self-reported history or missing values of CVD at time of HUNT2
@@ -106,6 +105,7 @@ sum(data$SeGluNonFast.NT2BLM>=11.1,na.rm=T)
 indexNT2.high.glu <- data$SeGluNonFast.NT2BLM>=11.1
 # measured glucose 
 indexNT2.miss.high.glu <- is.na(data$SeGluNonFast.NT2BLM) 
+sum(indexNT2.miss.high.glu, na.rm=T)
 data <- data[!(indexNT2.miss.high.glu|indexNT2.high.glu),]
 
 
@@ -127,10 +127,6 @@ sum(indexNT2.hyp, na.rm=T)
 index.miss.bp.2 <- is.na(data$BPSystMn23.NT2BLM) | is.na(data$BPDiasMn23.NT2BLM) 
 sum(index.miss.bp.2, na.rm=T)
 data <- data[!(indexNT2.hyp|index.miss.bp.2),]
-
-sum(is.na(data$Sex))
-sum(is.na(data$PID.108676))
-sum(is.na(data$BirthYear))
 
 str(data)
 
@@ -165,10 +161,6 @@ indexNT3.miss.bpmed <- is.na(data$BPMedEv.NT3BLQ1)
 sum(indexNT3.miss.bpmed, na.rm=T)
 data <- data[!indexNT3.miss.bpmed,]
 
-sum(is.na(data$Sex))
-sum(is.na(data$PID.108676))
-sum(is.na(data$BirthYear))
-
 str(data)
 
 #### DEPENDENT AND INDEPENDENT VARIABLES
@@ -195,12 +187,7 @@ df.dep.indep.var <- data.frame("PID"=data$PID.108676,"BirthYear"=data$BirthYear,
                       "Alc"=alcohol.total.NT2, "BPSys2"=data$BPSystMn23.NT2BLM, "BPDias2"=data$BPDiasMn23.NT2BLM, 
                       "BPSys3"=data$BPSystMn23.NT3BLM, "BPDias3"=data$BPDiasMn23.NT3BLM)
 
-sum(is.na(data$Sex))
-sum(is.na(data$PID.108676))
-sum(is.na(data$BirthYear))
 # Plot showing the missing values in each independent and dependent variable
-### SOMETHING WRONG; SAYS THERE ARE MISSING VALUES FOR BIRTH YEAR AND SEX
-### IS THIS A SIGN THAT I HAVE DONE SOMETHING WRONG?
 plot_missing(df.dep.indep.var)
 
 # SO MANY MISSING VALUES; AND ALCOHOL NOT ONE OF MAIN RISK FACTORS;
@@ -209,7 +196,7 @@ plot_missing(df.dep.indep.var)
 
 #### Blood pressure measurements
 ### Remove all who have missing mean systolic or mean diastolic bp measurements in HUNT2 or HUNT3
-index.miss.bp <- is.na(data$BPSystMn23.NT2BLM) | is.na(data$BPDiasMn23.NT2BLM) | is.na(data$BPSystMn23.NT3BLM) | is.na(data$BPDiasMn23.NT3BLM)
+index.miss.bp <-is.na(data$BPSystMn23.NT3BLM) | is.na(data$BPDiasMn23.NT3BLM)
 sum(index.miss.bp, na.rm=T)
 data <- data[!index.miss.bp,]
 
@@ -236,8 +223,8 @@ sum(is.na(data$RecPA.NT2))
 # Check for missing values in parental blood pressure 
 # Missing value in all categories
 indexNT2.miss.fam.bp.high <- is.na(data$BPHigFamNon.NT2BLQ2) & is.na(data$BPHigBrotEv.NT2BLQ2) & is.na(data$BPHigFathEv.NT2BLQ2) & is.na(data$BPHigChiEv.NT2BLQ2) & is.na(data$BPHigSistEv.NT2BLQ2) & is.na(data$BPHigMothEv.NT2BLQ2)
-data <- data[!indexNT2.miss.fam.bp.high,]
 sum(indexNT2.miss.fam.bp.high)
+data <- data[!indexNT2.miss.fam.bp.high,]
 
 # Parents have high blood pressure if answered either mom or dad, 
 # parents don't have high blood pressure, if both mom and dad NA and answered at least one question
@@ -246,7 +233,7 @@ sum(indexNT2.BPHigParEv, na.rm=T)
 
 # Add new column with logical variable of parental history of hypertension
 data$BPHigParEv.NT2 <- indexNT2.BPHigParEv
-data$BPHigParEv.NT2[is.na(indexNT2.BPHigParEv)] <-FALSE
+data$BPHigParEv.NT2[is.na(indexNT2.BPHigParEv)] <-FALSE  #NA meant either no or na previosly
 
 
 # Check if missing values in variable measuring smoking 
@@ -274,11 +261,6 @@ sum(is.na(data$SeHDLChol.NT2BLM))
 indexNT2.miss.hdlchol <- is.na(data$SeHDLChol.NT2BLM) 
 data <- data[!indexNT2.miss.hdlchol,]
 
-# Checking if missing values in non-fasting glucose
-sum(is.na(data$SeGluNonFast.NT2BLM))
-indexNT2.miss.glu <- is.na(data$SeGluNonFast.NT2BLM)
-data <- data[!indexNT2.miss.glu,]
-
 # Checking if missing values in gfre
 sum(is.na(data$GFREstStag.NT2BLM))
 indexNT2.miss.gfre <- is.na(data$GFREstStag.NT2BLM) 
@@ -292,9 +274,7 @@ sum(is.na(data$Educ.NT2BLQ1))
 indexNT2.miss.edu <- is.na(data$Educ.NT2BLQ1) 
 data <- data[!indexNT2.miss.edu,]
 
-
-# If remove people with missing values on alcohol, i am left with 14 998 participants
-# If don't consider alcohol, then left with 25 556 participants
+str(data)
 
 
 ###### FIND WHO IS ON BPMED AT HUNT3 AND CORRECT BLOOD PRESSURE
@@ -354,8 +334,10 @@ data$CVD.NT3  <- data$CarInfEv.NT3BLQ1=="Ja" | data$CarAngEv.NT3BLQ1=="Ja" | dat
 # Total data set after cleaning 
 str(data)
 
+#"PID"=data$PID.108676 include this?
+
 # Create new data set with only relevant dependent and independent variables
-df <- data.frame("PID"=data$PID.108676,"BirthYear"=data$BirthYear, "Sex"=data$Sex, "BMI"=data$Bmi.NT2BLM, 
+df <- data.frame("BirthYear"=data$BirthYear, "Sex"=data$Sex, "BMI"=data$Bmi.NT2BLM, 
                  "BPSys2"=data$BPSystMn23.NT2BLM, "BPDias2"=data$BPDiasMn23.NT2BLM, "PAI"=data$PAI.NT2, 
                  "RecPA"=data$RecPA.NT2, "BPHigPar"=data$BPHigParEv.NT2, "SmoStat"=data$SmoStat.NT2BLQ1, 
                  "SeChol"=data$SeChol.NT2BLM, "SeHDLChol"=data$SeHDLChol.NT2BLM, "SeGluNonFast"= data$SeGluNonFast.NT2BLM, 
@@ -376,3 +358,37 @@ plot_missing(df)
 
 # No missing values
 plot_missing(df.eval.3)
+
+
+# Overview of data set 
+plot_str(df)
+
+# Rename factors with special letters
+levels(df$SmoStat)
+levels(df$SmoStat)<- c("Aldri roeykt daglig", "Tidligere daglig roeyker", "Daglig roeyker")
+
+levels(df$Educ)
+levels(df$Educ)<- c("Grunnskole 7-10 aar, framhaldsskole, folkehoegskole", 
+                    "Realskole, middelskole, yrkesskole 1-2 aarig vgs",
+                    "Artium, oek.gymnas, allmennfaglig retning i vgs",
+                    "Hoegskole/universitet, mindre enn 4 aar",             
+                    "Hoegskole/universitet, 4 aar eller mer")
+
+
+
+# Continuous variables
+plot_histogram(df)
+
+# Correlation of the different continuous variables with the systolic bp from hunt3
+plot_correlation(df, type="continuous")
+
+
+# Categorical variables
+plot_bar(df)
+
+
+# Collection of EDA plots 
+create_report(df)
+
+
+
