@@ -34,21 +34,12 @@ sum(!unique(data$PID.108676)==data$PID.108676)
 var.names.data <-colnames(data)
 # all variables that start with Part is about participation in the specific study part
 
-# Which other study parts are relevant? Are there some who have na on part. but still have answered?
-indexNT23 <- data$Part.NT2BLQ1=="Deltatt" & data$Part.NT3BLM=="Deltatt" & data$Part.NT2BLM=="Deltatt" & data$Part.NT3BLQ1=="Deltatt"
+# everyone invited to BLq1 and BLm, but only those who participated in blm participated in blq2
+# NA in participation means not invited
+indexNT23.part <- data$Part.NT2BLQ1=="Deltatt" & data$Part.NT2BLM=="Deltatt" & data$Part.NT2BLQ2=="Deltatt" & data$Part.NT3BLM=="Deltatt" & data$Part.NT3BLQ1=="Deltatt"
 sum(indexNT23, na.rm=T)
-
-
-############### ADD PAI ##############
-# categorical value of physical activity
-source("R code/PAI.R")
-data$PAI.NT2 <- PAIlevel_NT2
-
-
-############### ADD RecPA ##############
-# Logical indicator mof whether a person reaches the recommended amount of physical activity
-source("R code/MVPA.R")
-data$RecPA.NT2 <- MeetsPARecomed_NT2
+indexNT23.miss <- is.na(data$Part.NT2BLQ1) | is.na(data$Part.NT2BLM) | is.na(data$Part.NT2BLQ2) |is.na(data$Part.NT3BLM) | is.na(data$Part.NT3BLQ1)
+data <- data[indexNT23.part & !indexNT23.miss,]
 
 
 
@@ -58,7 +49,7 @@ indexNT1.data <- grepl('NT1',colnames(data))
 data <- data[,!indexNT1.data]
 
 
-############################# MISSING VALUES DEPENDENT/INDEPENDENT ############
+############################# MISSING VALUES STEP 1 ############
 
 # total number of units of alcohol within last two weeks
 alcohol.total.NT2 <-data$AlcBeL2WN.NT2BLQ1+data$AlcLiL2WN.NT2BLQ1+data$AlcWiL2WN.NT2BLQ1
@@ -176,6 +167,19 @@ str(data)
 
 # To see if any of the independent variables will reduce our data set greatly
 # we study the number of missing value per variable
+
+
+############### ADD PAI ##############
+# categorical value of physical activity
+source("R code/PAI.R")
+data$PAI.NT2 <- PAIlevel_NT2
+
+
+############### ADD RecPA ##############
+# Logical indicator mof whether a person reaches the recommended amount of physical activity
+source("R code/MVPA.R")
+data$RecPA.NT2 <- MeetsPARecomed_NT2
+
 
 # Total number of units of alcohol during last two weeks
 alcohol.total.NT2 <-data$AlcBeL2WN.NT2BLQ1+data$AlcLiL2WN.NT2BLQ1+data$AlcWiL2WN.NT2BLQ1

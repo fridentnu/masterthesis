@@ -41,7 +41,9 @@ plot_histogram(df)
 plot_num(df)
 
 # Correlation of the different continuous variables with the systolic bp from hunt3
-plot_correlation(df, type="all")
+plot_correlation(df, type="continuous")
+
+
 
 
 # Categorical variables
@@ -82,6 +84,7 @@ plot_correlation(df, type="continuous")
 
 # Categorical variables
 plot_bar(df)
+freq(df)
 
 
 # Collection of EDA plots 
