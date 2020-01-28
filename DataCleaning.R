@@ -32,8 +32,8 @@ sum(!unique(data$PID.108676)==data$PID.108676)
 
 # Look at names of the 232 variables
 var.names.data <-colnames(data)
-# all variables that start with Part is about participation in the specific study part
 
+### Keep only people who participated in both HUNT2 anD HUNT3
 # everyone invited to BLq1 and BLm, but only those who participated in blm participated in blq2
 # NA in participation means not invited
 indexNT23.part <- data$Part.NT2BLQ1=="Deltatt" & data$Part.NT2BLM=="Deltatt" & data$Part.NT2BLQ2=="Deltatt" & data$Part.NT3BLM=="Deltatt" & data$Part.NT3BLQ1=="Deltatt"
@@ -43,82 +43,97 @@ data <- data[indexNT23.part & !indexNT23.miss,]
 
 
 
-############# DATA REDUCTION AND CLEANING ########
-#### Remove all variables from HUNT1
+######## DATA REDUCTION AND CLEANING ########
+### Remove all variables from HUNT1
 indexNT1.data <- grepl('NT1',colnames(data))
 data <- data[,!indexNT1.data]
 
 
-############################# MISSING VALUES STEP 1 ############
-
-# total number of units of alcohol within last two weeks
-alcohol.total.NT2 <-data$AlcBeL2WN.NT2BLQ1+data$AlcLiL2WN.NT2BLQ1+data$AlcWiL2WN.NT2BLQ1
+############################# STEP 1 ############
 
 
-df.dep.indep.var <- data.frame("PID"=data$PID.108676,"BirthYear"=data$BirthYear, "Sex"=data$Sex, "BMI"=data$Bmi.NT2BLM, 
-                               "PAI"=data$PAI.NT2, "RecPA"=data$RecPA.NT2, "SmoStat"=data$SmoStat.NT2BLQ1, 
-                               "SeChol"=data$SeChol.NT2BLM, "SeHDLChol"=data$SeHDLChol.NT2BLM, "SeGluNonFast"= data$SeGluNonFast.NT2BLM, 
-                               "GFRestStag"=data$GFREstStag.NT2BLM, "SeCreaCorr"=data$SeCreaCorr.NT2BLM, "Educ"=data$Educ.NT2BLQ1, 
-                               "Alc"=alcohol.total.NT2, "BPSys2"=data$BPSystMn23.NT2BLM, "BPDias2"=data$BPDiasMn23.NT2BLM, 
-                               "BPSys3"=data$BPSystMn23.NT3BLM, "BPDias3"=data$BPDiasMn23.NT3BLM)
 
-# Plot showing the missing values in each independent and dependent variable
-# not showing missing values in exclusion criteria
-plot_missing(df.dep.indep.var)
-###############################################################################
 
 ######## EXCLUSION CRITERIA ###########
-#### Remove all who have self-reported history or missing values of CVD at time of HUNT2
+
+# History of CVD at time of HUNT2
 # CarInfEv@NT2BLQ1 (ever had heart attack), CarAngEv@NT2BLQ1 (hjertekrampe/chest pain), ApoplEv@NT2BLQ1 (stroke)
-# dersom svart ja på en av disse, så har cvd historie
 indexNT2.CVD <- data$CarInfEv.NT2BLQ1=="Ja" | data$CarAngEv.NT2BLQ1=="Ja" | data$ApoplEv.NT2BLQ1=="Ja"
-sum(indexNT2.CVD, na.rm=T)
-## Remove all who have missing values for cvd at HUNT2
-indexNT2.miss.CVD <- is.na(data$CarInfEv.NT2BLQ1) | is.na(data$CarAngEv.NT2BLQ1) | is.na(data$ApoplEv.NT2BLQ1)
-sum(indexNT2.miss.CVD, na.rm=T)
-data <- data[!(indexNT2.miss.CVD|indexNT2.CVD),]
 
 
-#### Remove all who have self-reported history of or mssing values of diabetes at time of HUNT2
-indexNT2.dia <- data$DiaEv.NT2BLQ1=="Ja"
-sum(indexNT2.dia, na.rm=T)
-#Remove all who have missing values for diabetes at HUNT3
-# self-reported
-indexNT2.miss.dia <- is.na(data$DiaEv.NT2BLQ1) 
-sum(indexNT2.miss.dia, na.rm=T)
-data <- data[!(indexNT2.miss.dia|indexNT2.dia),]
-
-
+# History of diabetes
 # also want to exclude people with non fasting glucose above threshold value or missing value
 # probably undiagnosed diabetes
-# "Symptoms plus random blood glucose ≥11.1 mmol/L (≥200 mg/dL) indicate diabetes" 
+# "Symptoms plus random blood glucose ?11.1 mmol/L (?200 mg/dL) indicate diabetes" 
 # - Cosentino et al, 2019  https://doi.org/10.1093/eurheartj/ehz486
-sum(data$SeGluNonFast.NT2BLM>=11.1,na.rm=T)
-indexNT2.high.glu <- data$SeGluNonFast.NT2BLM>=11.1
-# measured glucose 
-indexNT2.miss.high.glu <- is.na(data$SeGluNonFast.NT2BLM) 
-sum(indexNT2.miss.high.glu, na.rm=T)
-data <- data[!(indexNT2.miss.high.glu|indexNT2.high.glu),]
+indexNT2.dia <- data$DiaEv.NT2BLQ1=="Ja" | data$SeGluNonFast.NT2BLM>=11.1
+
+# History of hypertension at time of HUNT2
+indexNT2.hyp <- data$BPSystMn23.NT2BLM>140 | data$BPDiasMn23.NT2BLM>90 |data$BPMedCu.NT2BLQ1=="N\xe5" | data$BPMedCu.NT2BLQ1=="F\xf8r, men ikke n\xe5"
+
+df.ill <-data.frame(indexNT2.CVD, indexNT2.hyp, indexNT2.dia)
+
+plot_bar(df.ill) # Most people in the study are healthy. See that the biggest loss comes from hypertensive people
+
+# Check missing values more closely
+df.health <- data.frame("BPMed2"= data$BPMedCu.NT2BLQ1, "SystolicMean2"=data$BPSystMn23.NT2BLM,
+                        "DiastolicMean2"=data$BPDiasMn23.NT2BLM, "HeartAttack"=data$CarInfEv.NT2BLQ1, 
+                        "Ang.Pec"=data$CarAngEv.NT2BLQ1,"Stroke"=data$ApoplEv.NT2BLQ1, 
+                        "Diabetes2"=data$DiaEv.NT2BLQ1, "BloodGlucose2"=data$SeGluNonFast.NT2BLM, "SystolicMean3"=data$BPSystMn23.NT3BLM, 
+                        "DiastolicMean3"=data$BPDiasMn23.NT3BLM, "BPMed3"=data$BPMedEv.NT3BLQ1)
+plot_missing(df.health)
+# few missing values in health data at time of HUNT2, so we remove all with history and NA
+
+#Very few missing rows
 
 
-#### Remove all who are currently or have previously been on bpmed at time of HUNT2
-indexNT2.bp.med <- data$BPMedCu.NT2BLQ1=="N\xe5" | data$BPMedCu.NT2BLQ1=="F\xf8r, men ikke n\xe5"
-sum(indexNT2.bp.med, na.rm=T)
-data <- data[!indexNT2.bp.med,]
-indexNT2.miss.bp.med <- is.na(data$BPMedCu.NT2BLQ1) 
-sum(indexNT2.miss.bp.med, na.rm=T)
-data <- data[!indexNT2.miss.bp.med,]
-# Check that removed all who have ever taken bpmed
-sum(data$indexNT2.bp.med,na.rm=T)==0
+
+#########################################3
+
+## Missing values for cvd at HUNT2
+indexNT2.miss.CVD <- is.na(data$CarInfEv.NT2BLQ1) | is.na(data$CarAngEv.NT2BLQ1) | is.na(data$ApoplEv.NT2BLQ1)
+
+# Missing values for diabetes at HUNT2
+indexNT2.miss.dia <- is.na(data$DiaEv.NT2BLQ1) | is.na(data$SeGluNonFast.NT2BLM)
+
+#### Missing values hypertension
+indexNT2.miss.hyp <- is.na(data$BPMedCu.NT2BLQ1)|is.na(data$BPSystMn23.NT2BLM) | is.na(data$BPDiasMn23.NT2BLM)
 
 
-#### Remove all who are currently hypertensive or have missing values of blood pressure at time of HUNT2
-# definition mean sys>140mmHg, or mean dia >90mmHg, or on bpmed (already excluded these)
-indexNT2.hyp <- data$BPSystMn23.NT2BLM>140 | data$BPDiasMn23.NT2BLM>90
-sum(indexNT2.hyp, na.rm=T)
-index.miss.bp.2 <- is.na(data$BPSystMn23.NT2BLM) | is.na(data$BPDiasMn23.NT2BLM) 
-sum(index.miss.bp.2, na.rm=T)
-data <- data[!(indexNT2.hyp|index.miss.bp.2),]
+indexNT3.miss.bp <-is.na(data$BPSystMn23.NT3BLM) | is.na(data$BPDiasMn23.NT3BLM)
+indexNT3.miss.bpmed <- is.na(data$BPMedEv.NT3BLQ1) 
+
+
+# clean data
+data <- data[!(indexNT2.CVD| indexNT2.dia | indexNT2.hyp|
+                 indexNT2.miss.CVD | indexNT2.miss.dia |indexNT2.miss.hyp |
+                 indexNT3.miss.bp|indexNT3.miss.bpmed),]
+
+df.health <- data.frame("BPMed2"= data$BPMedCu.NT2BLQ1, "SystolicMean2"=data$BPSystMn23.NT2BLM,
+                        "DiastolicMean2"=data$BPDiasMn23.NT2BLM, "HeartAttack"=data$CarInfEv.NT2BLQ1, 
+                        "Ang.Pec"=data$CarAngEv.NT2BLQ1,"Stroke"=data$ApoplEv.NT2BLQ1, 
+                        "Diabetes2"=data$DiaEv.NT2BLQ1, "BloodGlucose2"=data$SeGluNonFast.NT2BLM, "SystolicMean3"=data$BPSystMn23.NT3BLM, 
+                        "DiastolicMean3"=data$BPDiasMn23.NT3BLM, "BPMed3"=data$BPMedEv.NT3BLQ1)
+plot_missing(df.health)
+
+# Now 19748 participants
+
+########## STEP 2
+
+# # total number of units of alcohol within last two weeks
+# alcohol.total.NT2 <-data$AlcBeL2WN.NT2BLQ1+data$AlcLiL2WN.NT2BLQ1+data$AlcWiL2WN.NT2BLQ1
+# 
+# 
+# df.dep.indep.var <- data.frame("PID"=data$PID.108676,"BirthYear"=data$BirthYear, "Sex"=data$Sex, "BMI"=data$Bmi.NT2BLM, 
+#                                "PAI"=data$PAI.NT2, "RecPA"=data$RecPA.NT2, "SmoStat"=data$SmoStat.NT2BLQ1, 
+#                                "SeChol"=data$SeChol.NT2BLM, "SeHDLChol"=data$SeHDLChol.NT2BLM, "SeGluNonFast"= data$SeGluNonFast.NT2BLM, 
+#                                "GFRestStag"=data$GFREstStag.NT2BLM, "SeCreaCorr"=data$SeCreaCorr.NT2BLM, "Educ"=data$Educ.NT2BLQ1, 
+#                                "Alc"=alcohol.total.NT2, "BPSys2"=data$BPSystMn23.NT2BLM, "BPDias2"=data$BPDiasMn23.NT2BLM, 
+#                                "BPSys3"=data$BPSystMn23.NT3BLM, "BPDias3"=data$BPDiasMn23.NT3BLM)
+
+# Plot showing the missing values
+###############################################################################
+
 
 str(data)
 
@@ -300,7 +315,7 @@ pid.curr.bp.med1 <- as.vector(data.bp.med$PID.108676)[indexNT3.curr.bp.med1]
 indexNT3.curr.bp.med2 <- data$BPMedEv.NT3BLQ1=="Ja"
 pid.curr.bp.med2 <- as.vector(data$PID.108676)[indexNT3.curr.bp.med2]
 
-# People who answered yes to BPMEdEv and either yes or no to BPM
+# People who answered yes to BPMEdEv and either yes or no to BPMedSiEffev
 pid.curr.bp.med <- intersect(pid.curr.bp.med1,pid.curr.bp.med2)
 index.curr.bp.med <- match(pid.curr.bp.med, data$PID.108676)
 
