@@ -9,17 +9,17 @@
 ## HUNT2 ##
 
 
-Sex <- data$Sex
+Sex <- data.1$Sex
 
 #How has your physical activity in leisure time been during the last year?
 #Average of hours of light physical activity per week in the last year: ExeLigDuLY_NT2BLQ1
-ExeLigDur <- data$ExeLigDuLY.NT2BLQ1
+ExeLigDur <- data.1$ExeLigDuLY.NT2BLQ1
 levels(ExeLigDur) <-c(0, 30, 90, 180) #Median Exercise Duration [min]
 ExeLigDur <- as.numeric(levels(ExeLigDur))[ExeLigDur] #"Minutes of Light PA per Week"
 #Exercise Frequency is 1 
 
 #Average of hours of vigorous physical activity per week in the last year: ExeHarDuLY_NT2BLQ1
-ExeHarDur <- data$ExeHarDuLY.NT2BLQ1
+ExeHarDur <- data.1$ExeHarDuLY.NT2BLQ1
 levels(ExeHarDur) <-c(0, 30, 90, 180) #Median Exercise Duration [min]
 ExeHarDur <- as.numeric(levels(ExeHarDur))[ExeHarDur] #Minutes of Vigorous PA per Week
 #Exercise Frequency is 1 
@@ -44,7 +44,7 @@ df$AS[Idx] = NA
 
 #Step 3: Calculate Health Predictive Activity Score (HPS) with sex specific cofficients 
 #Cofficients HPS represents offset and decay of cardiorespiratory fitness improvement. 
-df$HPS <- ifelse(data$Sex == "Male", (41.9374+9.8382*(1-exp(-df$AS))), (34.2325+9.7581*(1-exp(-df$AS))))
+df$HPS <- ifelse(data.1$Sex == "Male", (41.9374+9.8382*(1-exp(-df$AS))), (34.2325+9.7581*(1-exp(-df$AS))))
 
 attach(df)
 tapply(HPS, Sex, min, na.rm=T)
@@ -61,13 +61,13 @@ detach(df)
 
 #How has your physical activity in leisure time been during the last year?
 #Average of hours of light physical activity per week in the last year: ExeLigDuLY_NT2BLQ2
-ExeLigDur <- data$ExeLigDuLY.NT3BLQ2
+ExeLigDur <- data.1$ExeLigDuLY.NT3BLQ2
 levels(ExeLigDur) <-c(0, 30, 90, 180) #Median Exercise Duration [min]
 ExeLigDur <- as.numeric(levels(ExeLigDur))[ExeLigDur] #"Minutes of Light PA per Week"
 #Exercise Frequency is 1 
 
 #Average of hours of vigorous physical activity per week in the last year: ExeHarDuLY_NT2BLQ2
-ExeHarDur <- data$ExeHarDuLY.NT3BLQ2
+ExeHarDur <- data.1$ExeHarDuLY.NT3BLQ2
 levels(ExeHarDur) <-c(0, 30, 90, 180) #Median Exercise Duration [min]
 ExeHarDur <- as.numeric(levels(ExeHarDur))[ExeHarDur] #Minutes of Vigorous PA per Week
 #Exercise Frequency is 1 
@@ -111,13 +111,13 @@ detach(df)
 ## HUNT 3 ##
 #How often do you exercise? 
 #ExeF_NT3BLQ1 
-ExeF <- data$ExeF.NT3BLQ1 
+ExeF <- data.1$ExeF.NT3BLQ1 
 levels(ExeF) <- c(0, 0.5, 1, 2.5, 5) #Exercise Frequency
 ExeF <- as.numeric(levels(ExeF))[ExeF]  
 
 #If you exercise as often as once or several times a week: How long do you exercise each time?
 #ExeDu_NT3BLQ1
-ExeDu <- data$ExeDu.NT3BLQ1
+ExeDu <- data.1$ExeDu.NT3BLQ1
 levels(ExeDu) <- c(7.5, 22.5, 45, 60) #Median Exercise Duration [Min]
 ExeDu <- as.numeric(levels(ExeDu))[ExeDu]
 
@@ -127,7 +127,7 @@ ExeTime <- ifelse(ExeF == 0 | ExeF == 0.5, 0, ExeF*ExeDu)
 
 #If you exercise as often as once or several times a week:How hard do you exercise?
 #ExeInt_NT3BLQ1
-ExeInt <- data$ExeInt.NT3BLQ1
+ExeInt <- data.1$ExeInt.NT3BLQ1
 levels(ExeInt) <- c(0.44, 0.73, 0.83) #Low, Moderate and High Intensity Corresponds to 44%, 73% and 83% of HRmax
 ExeInt <- as.numeric(levels(ExeInt))[ExeInt]
 ExeInt <- (ExeInt-0.2)/0.8 #Rescaling
