@@ -34,18 +34,13 @@ sum(!unique(data$PID.108676)==data$PID.108676)
 var.names.data <-colnames(data)
 
 
-########## DATA REDUCTION AND CLEANING ########
-### Remove all variables from HUNT1
-indexNT1.data <- grepl('NT1',colnames(data))
-data <- data[,!indexNT1.data]
-
 ### Keep only people who participated in both HUNT2 and HUNT3
 # everyone invited to BLq1 and BLm, but only those who participated in blm participated in blq2
 # NA in participation means not invited
 indexNT23.part <- data$Part.NT2BLQ1=="Deltatt" & data$Part.NT2BLM=="Deltatt" &
   data$Part.NT2BLQ2=="Deltatt" & data$Part.NT3BLM=="Deltatt" &
   data$Part.NT3BLQ1=="Deltatt"
-sum(indexNT23, na.rm=T)
+sum(indexNT23.part, na.rm=T)
 indexNT23.miss <- is.na(data$Part.NT2BLQ1) | is.na(data$Part.NT2BLM) | 
   is.na(data$Part.NT2BLQ2) |is.na(data$Part.NT3BLM) | is.na(data$Part.NT3BLQ1)
 data <- data[indexNT23.part & !indexNT23.miss,]

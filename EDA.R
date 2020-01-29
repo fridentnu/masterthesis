@@ -36,6 +36,52 @@ basic_eda(df)
 describe(df)
 # gmd= Gini mean distance, mean absolute difference between any pair of observations
 
+
+
+
+
+########################## RESPONSE ##########################
+# Correct the blood pressure values
+BPSys3.uncorr <- df$BPSys3
+BPSys3.uncorr[df.eval$BPMed3] <- df$BPSys3[df.eval$BPMed3]-15
+BPDias3.uncorr <- df$BPDias3
+BPDias3.uncorr[df.eval$BPMed3] <- df$BPDias3[df.eval$BPMed3]-10
+
+# Look at response
+plot_histogram(data.frame(df$BPSys3, df$BPDias3))
+
+
+# Compare corrected and uncorrected blood pressure
+plot_histogram(data.frame(BPSys3.uncorr,df$BPSys3))
+plot_histogram(data.frame(BPDias3.uncorr,df$BPDias3))
+#### ADD VERTICAL LINE HERE at 140 and 90? 
+
+
+
+
+##################### EXPLANATORY VARIABLES #################
+
+################# BASIC INFO ###############
+
+# sex, age
+
+################# BLOOD PRESSURE ###############
+
+# systlic and diastolic bp at hunt2, hypertensive parents
+
+################# LIFESTYLE ###############
+
+# bmi, smoking, pai, recpa, educational level
+
+
+################# BLOOD SAMPLES ###############
+
+# grfe, creatinine, chol, hdl chol, blood glucose
+
+
+
+
+
 # Continuous variables
 plot_histogram(df)
 plot_num(df)
