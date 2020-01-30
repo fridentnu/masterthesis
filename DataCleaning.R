@@ -68,6 +68,9 @@ indexNT2.hyp <- data$BPSystMn23.NT2BLM>140 | data$BPDiasMn23.NT2BLM>90 |data$BPM
 df.ill <-data.frame(indexNT2.CVD, indexNT2.hyp, indexNT2.dia)
 
 plot_bar(df.ill) # Most people in the study are healthy. See that the biggest loss comes from hypertensive people
+dev.copy(png,'~/figures/DataCleaning/HealthStatus.png') # Save the plot
+dev.off()
+
 
 # Check missing values more closely
 df.health <- data.frame("BPMed2"= data$BPMedCu.NT2BLQ1, "SystolicMean2"=data$BPSystMn23.NT2BLM,
@@ -77,6 +80,8 @@ df.health <- data.frame("BPMed2"= data$BPMedCu.NT2BLQ1, "SystolicMean2"=data$BPS
                         "SystolicMean3"=data$BPSystMn23.NT3BLM,"DiastolicMean3"=data$BPDiasMn23.NT3BLM,
                         "BPMed3"=data$BPMedEv.NT3BLQ1)
 plot_missing(df.health)
+dev.copy(png,'~/figures/DataCleaning/MissingValuesStep1.png') # Save the plot
+dev.off()
 #Very few missing rows
 
 ##### Missing values Step 1 ###33
@@ -110,6 +115,7 @@ df.health <- data.frame("BPMed2"= data.1$BPMedCu.NT2BLQ1, "SystolicMean2"=data.1
                         "SystolicMean3"=data.1$BPSystMn23.NT3BLM, "DiastolicMean3"=data.1$BPDiasMn23.NT3BLM,
                         "BPMed3"=data.1$BPMedEv.NT3BLQ1)
 plot_missing(df.health)
+
 
 # Now 19748 participants
 str(data.1)
@@ -170,7 +176,8 @@ df.exp.var <- data.frame("PID"=data.1$PID.108676,"BirthYear"=data.1$BirthYear, "
 # Plot showing the missing values
 
 plot_missing(df.exp.var)
-
+dev.copy(png,'~/figures/DataCleaning/MissingValuesStep2.png') # Save the plot
+dev.off()
 # SO MANY MISSING VALUES OF ALCOHOL; AND ALCOHOL NOT ONE OF MAIN RISK FACTORS;
 # SO WE WON'T KEEP ALCOHOL AS EXPLANATORY FOR NOW
 
@@ -271,7 +278,8 @@ df.eval.var.2 <- data.frame("Heart Attack"=data.2$CarInfEv.NT3BLQ1, "Ang.Pec"=da
                           "Stroke"=data.2$ApoplEv.NT3BLQ1, "DiaEv3"=data.2$DiaEv.NT3BLQ1, 
                           "SeGlunonFast3"=data.2$SeGluNonFast.NT3BLM)
 plot_missing(df.eval.var.2)
-
+dev.copy(png,'~/figures/DataCleaning/MissingValuesStep3.png') # Save the plot
+dev.off()
 
 ### Remove all who have missing values for cvd at HUNT3
 indexNT3.miss.CVD <- is.na(data.2$CarInfEv.NT3BLQ1) | is.na(data.2$CarAngEv.NT3BLQ1) | is.na(data.2$ApoplEv.NT3BLQ1)
@@ -321,10 +329,13 @@ df.eval <- data.frame("Diabetes3"=data.3$DiaCurr.NT3, "CVD3"= data.3$CVD.NT3, "B
 
 # No missing  values 
 plot_missing(df) 
+dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.png') # Save the plot
+dev.off()
 
 # No missing values
 plot_missing(df.eval)
-
+dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.EVAL.png') # Save the plot
+dev.off()
 
 #Overview of data sets
 plot_str(df)
