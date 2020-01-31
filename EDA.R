@@ -1,6 +1,7 @@
 library(funModeling) 
 library(tidyverse) 
 library(Hmisc)
+library(DataExplorer)
 
 
 
@@ -15,10 +16,13 @@ library(Hmisc)
 # Load data set from DataCleaning
 source("R code/DataCleaning.R")
 
+# Explanatory variables
+exp.var <- drop_columns(df, c("PID", "BPSys3", "BPDias3"))
+
+response <- data.frame("Sys"=df$BPSys3, "Dias"=df$BPDias3)
 
 # Overview of data set 
-plot_str(df)
-
+introduce(df)
 
 # More detailed overview
 basic_eda <- function(data)
@@ -61,6 +65,14 @@ plot_histogram(data.frame(BPDias3.uncorr,df$BPDias3))
 
 ##################### EXPLANATORY VARIABLES #################
 
+# check that all are in the format they should be (no factor to numerical)
+# check for outliers
+# check distribution
+plot_boxplot(data.frame(df$PAI, df$SmoStat), by=df$BPSys3)
+
+
+# boxplot of continuous variables against response
+plot_boxplot(df, by="BPSys3")
 ################# BASIC INFO ###############
 
 # sex, age
