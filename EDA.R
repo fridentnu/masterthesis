@@ -12,7 +12,7 @@ library(reshape2)
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
 # https://blog.datascienceheroes.com/exploratory-data-analysis-in-r-intro/
 # https://r4ds.had.co.nz/exploratory-data-analysis.html 
-
+# http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization 
 
 # Load data set from DataCleaning
 source("R code/DataCleaning.R")
@@ -25,21 +25,36 @@ df.total <- data.frame(df, df.eval)
 introduce(df)
 describe(df)
 # gmd= Gini mean distance, mean absolute difference between any pair of observations
+###Comment: doesn't seem to be any single extreme outliers
+# Lower values for BP at HUNT3 than HUNT2
+
 
 # Continuous variables
 plot_histogram(df)
-plot_num(df)
+### Comment: multiple variables have some values that are much more common than the others
+### and se from width of plots that there are some outliers
 
 # Categorical variables
-plot_bar(df)
-freq(df)
+plot_bar(df)  
+## Comment: most levels are well represented, excpect stage 4 in GFRest
 
 
-# Correlation of the different continuous variables with the systolic bp from hunt3
-plot_correlation(df, type="continuous")
+# Correlation of the all variables with the systolic bp from hunt3
+plot_correlation(df)
+# appendix
 
-# Collection of EDA plots 
-#create_report(df)
+
+cor.mat <- cor(df[,-c(1,3,7,8,9,10,14,16)])
+ggplot(data=melt(cor.mat))+
+  geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", name="Correlation") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  ggtitle("Total correlation continuous")
+### Comment: Negative correlation Birthyear and cholestrol (ie. cholestrol goes up with age)
+### negative correlation birthyear and response (bpsys3)
 
 
 
@@ -51,57 +66,110 @@ BPDias3.uncorr <- df$BPDias3
 BPDias3.uncorr[df.eval$BPMed3] <- df$BPDias3[df.eval$BPMed3]-10
 
 # Look at response
-plot_histogram(data.frame(df$BPSys3, df$BPDias3))
+# plot_histogram(data.frame(df$BPSys3, df$BPDias3))
+res.p1 <- ggplot(data=df)+
+  geom_histogram(mapping = aes(BPSys3), binwidth=1)+
+  ggtitle("Systolic bp")
+res.p2 <- ggplot(data=df)+
+  geom_histogram(mapping = aes(BPDias3), binwidth=1)+
+  ggtitle("Diastolic bp")
+grid.arrange(res.p1,res.p2,nrow=1)
 
 
-# Compare corrected and uncorrected blood pressure
-# prøve å dele opp hver bin i to farger, de som bruker og de som ikke bruker bpmed?
-plot_histogram(data.frame(BPSys3.uncorr,df$BPSys3))
-plot_histogram(data.frame(BPDias3.uncorr,df$BPDias3))
-#### ADD VERTICAL LINE HERE at 140 and 90? 
 
-# Corrected
-ggplot(data=df.total)+
-  geom_histogram(mapping = aes(x=BPSys3, fill=BPMed3), binwidth=1)+
-  geom_vline(xintercept = 140)+
-  ggtitle("Corrected systolic bp")
+### Compare corrected and uncorrected blood pressure
+#plot_histogram(data.frame(BPSys3.uncorr,df$BPSys3))
+#plot_histogram(data.frame(BPDias3.uncorr,df$BPDias3))
 
+sys.p1 <- ggplot(data=df)+
+  geom_histogram(mapping = aes(BPSys3), binwidth=1)+
+  geom_vline(xintercept = 140, color="red")+
+  ggtitle("Corrected systolic")
+sys.p2 <- ggplot(data=data.frame(BPSys3.uncorr))+
+  geom_histogram(mapping = aes(BPSys3.uncorr), binwidth=1)+
+  geom_vline(xintercept = 140,color= "red")+
+  ggtitle("Uncorrected systolic")
+grid.arrange(sys.p1,sys.p2,nrow=1)
+
+dias.p1 <- ggplot(data=df)+
+  geom_histogram(mapping = aes(BPDias3), binwidth=1)+
+  geom_vline(xintercept = 90, color="red")+
+  ggtitle("Corrected diastolic")
+dias.p2 <- ggplot(data=data.frame(BPDias3.uncorr))+
+  geom_histogram(mapping = aes(BPDias3.uncorr), binwidth=1)+
+  geom_vline(xintercept = 90,color= "red")+
+  ggtitle("Uncorrected diastolic")
+grid.arrange(dias.p1,dias.p2,nrow=1)
+
+### Compare people on/off bp medication before/after correction
+## Systolic
 # Unorrected
-ggplot(data=df.total)+
+sys.med.p1 <-ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=BPSys3.uncorr, fill=BPMed3), binwidth = 1)+
   geom_vline(xintercept = 140)+
   ggtitle("Uncorrected systolic bp")
 
-# for systolic bp: 
-# Heavier right tail for corrected than uncorrected, 
+# Corrected
+sys.med.p2 <-ggplot(data=df.total)+
+  geom_histogram(mapping = aes(x=BPSys3, fill=BPMed3), binwidth=1)+
+  geom_vline(xintercept = 140)+
+  ggtitle("Corrected systolic bp")
+grid.arrange(sys.med.p1,sys.med.p2,nrow=1)
+### Comment: Heavier right tail for corrected than uncorrected, 
 # but in both cases heavier right tail than left tail
 
+## Diastolic
 # Corrected
-ggplot(data=df.total)+
+dias.med.p1 <- ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=BPDias3, fill=BPMed3), binwidth = 1)+
   geom_vline(xintercept = 90)+
   ggtitle("Corrected diastolic bp")
 
-
 # Unorrected
-ggplot(data=df.total)+
+dias.med.p2 <- ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=BPDias3.uncorr, fill=BPMed3), binwidth=1)+ 
   geom_vline(xintercept = 90)+
   ggtitle("Uncorrected diastolic bp")
+grid.arrange(dias.med.p2,dias.med.p1,nrow=1)
+### Comment: for diastolic tail seems approximately equal 
 
-# for diastolic bp, tails seems approximately equal
 
-# scatterplot comparing systolic bp of people using vs not using bp medication, after corrected
-ggplot(data=df.total)+
-  geom_point(mapping = aes(x=1:length(BPSys3), y=BPSys3))+
-  facet_wrap(~BPMed3)+ geom_hline(yintercept = 140, color="red", size=2)+ 
-  ggtitle("Corrected blood pressure")
+# # scatterplot comparing systolic bp of people using vs not using bp medication, after corrected
+# ggplot(data=df.total)+
+#   geom_point(mapping = aes(x=1:length(BPSys3), y=BPSys3))+
+#   facet_wrap(~BPMed3)+ geom_hline(yintercept = 140, color="red", size=2)+ 
+#   ggtitle("Corrected blood pressure")
+# 
+# # scatterplot comparing systolic bp of people using vs not using bp medication, not corrected
+# ggplot(data=df.total)+
+#   geom_point(mapping = aes(x=1:length(BPSys3), y=BPSys3.uncorr))+
+#   facet_wrap(~BPMed3)+geom_hline(yintercept = 140, color="red", size=2)+
+#   ggtitle("Uncorrected blood pressure")
 
-# scatterplot comparing systolic bp of people using vs not using bp medication, not corrected
-ggplot(data=df.total)+
-  geom_point(mapping = aes(x=1:length(BPSys3), y=BPSys3.uncorr))+
-  facet_wrap(~BPMed3)+geom_hline(yintercept = 140, color="red", size=2)+
-  ggtitle("Uncorrected blood pressure")
+
+########### BP for subgroups ##################3
+ill.p1<-ggplot(data=df.total)+
+  geom_histogram(mapping = aes(x=BPSys3, fill= Diabetes3), binwidth = 1)+
+  geom_vline(xintercept = mean(df$BPSys3))+
+  geom_vline(xintercept = mean(df$BPSys3[df.total$Diabetes3]), color="blue")+
+  ggtitle("BPSys for diabetes")
+
+ill.p2 <-ggplot(data=df.total)+
+  geom_histogram(mapping = aes(x=BPSys3, fill=CVD3), binwidth = 1)+
+  geom_vline(xintercept = mean(df$BPSys3))+
+  geom_vline(xintercept = mean(df$BPSys3[df.total$CVD3]), color="blue")+
+  ggtitle("BPSys for CVD")
+
+ill.p3<-ggplot(data=df.total)+
+  geom_histogram(mapping = aes(x=BPSys3, fill=BPMed3), binwidth = 1)+
+  geom_vline(xintercept = mean(df$BPSys3))+
+  geom_vline(xintercept = mean(df$BPSys3[df.total$BPMed3]), color="blue")+
+  ggtitle("BPSys for BPMed")
+# use corrected version of blood pressure here
+grid.arrange(ill.p1,ill.p2, ill.p3,nrow=1)
+### Comment: group with diabetes and group with cvd have higher mean bp than total group
+## seems that group with diabetes and group with cvd have similar mean
+## highest mean for the corrected bp of group on bp medication (no surprise)
 
 
 ##################### EXPLANATORY VARIABLES #################
@@ -110,7 +178,8 @@ ggplot(data=df.total)+
 # check distribution
 
 # boxplot of continuous variables against response
-plot_boxplot(f,  by="BPSys3")
+plot_boxplot(df,  by="BPSys3")
+# not sure if need this
 
 ################# BASIC INFO ###############
 # sex, age
@@ -129,20 +198,29 @@ plot_correlation(data.frame(df.basic, df$BPSys3))
 ggplot(data=df.basic)+
   geom_histogram(mapping = aes(x=Birthyear), binwidth=1)+
   ggtitle("Birthyear")
-# Comment: see cut-off value, since have to be 20 years to enter study
+### Comment: see cut-off value, since have to be 20 years to enter study
+### mean birthyear=1953.74, ie. mean age HUNT2 was approx 43, mean age HUNT3 was approx. 54
+
 
 ## Categorical variable
 ggplot(data=df.basic)+
   geom_bar(mapping = aes(x=Sex))+
   ggtitle("Sex")
+### Comment: significantly more females in the study
 
 ## Correlation Categorical variable
 ggplot(data=df.basic.res)+
   geom_boxplot(mapping = aes(x=Sex,y=BPSys3))+
   ggtitle("Sex vs. BP")
+### Comment: males have higher median bp, but highest bp belongs to a woman
 
 # Correlation continuous variable
 cat("Correlation Birthyear and BPSys3: ",cor(df$BirthYear, df$BPSys3), sep=" ")
+ggplot(data=df.basic.res)+
+  geom_point(mapping = aes(x=Birthyear, y=BPSys3), alpha=1/10)+
+  ggtitle("Birthyear vs. BPSys3")
+### Comment: See both from calculation and plot that there is a negative correlation between birthyear and bp
+
 
 ################# BLOOD PRESSURE ###############
 # systlic and diastolic bp at hunt2, hypertensive parents
@@ -162,24 +240,35 @@ bp.p2 <- ggplot(data=df.bp)+
   ggtitle("Diastolic")
 
 grid.arrange(bp.p2, bp.p1, nrow=1)
-# Comment: see cut-off value, since have to be 20 years to enter study
+### Comment: see cut-off value for both, seems escpecially abrupt for systolic
+## might be because diastolic decreases with age
+
 
 ## Categorical variables
 ggplot(data=df.bp)+
   geom_bar(mapping = aes(x=BPHigPar))+
   ggtitle("Hypertensive parents")
+### Comment: almost 50% as many people who have hypertensive parents as who haven't got hypertensive parents
 
 # Correlation categorical variables
 ggplot(data=df.bp.res)+
   geom_boxplot(mapping = aes(x=BPHigPar,y=BPSys3))+
   ggtitle("Hypertensive parents vs. BP")
+### Comment: very slighty higher median bp for people with hypertenive parents
+### smaller effect than we thought?
 
 # Correlation continuous variables
-cor.mat.bp <- cor(df.bp.res[,-3])
+cor.mat.bp <- cor(data.frame("BPSys2"=df$BPSys2,"BPDias2"=df$BPDias2,"BPSys3"=df$BPSys3,"BPDias3"=df$BPDias3))
 ggplot(data=melt(cor.mat.bp))+
       geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", name="Correlation") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
   ggtitle("Correlation blood pressure")
-       
+### Comment: see that positive correlations between all (as expected)
+### stronger correlations between dias and sys in same survey
   
 
 ################## LIFESTYLE ###############
@@ -192,6 +281,9 @@ df.life.res <- data.frame("BMI"=df$BMI, "Smoking"=df$SmoStat, "PAI"=df$PAI, "Rec
 ggplot(data=df.life)+
   geom_histogram(mapping = aes(x=BMI), binwidth=1)+
   ggtitle("BMI")
+### Comment: long right tail, not symmetric, big variation
+### mean 25.31 
+
 
 # Categorical variables
 life.p1 <-ggplot(data=df.life)+
@@ -211,9 +303,17 @@ life.p4 <-ggplot(data=df.life)+
   ggtitle("Education")
 
 grid.arrange(life.p2, life.p1, life.p3,life.p4, nrow=2)
+### Comment: all levels of these are well-represented
+
 
 ## Correlation continuous variables
 cat("Correlation BMI and BPSys3: ",cor(df$BMI, df$BPSys3))
+ggplot(data=df.life.res)+
+  geom_point(mapping = aes(x=BMI, y=BPSys3), alpha=1/10)+
+  ggtitle("BMI vs. BPSys3")
+### Comment: from both calculation and plot, we see a slight positive correlation
+### not as big as might expect, biggest BMI not necesarrily highest bp
+### people with highest bp is within 20-30 (healthy and overweight range)
 
 ## Correlation categorical variables
 life.c1 <- ggplot(data=df.life.res)+
@@ -233,8 +333,25 @@ life.c4 <- ggplot(data=df.life.res)+
   ggtitle("Education vs. BP")
 
 grid.arrange(life.c2, life.c1, life.c3,life.c4, nrow=2)
+### Comment: not very bigg effect of any of these
+### see some negative correlation between bp and physical activity 
+### somewhat hight for previous daily smoker (but that might be due to age)
+### might be same reason for pattern in education, seems like it
 
 
+mean(df$BPSys3[df$RecPA])
+mean(df$BPSys3[!df$RecPA])
+
+mean(df$BPSys3[df$PAI=="High"])
+mean(df$BPSys3[df$PAI=="Low"])
+
+ggplot(data=df.life.res)+
+  geom_boxplot(mapping = aes(x=Smoking,y=df$BirthYear))+
+  ggtitle("Smoking vs. birthyear")
+
+ggplot(data=df.life.res)+
+  geom_boxplot(mapping = aes(x=Education,y=df$BirthYear))+
+  ggtitle("Education vs. birthyear")
 
 ################# BLOOD SAMPLES ###############
 
@@ -283,6 +400,11 @@ ggplot(data=df.blood.res)+
 cor.mat.blood <- cor(df.blood.res[,-1])
 ggplot(data=melt(cor.mat.blood))+
   geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
   ggtitle("Correlation blood samples and BPSys3")
 
 
