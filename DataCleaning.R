@@ -352,11 +352,12 @@ levels(df$SmoStat)
 levels(df$SmoStat)<- c("Never smoked daily", "Previous daily smoker", "Daily smoker")
 
 levels(df$Educ)
-levels(df$Educ)<- c("Primary school 7-10 years, Folk high school", 
-                    "Upper secondary school 1-2 years",
-                    "Upper secondary school 3 years",
-                    "Higher education/University, less than 4 years",             
-                    "Higher education/University, 4 years or more")
+#levels(df$Educ)<- c("Primary school 7-10 years, Folk high school", 
+#                    "Upper secondary school 1-2 years",
+#                    "Upper secondary school 3 years",
+#                   "Higher education/University, less than 4 years",             
+#                   "Higher education/University, 4 years or more")
+levels(df$Educ) <- c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5")
 
 
 # 18 variables
