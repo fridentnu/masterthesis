@@ -59,6 +59,8 @@ ggplot(data=melt(cor.mat))+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
   ggtitle("Total correlation continuous")
+dev.copy(png,'~/figures/EDA/ContinuousCorrelation.png') # Save the plot
+dev.off()
 ### Comment: Negative correlation Birthyear and cholestrol (ie. cholestrol goes up with age)
 ### biggest negative correlation with response (bpsys3) was birthyear
 ### biggest positive correlation with response (bpsys3) was bpsys2
@@ -391,6 +393,8 @@ ggplot(data=df.blood)+
   ggtitle("GFRestStag")+
   coord_flip()
 ### Comment: see from plot that very few in stage 3, only one in 4, and no one in stage 5
+### GFR (glomerular filtration rate) how much blood passes through the glomeruli each minute
+### more is better, below 60 might mean kidney disease
 
 cat("Participants in Stage 3: ", sum(df.blood$GFRestStag=="Stage 3: GFREst 30-59 ml/min"))
 cat("Participants in Stage 4: ", sum(df.blood$GFRestStag=="Stage 4: GFREst 15-29 ml/min"))
@@ -428,7 +432,8 @@ ggplot(data=df.blood)+
   ggtitle("Creatinine")+
   coord_cartesian(ylim = c(0,10))
 sum(df$SeCreaCorr==22)
-
+## Low creatinine means good kidney function, high means bad
+## according to wikipedia referance values are 45-90 women and 60-110 mens
 
 ## Correlation categorical variable 
 ggplot(data=df.blood.res)+
