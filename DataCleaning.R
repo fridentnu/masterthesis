@@ -34,6 +34,10 @@ sum(!unique(data$PID.108676)==data$PID.108676)
 var.names.data <-colnames(data)
 
 
+
+
+###################### SELECTING THE POPULATION ########################################
+
 ### Keep only people who participated in both HUNT2 and HUNT3
 # everyone invited to BLq1 and BLm, but only those who participated in blm participated in blq2
 # NA in participation means not invited
@@ -45,8 +49,6 @@ indexNT23.miss <- is.na(data$Part.NT2BLQ1) | is.na(data$Part.NT2BLM) |
   is.na(data$Part.NT2BLQ2) |is.na(data$Part.NT3BLM) | is.na(data$Part.NT3BLQ1)
 data <- data[indexNT23.part & !indexNT23.miss,]
 
-
-###################### STEP 1 ########################################
 
 #### EXCLUSION CRITERIA #####
 
@@ -137,12 +139,10 @@ str(data.1)
 source("R code/PAI.R")
 data.1$PAI.NT2 <- PAIlevel_NT2
 
-
 ############### ADD RecPA ##############
 # Logical indicator mof whether a person reaches the recommended amount of physical activity
 source("R code/MVPA.R")
 data.1$RecPA.NT2 <- MeetsPARecomed_NT2
-
 
 
 ############## ADD BPHigParEv ###############

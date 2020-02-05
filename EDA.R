@@ -87,6 +87,7 @@ grid.arrange(res.p1,res.p2,nrow=1)
 ### Comment: many people are hypertensive, see most have problem with systolic
 ### spike 121 and 122 certain values for systolic 
 
+## different plots, commented out
 ##### Compare corrected and uncorrected blood pressure
 #plot_histogram(data.frame(BPSys3.uncorr,df$BPSys3))
 #plot_histogram(data.frame(BPDias3.uncorr,df$BPDias3))
@@ -127,6 +128,8 @@ sys.med.p2 <-ggplot(data=df.total)+
   geom_vline(xintercept = 140)+
   ggtitle("Corrected systolic bp")
 grid.arrange(sys.med.p1,sys.med.p2,nrow=1)
+### OBS: this is a stacked histogram
+
 ### Comment: Slightly heavier right tail for corrected than uncorrected, 
 ### small difference since so few on bpmed
 ### but in both cases heavier right tail than left tail
@@ -143,6 +146,18 @@ dias.med.p2 <- ggplot(data=df.total)+
   ggtitle("Uncorrected diastolic bp")
 grid.arrange(dias.med.p2,dias.med.p1,nrow=1)
 ### Comment:  very slightly heavier right tail for corrected than uncorrected,
+
+
+#### BINARY HYPERTENSION VARIABLE
+
+# only binary variable for systolic hypertension, since only look at systolic bp as response
+df.total$BPSysHyp <- df.total$BPSys3>140
+sum(df.total$BPSysHyp)/length(df.total$BPSys3)
+
+ggplot(data=df.total)+
+  geom_bar(aes(BPSysHyp))+
+  ggtitle("Systolic hypertension")
+### Comment: approximately 19% is hypertensive 
 
 
 # # scatterplot comparing systolic bp of people using vs not using bp medication, after corrected
@@ -196,10 +211,11 @@ mean(df$BPSys3[df.total$CVD3])
 plot_boxplot(df,  by="BPSys3")
 # not sure if need this
 
-################# BASIC INFO ###############
+################# BASIC INFO ##############################
 # sex, age
 df.basic <- data.frame("Sex"=df$Sex, "Birthyear"=df$BirthYear)
-df.basic.res <- data.frame("Sex"=df$Sex, "Birthyear"=df$BirthYear, "BPSys3"=df$BPSys3)
+df.basic.res <- data.frame("Sex"=df$Sex, "Birthyear"=df$BirthYear,
+                           "BPSys3"=df$BPSys3, "BPSysHyp"=df.total$BPSysHyp)
 
 # DataExplorer
 # plot_histogram(df.basic)
@@ -209,6 +225,8 @@ df.basic.res <- data.frame("Sex"=df$Sex, "Birthyear"=df$BirthYear, "BPSys3"=df$B
 # plot_correlation(data.frame(df.basic, df$BPSys3))
 # 
 
+
+####### Inspect variables ---------------------------------------------
 ## Continuous variable
 ggplot(data=df.basic)+
   geom_histogram(mapping = aes(x=Birthyear), binwidth=1)+
@@ -218,20 +236,28 @@ ggplot(data=df.basic)+
 ### a few prticipants born before 1920, earliest in 1910
 
 
-
 ## Categorical variable
 ggplot(data=df.basic)+
   geom_bar(mapping = aes(x=Sex))+
   ggtitle("Sex")
-### Comment: significantly more females in the study
+### Comment: significantly more females in the study.
+### Check if this is the case in these age groups in the population in general
 
-## Correlation Categorical variable
+###### Correlation categorical variables -------------------------------------------
+## Correlation BP Categorical variable
 ggplot(data=df.basic.res)+
   geom_boxplot(mapping = aes(x=Sex,y=BPSys3))+
   ggtitle("Sex vs. BP")
 ### Comment: males have higher median bp, but highest bp belongs to a woman, and lowest bp to man
 
-# Correlation continuous variable
+## Correlation Hyp categorical variable
+ggplot(data=df.basic.res)+
+  geom_bar(mapping = aes(x=Sex,fill=BPSysHyp))+
+  ggtitle("Sex vs. Systolic ")
+
+
+###### Correlation continuous variables ----------------------------------
+# Correlation bp continuous variable
 cat("Correlation Birthyear and BPSys3: ",cor(df$BirthYear, df$BPSys3), sep=" ")
 ggplot(data=df.basic.res)+
   geom_point(mapping = aes(x=Birthyear, y=BPSys3), alpha=1/10)+
@@ -239,10 +265,17 @@ ggplot(data=df.basic.res)+
 ### Comment: See both from calculation and plot that there is a negative correlation between birthyear and bp
 ### but also that there are som outliers that doesn't follow this trend
 
+# Correlation hyp continuous variable
+ggplot(data=df.basic.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=Birthyear))+
+  ggtitle("Birthyear vs. Systolic hypertension")
+### Comment: see that people with systolic hypertension are older.  
+
 ################# BLOOD PRESSURE ###############
 # systlic and diastolic bp at hunt2, hypertensive parents
 df.bp <- data.frame("BPSys2"=df$BPSys2, "BPDias2"=df$BPDias2, "BPHigPar"=df$BPHigPar)
-df.bp.res <- data.frame("BPSys2"=df$BPSys2, "BPDias2"=df$BPDias2, "BPHigPar"=df$BPHigPar, "BPSys3"=df$BPSys3)
+df.bp.res <- data.frame("BPSys2"=df$BPSys2, "BPDias2"=df$BPDias2, "BPHigPar"=df$BPHigPar, 
+                        "BPSys3"=df$BPSys3, "BPSysHyp"=df.total$BPSysHyp)
 
 # Data explorer
 plot_histogram(df.bp)
@@ -277,7 +310,7 @@ ggplot(data=df.bp.res)+
 ### Comment: very slighty higher median bp for people with hypertenive parents
 ### smaller effect than we thought?
 
-# Correlation continuous variables
+# Correlation BP continuous variables
 cor.mat.bp <- round(cor(data.frame("BPSys2"=df$BPSys2,"BPDias2"=df$BPDias2,"BPSys3"=df$BPSys3,"BPDias3"=df$BPDias3)),2)
 ggplot(data=melt(cor.mat.bp))+
       geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
@@ -291,14 +324,39 @@ ggplot(data=melt(cor.mat.bp))+
   ggtitle("Correlation blood pressure")
 ### Comment: see that positive correlations between all (as expected)
 ### stronger correlations between dias and sys in same survey
-  
+
+# Correlation hyp continuous variable
+bp.bc1 <-ggplot(data=df.bp.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=BPSys2))+
+  ggtitle("Systolic bp HUNT2")
+bp.bc2 <-ggplot(data=df.bp.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=BPDias2))+
+  ggtitle("Diastolic bp HUNT2")
+grid.arrange(bp.bc1, bp.bc2, nrow=1)
+### Comment: as expected
+
+## Correlation Hyp categorical variable
+ggplot(data=df.bp.res)+
+  geom_bar(mapping = aes(x=BPHigPar,fill=BPSysHyp))+
+  ggtitle("Hypertensive parents vs. Systolic hypertension ")
+
+# Percentage of people with hypertesive parents with hypertension
+100*sum(df.bp.res$BPHigPar&df.bp.res$BPSysHyp)/sum(df.bp.res$BPHigPar)
+# Percentage of people with hypertensive parents with out hypertension
+100*(1-sum(df.bp.res$BPHigPar&df.bp.res$BPSysHyp)/sum(df.bp.res$BPHigPar))
+# Percentage of people without hypertensive parents with  hypertension
+100*sum((!df.bp.res$BPHigPar)&df.bp.res$BPSysHyp)/sum(!df.bp.res$BPHigPar)
+# neither
+100*(1-sum((!df.bp.res$BPHigPar)&df.bp.res$BPSysHyp)/sum(!df.bp.res$BPHigPar))
+### almost 22% of people with hypertensive parents have hypertension
+### while only 17.7% of people with non-hypertensive parents are hypertensive
 
 ################## LIFESTYLE ###############
 
 # bmi, smoking, pai, recpa, educational level
 df.life <- data.frame("BMI"=df$BMI, "Smoking"=df$SmoStat, "PAI"=df$PAI, "RecPA"=df$RecPA, "Education"=df$Educ)
 df.life.res <- data.frame("BMI"=df$BMI, "Smoking"=df$SmoStat, "PAI"=df$PAI, "RecPA"=df$RecPA,
-                          "Education"=df$Educ, "BPSys3"=df$BPSys3)
+                          "Education"=df$Educ, "BPSys3"=df$BPSys3, "BPSysHyp"=df.total$BPSysHyp)
 # Continuous variables
 ggplot(data=df.life)+
   geom_histogram(mapping = aes(x=BMI), binwidth=1)+
@@ -328,7 +386,7 @@ grid.arrange(life.p2, life.p1, life.p3,life.p4, nrow=2)
 ### Comment: all levels of these are well-represented
 
 
-## Correlation continuous variables
+## Correlation bp continuous variables
 cat("Correlation BMI and BPSys3: ",cor(df$BMI, df$BPSys3))
 ggplot(data=df.life.res)+
   geom_point(mapping = aes(x=BMI, y=BPSys3), alpha=1/10)+
@@ -336,6 +394,11 @@ ggplot(data=df.life.res)+
 ### Comment: from both calculation and plot, we see a slight positive correlation
 ### not as big as might expect, biggest BMI not necesarrily highest bp
 ### people with highest bp is within 20-30 (healthy and overweight range)
+
+## Correlation hyp continuous variables
+ggplot(data=df.life.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=BMI))+
+  ggtitle("BMI versus systolic hypertension")
 
 ## Correlation categorical variables
 life.c1 <-ggplot(data=df.life.res)+
@@ -360,6 +423,7 @@ grid.arrange(life.c2, life.c1, life.c3,life.c4, nrow=2)
 ### somewhat higher for previous daily smoker (but that might be due to age)
 ### might be same reason for pattern in education, seems like it
 
+
 # check the negative correlation with physical activity
 mean(df$BPSys3[df$RecPA])
 mean(df$BPSys3[!df$RecPA])
@@ -377,13 +441,33 @@ ggplot(data=df.life.res)+
   geom_boxplot(mapping = aes(x=Education,y=df$BirthYear))+
   ggtitle("Education vs. Birthyear")
 
+
+
+## Correlation Hyp categorical variable
+life.bc1 <-ggplot(data=df.life.res)+
+  geom_bar(mapping = aes(x=Smoking,fill=BPSysHyp))+
+  ggtitle("Hypertensive parents vs. Systolic hypertension ")
+life.bc2 <-ggplot(data=df.life.res)+
+  geom_bar(mapping = aes(x=PAI,fill=BPSysHyp))+
+  ggtitle("Hypertensive parents vs. Systolic hypertension ")
+life.bc3 <-ggplot(data=df.life.res)+
+  geom_bar(mapping = aes(x=RecPA,fill=BPSysHyp))+
+  ggtitle("Hypertensive parents vs. Systolic hypertension ")
+life.bc4 <-ggplot(data=df.life.res)+
+  geom_bar(mapping = aes(x=Education,fill=BPSysHyp))+
+  ggtitle("Hypertensive parents vs. Systolic hypertension ")
+grid.arrange(life.bc1,life.bc2,life.bc3,life.bc4, nrow=2)
+
+### Comment: need to find some other way to display this
+
 ################# BLOOD SAMPLES ###############
 # grfe, creatinine, chol, hdl chol, blood glucose
 
 df.blood <- data.frame("GFRestStag"=df$GFRestStag, "Creatinine"=df$SeCreaCorr, "Cholestrol"=df$SeChol, 
                        "HDL.Cholestrol"=df$SeHDLChol, "Blood.Glucose"=df$SeGluNonFast)
 df.blood.res <- data.frame("GFRestStag"=df$GFRestStag, "Creatinine"=df$SeCreaCorr, "Cholestrol"=df$SeChol, 
-                           "HDL.Cholestrol"=df$SeHDLChol, "Blood.Glucose"=df$SeGluNonFast,"BPSys3"=df$BPSys3)
+                           "HDL.Cholestrol"=df$SeHDLChol, "Blood.Glucose"=df$SeGluNonFast,
+                           "BPSys3"=df$BPSys3, "BPSysHyp"=df.total$BPSysHyp)
 
 plot_histogram(df.blood)
 
@@ -459,11 +543,25 @@ ggplot(data=melt(cor.mat.blood))+
 ### negative correlation between hdl.cholestrol and creatinine
 ### very slight negative correlation between HDL.cholestrol and blood pressure
 
+## Correlation hyp continuous variables
+blood.bc1 <- ggplot(data=df.blood.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=Cholestrol))+
+  ggtitle("Cholestrol")
+
+blood.bc2 <- ggplot(data=df.blood.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=HDL.Cholestrol))+
+  ggtitle("HDL Cholestrol")
+
+blood.bc3 <- ggplot(data=df.blood.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=Creatinine))+
+  ggtitle("Creatinine")
+
+blood.bc4 <- ggplot(data=df.blood.res)+
+  geom_boxplot(mapping = aes(x=BPSysHyp,y=Blood.Glucose))+
+  ggtitle("Blood glucose")
+grid.arrange(blood.bc1, blood.bc2, blood.bc3, blood.bc4, nrow=2)
 
 
-
-
-#############################################################################
 
 
 
