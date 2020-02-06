@@ -256,6 +256,23 @@ ggplot(data=df.basic.res)+
   ggtitle("Sex vs. Systolic ")
 
 
+count.mat <- aggregate(rep(1, length(df.total$BPSysHyp)),by=list(df.total$Sex, df.total$BPSysHyp), FUN=sum)
+count.mat$x<- count.mat$x*100/length(df.total$BPSysHyp)
+count.mat
+
+
+ggplot(data=count.mat)+
+  geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
+  scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
+  geom_text(aes(x=Group.1, y=Group.2,label = round(x,2)), color = "black", size = 4)+
+  theme(axis.title.x = element_text(size=14, face="italic"),
+        axis.title.y = element_text(size=14, face="italic"),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  ggtitle("Sex vs. Hypertension")+
+  xlab("Sex") + ylab("Hypertension")
+
+
 ###### Correlation continuous variables ----------------------------------
 # Correlation bp continuous variable
 cat("Correlation Birthyear and BPSys3: ",cor(df$BirthYear, df$BPSys3), sep=" ")
