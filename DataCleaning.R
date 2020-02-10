@@ -1,6 +1,9 @@
 library(foreign) #to import spss-files
 library(tibble)  # to use glimpse
 library(DataExplorer) # EDA package in R
+library(gridExtra)
+library(tidyverse) 
+library(viridis)
 
 
 ##### OBS: HUSK Å LAGRE KILDER
@@ -67,26 +70,46 @@ indexNT2.dia <- data$DiaEv.NT2BLQ1=="Ja" | data$SeGluNonFast.NT2BLM>=11.1
 # History of hypertension at time of HUNT2
 indexNT2.hyp <- data$BPSystMn23.NT2BLM>140 | data$BPDiasMn23.NT2BLM>90 |data$BPMedCu.NT2BLQ1=="N\xe5" | data$BPMedCu.NT2BLQ1=="F\xf8r, men ikke n\xe5"
 
-df.ill <-data.frame(indexNT2.CVD, indexNT2.hyp, indexNT2.dia)
+df.ill <-data.frame("CVD"=indexNT2.CVD, "Hypertension"=indexNT2.hyp, "Diabetes"=indexNT2.dia)
 
-plot_bar(df.ill) # Most people in the study are healthy. See that the biggest loss comes from hypertensive people
+ill.p1 <-ggplot(data=df.ill)+
+  geom_bar(mapping = aes(x=CVD))+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank())+
+  coord_flip()+
+  ggtitle("CVD")
+ill.p2 <-ggplot(data=df.ill)+
+  geom_bar(mapping = aes(x=Diabetes))+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank())+
+  coord_flip()+
+  ggtitle("Diabetes")
+ill.p3 <-ggplot(data=df.ill)+
+  geom_bar(mapping = aes(x=Hypertension))+
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank())+
+  coord_flip()+
+  ggtitle("Hypertension")
+grid.arrange(ill.p1,ill.p2,ill.p3,nrow=3, left="Participants")
+
+#plot_bar(df.ill) # Most people in the study are healthy. See that the biggest loss comes from hypertensive people
 dev.copy(png,'~/figures/DataCleaning/HealthStatus.png') # Save the plot
 dev.off()
 
 
 # Check missing values more closely
-df.health <- data.frame("BPMed2"= data$BPMedCu.NT2BLQ1, "SystolicMean2"=data$BPSystMn23.NT2BLM,
-                        "DiastolicMean2"=data$BPDiasMn23.NT2BLM, "HeartAttack"=data$CarInfEv.NT2BLQ1, 
-                        "Ang.Pec"=data$CarAngEv.NT2BLQ1,"Stroke"=data$ApoplEv.NT2BLQ1, 
-                        "Diabetes2"=data$DiaEv.NT2BLQ1, "BloodGlucose2"=data$SeGluNonFast.NT2BLM,
-                        "SystolicMean3"=data$BPSystMn23.NT3BLM,"DiastolicMean3"=data$BPDiasMn23.NT3BLM,
+df.health <- data.frame("BPMed2"= data$BPMedCu.NT2BLQ1, "SystolicBP2"=data$BPSystMn23.NT2BLM,
+                        "DiastolicBP2"=data$BPDiasMn23.NT2BLM, "HeartAttack2"=data$CarInfEv.NT2BLQ1, 
+                        "AnginaPectoris2"=data$CarAngEv.NT2BLQ1,"Stroke2"=data$ApoplEv.NT2BLQ1, 
+                        "Diabetes2"=data$DiaEv.NT2BLQ1, "Glucose2"=data$SeGluNonFast.NT2BLM,
+                        "SystolicBP3"=data$BPSystMn23.NT3BLM,"DiastolicBP3"=data$BPDiasMn23.NT3BLM,
                         "BPMed3"=data$BPMedEv.NT3BLQ1)
-plot_missing(df.health)
+plot_missing(df.health, title="Missing values of blood pressure health")
 dev.copy(png,'~/figures/DataCleaning/MissingValuesStep1.png') # Save the plot
 dev.off()
 #Very few missing rows
 
-##### Missing values Step 1 ###33
+##### Missing values Step 1 ###
 
 # Missing values for cvd at HUNT2
 indexNT2.miss.CVD <- is.na(data$CarInfEv.NT2BLQ1) | is.na(data$CarAngEv.NT2BLQ1) | is.na(data$ApoplEv.NT2BLQ1)
@@ -110,17 +133,17 @@ data.1 <- data[!(indexNT2.CVD| indexNT2.dia | indexNT2.hyp|
                  indexNT3.miss.bp|indexNT3.miss.bpmed),]
 
 # Check that 
-df.health <- data.frame("BPMed2"= data.1$BPMedCu.NT2BLQ1, "SystolicMean2"=data.1$BPSystMn23.NT2BLM,
-                        "DiastolicMean2"=data.1$BPDiasMn23.NT2BLM, "HeartAttack"=data.1$CarInfEv.NT2BLQ1, 
-                        "Ang.Pec"=data.1$CarAngEv.NT2BLQ1,"Stroke"=data.1$ApoplEv.NT2BLQ1, 
-                        "Diabetes2"=data.1$DiaEv.NT2BLQ1, "BloodGlucose2"=data.1$SeGluNonFast.NT2BLM, 
-                        "SystolicMean3"=data.1$BPSystMn23.NT3BLM, "DiastolicMean3"=data.1$BPDiasMn23.NT3BLM,
+df.health <- data.frame("BPMed2"= data.1$BPMedCu.NT2BLQ1, "SystolicBPMean2"=data.1$BPSystMn23.NT2BLM,
+                        "DiastolicBPMean2"=data.1$BPDiasMn23.NT2BLM, "HeartAttack2"=data.1$CarInfEv.NT2BLQ1, 
+                        "AnginaPectoris2"=data.1$CarAngEv.NT2BLQ1,"Stroke2"=data.1$ApoplEv.NT2BLQ1, 
+                        "Diabetes2"=data.1$DiaEv.NT2BLQ1, "Glucose2"=data.1$SeGluNonFast.NT2BLM, 
+                        "SystolicBPMean3"=data.1$BPSystMn23.NT3BLM, "DiastolicBPMean3"=data.1$BPDiasMn23.NT3BLM,
                         "BPMed3"=data.1$BPMedEv.NT3BLQ1)
 plot_missing(df.health)
 
 
 # Now 19748 participants
-str(data.1)
+introduce(data.1)
 
 ############# STEP 2 #######################
 ## Possible explanatory variables
@@ -168,14 +191,14 @@ alcohol.total.NT2 <-data.1$AlcBeL2WN.NT2BLQ1+data.1$AlcLiL2WN.NT2BLQ1+data.1$Alc
 
 
 df.exp.var <- data.frame("PID"=data.1$PID.108676,"BirthYear"=data.1$BirthYear, "Sex"=data.1$Sex, "BMI"=data.1$Bmi.NT2BLM, 
-                               "PAI"=data.1$PAI.NT2, "BPHigParEv"=data.1$BPHigParEv.NT2,"RecPA"=data.1$RecPA.NT2, "SmoStat"=data.1$SmoStat.NT2BLQ1,
-                               "SeChol"=data.1$SeChol.NT2BLM, "SeHDLChol"=data.1$SeHDLChol.NT2BLM, "SeGluNonFast"= data.1$SeGluNonFast.NT2BLM,
-                               "GFRestStag"=data.1$GFREstStag.NT2BLM, "SeCreaCorr"=data.1$SeCreaCorr.NT2BLM, "Educ"=data.1$Educ.NT2BLQ1,
-                               "Alc"=alcohol.total.NT2, "BPSys2"=data.1$BPSystMn23.NT2BLM, "BPDias2"=data.1$BPDiasMn23.NT2BLM)
+                               "PAI"=data.1$PAI.NT2, "BPHigParEv"=data.1$BPHigParEv.NT2,"RecPA"=data.1$RecPA.NT2, "Smoking"=data.1$SmoStat.NT2BLQ1,
+                               "Cholestrol"=data.1$SeChol.NT2BLM, "HDLCholestrol"=data.1$SeHDLChol.NT2BLM, "Glucose"= data.1$SeGluNonFast.NT2BLM,
+                               "GFRestStag"=data.1$GFREstStag.NT2BLM, "Creatinine"=data.1$SeCreaCorr.NT2BLM, "Education"=data.1$Educ.NT2BLQ1,
+                               "Alcohol"=alcohol.total.NT2, "SystolicBP"=data.1$BPSystMn23.NT2BLM, "DiastolicBP"=data.1$BPDiasMn23.NT2BLM)
 
 # Plot showing the missing values
 
-plot_missing(df.exp.var)
+plot_missing(df.exp.var[,-1], title="Missing values in explanatory variables")
 dev.copy(png,'~/figures/DataCleaning/MissingValuesStep2.png') # Save the plot
 dev.off()
 # SO MANY MISSING VALUES OF ALCOHOL; AND ALCOHOL NOT ONE OF MAIN RISK FACTORS;
@@ -230,7 +253,7 @@ df.exp.var.2 <- data.frame("PID"=data.2$PID.108676,"BirthYear"=data.2$BirthYear,
 
 plot_missing(df.exp.var.2)
 
-str(data.2)
+introduce(data.2)
 # 18303
 
 
@@ -274,10 +297,10 @@ data.2$BPSystMn23.NT3BLM[index.curr.bp.med] <- data.2$BPSystMn23.NT3BLM[index.cu
 data.2$BPDiasMn23.NT3BLM[index.curr.bp.med] <- data.2$BPDiasMn23.NT3BLM[index.curr.bp.med]+10
 
 ##### Evaluation information at HUNT3
-df.eval.var.2 <- data.frame("Heart Attack"=data.2$CarInfEv.NT3BLQ1, "Ang.Pec"=data.2$CarAngEv.NT3BLQ1,
-                          "Stroke"=data.2$ApoplEv.NT3BLQ1, "DiaEv3"=data.2$DiaEv.NT3BLQ1, 
-                          "SeGlunonFast3"=data.2$SeGluNonFast.NT3BLM)
-plot_missing(df.eval.var.2)
+df.eval.var.2 <- data.frame("HeartAttack"=data.2$CarInfEv.NT3BLQ1, "AnginaPectoris"=data.2$CarAngEv.NT3BLQ1,
+                          "Stroke"=data.2$ApoplEv.NT3BLQ1, "Diabetes"=data.2$DiaEv.NT3BLQ1, 
+                          "Glucose"=data.2$SeGluNonFast.NT3BLM)
+plot_missing(df.eval.var.2, title="Missing values in evaluation variables")
 dev.copy(png,'~/figures/DataCleaning/MissingValuesStep3.png') # Save the plot
 dev.off()
 
@@ -299,7 +322,7 @@ df.eval.var.3 <- data.frame("Heart Attack"=data.3$CarInfEv.NT3BLQ1, "Ang.Pec"=da
                           "SeGlunonFast3"=data.3$SeGluNonFast.NT3BLM)
 plot_missing(df.eval.var.3)
 
-str(data.3)
+introduce(data.3)
 # 17926
 
 
@@ -314,7 +337,7 @@ data.3$CVD.NT3  <- data.3$CarInfEv.NT3BLQ1=="Ja" | data.3$CarAngEv.NT3BLQ1=="Ja"
  
 ############# BASIC ANALYSIS #################
 # Total data set after cleaning 
-str(data.3)
+introduce(data.3)
 
 # Create new data set with only relevant dependent and independent variables
 df <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "Sex"=data.3$Sex, "BMI"=data.3$Bmi.NT2BLM, 
@@ -327,20 +350,31 @@ df <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "Sex"=da
 # Create new dataframe with information used to evaluate performance of model on certain subgroups
 df.eval <- data.frame("Diabetes3"=data.3$DiaCurr.NT3, "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3)
 
+
+
+################### Total dataset 
+
+df.show <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "Sex"=data.3$Sex, "BMI2"=data.3$Bmi.NT2BLM, 
+                      "SystolicBP2"=data.3$BPSystMn23.NT2BLM, "DiastolicBP2"=data.3$BPDiasMn23.NT2BLM, "PAI2"=data.3$PAI.NT2, 
+                      "RecPA2"=data.3$RecPA.NT2, "BPHigPar2"=data.3$BPHigParEv.NT2, "Smoking2"=data.3$SmoStat.NT2BLQ1, 
+                      "Cholestrol2"=data.3$SeChol.NT2BLM, "HDLCholestrol2"=data.3$SeHDLChol.NT2BLM, "Glucose2"= data.3$SeGluNonFast.NT2BLM, 
+                      "GFRestStag2"=data.3$GFREstStag.NT2BLM, "Creatinine2"=data.3$SeCreaCorr.NT2BLM, "Education2"=data.3$Educ.NT2BLQ1, 
+                      "SystolicBP3"=data.3$BPSystMn23.NT3BLM, "DiastolicBP3"=data.3$BPDiasMn23.NT3BLM,"Diabetes3"=data.3$DiaCurr.NT3,
+                      "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3)
 # No missing  values 
-plot_missing(df) 
+plot_missing(df.show, title = "Missing values in relevant data set") 
 dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.png') # Save the plot
 dev.off()
 
 # No missing values
-plot_missing(df.eval)
-dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.EVAL.png') # Save the plot
-dev.off()
+#plot_missing(df.eval)
+#dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.EVAL.png') # Save the plot
+#dev.off()
 
 #Overview of data sets
-plot_str(df)
+#plot_str(df)
 
-plot_str(df.eval)
+#plot_str(df.eval)
 
 # See that some of the levels are in Norwegian
 # Translate levels to English

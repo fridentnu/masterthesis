@@ -253,14 +253,15 @@ ggplot(data=df.basic.res)+
 ## Correlation Hyp categorical variable
 ggplot(data=df.basic.res)+
   geom_bar(mapping = aes(x=Sex,fill=BPSysHyp))+
-  ggtitle("Sex vs. Systolic ")
-
+  ggtitle("Sex vs.Hypertension")
+dev.copy(png,'~/figures/EDA/CorrBinSex.png') # Save the plot
+dev.off()
 
 count.mat <- aggregate(rep(1, length(df.total$BPSysHyp)),by=list(df.total$Sex, df.total$BPSysHyp), FUN=sum)
 count.mat$x<- count.mat$x*100/length(df.total$BPSysHyp)
 count.mat
 
-
+# total percentage 
 ggplot(data=count.mat)+
   geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
   scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
@@ -271,6 +272,28 @@ ggplot(data=count.mat)+
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
   ggtitle("Sex vs. Hypertension")+
   xlab("Sex") + ylab("Hypertension")
+dev.copy(png,'~/figures/EDA/CorrBinSexTotalPerc.png') # Save the plot
+dev.off()
+
+# relative percentage
+
+count.mat.2 <- aggregate(rep(1, length(df.total$BPSysHyp)),by=list(df.total$Sex, df.total$BPSysHyp), FUN=sum)
+count.mat.2$x[count.mat.2$Group.1=="Female"] <- count.mat.2$x[count.mat.2$Group.1=="Female"]*100/sum(count.mat.2$x[count.mat.2$Group.1=="Female"])
+count.mat.2$x[!count.mat.2$Group.1=="Female"] <- count.mat.2$x[!count.mat.2$Group.1=="Female"]*100/sum(count.mat.2$x[!count.mat.2$Group.1=="Female"])
+count.mat.2
+
+ggplot(data=count.mat.2)+
+  geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
+  scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
+  geom_text(aes(x=Group.1, y=Group.2,label = round(x,2)), color = "black", size = 4)+
+  theme(axis.title.x = element_text(size=14, face="italic"),
+        axis.title.y = element_text(size=14, face="italic"),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  ggtitle("Sex vs. Hypertension")+
+  xlab("Sex") + ylab("Hypertension")
+dev.copy(png,'~/figures/EDA/CorrBinSexRelPerc.png') # Save the plot
+dev.off()
 
 
 ###### Correlation continuous variables ----------------------------------
@@ -286,7 +309,10 @@ ggplot(data=df.basic.res)+
 ggplot(data=df.basic.res)+
   geom_boxplot(mapping = aes(x=BPSysHyp,y=Birthyear))+
   ggtitle("Birthyear vs. Systolic hypertension")
+dev.copy(png,'~/figures/EDA/CorrBinBirthyear.png') # Save the plot
+dev.off()
 ### Comment: see that people with systolic hypertension are older.  
+
 
 ################# BLOOD PRESSURE ###############
 # systlic and diastolic bp at hunt2, hypertensive parents
