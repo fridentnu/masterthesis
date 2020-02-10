@@ -90,7 +90,7 @@ ill.p3 <-ggplot(data=df.ill)+
         axis.title.y = element_blank())+
   coord_flip()+
   ggtitle("Hypertension")
-grid.arrange(ill.p1,ill.p2,ill.p3,nrow=3, left="Participants")
+grid.arrange(ill.p1,ill.p2,ill.p3,nrow=3, left="#Participants")
 
 #plot_bar(df.ill) # Most people in the study are healthy. See that the biggest loss comes from hypertensive people
 dev.copy(png,'~/figures/DataCleaning/HealthStatus.png') # Save the plot
@@ -354,15 +354,15 @@ df.eval <- data.frame("Diabetes3"=data.3$DiaCurr.NT3, "CVD3"= data.3$CVD.NT3, "B
 
 ################### Total dataset 
 
-df.show <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "Sex"=data.3$Sex, "BMI2"=data.3$Bmi.NT2BLM, 
+df.total <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "Sex"=data.3$Sex, "BMI2"=data.3$Bmi.NT2BLM, 
                       "SystolicBP2"=data.3$BPSystMn23.NT2BLM, "DiastolicBP2"=data.3$BPDiasMn23.NT2BLM, "PAI2"=data.3$PAI.NT2, 
                       "RecPA2"=data.3$RecPA.NT2, "BPHigPar2"=data.3$BPHigParEv.NT2, "Smoking2"=data.3$SmoStat.NT2BLQ1, 
                       "Cholestrol2"=data.3$SeChol.NT2BLM, "HDLCholestrol2"=data.3$SeHDLChol.NT2BLM, "Glucose2"= data.3$SeGluNonFast.NT2BLM, 
-                      "GFRestStag2"=data.3$GFREstStag.NT2BLM, "Creatinine2"=data.3$SeCreaCorr.NT2BLM, "Education2"=data.3$Educ.NT2BLQ1, 
-                      "SystolicBP3"=data.3$BPSystMn23.NT3BLM, "DiastolicBP3"=data.3$BPDiasMn23.NT3BLM,"Diabetes3"=data.3$DiaCurr.NT3,
+                      "GFR2"=data.3$GFREstStag.NT2BLM, "Creatinine2"=data.3$SeCreaCorr.NT2BLM, "Education2"=data.3$Educ.NT2BLQ1, 
+                      "SystolicBP3"=data.3$BPSystMn23.NT3BLM,"DiastolicBP3"=data.3$BPDiasMn23.NT3BLM,"Diabetes3"=data.3$DiaCurr.NT3,
                       "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3)
 # No missing  values 
-plot_missing(df.show, title = "Missing values in relevant data set") 
+plot_missing(df.total, title = "Missing values in relevant data set") 
 dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.png') # Save the plot
 dev.off()
 
@@ -378,20 +378,25 @@ dev.off()
 
 # See that some of the levels are in Norwegian
 # Translate levels to English
-levels(df$Sex)
-levels(df$Sex)<- c("Female", "Male")
+levels(df.total$Sex)
+levels(df.total$Sex)<- c("Female", "Male")
 
 
-levels(df$SmoStat)
-levels(df$SmoStat)<- c("Never smoked daily", "Previous daily smoker", "Daily smoker")
+levels(df.total$Smoking2)
+#levels(df.total$Smoking2)<- c("Never smoked daily", "Previous daily smoker", "Daily smoker")
+levels(df.total$Smoking2)<- c("Never", "Previous", "Current")
 
-levels(df$Educ)
+levels(df.total$Education2)
 #levels(df$Educ)<- c("Primary school 7-10 years, Folk high school", 
 #                    "Upper secondary school 1-2 years",
 #                    "Upper secondary school 3 years",
 #                   "Higher education/University, less than 4 years",             
 #                   "Higher education/University, 4 years or more")
-levels(df$Educ) <- c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5")
+levels(df.total$Education2) <- c("Level 1", "Level 2", "Level 3", "Level 4", "Level 5")
+
+
+levels(df.total$GFR2)
+levels(df.total$GFR2)<- c("Stage 1", "Stage 2", "Stage 3", "Stage 4", "Stage 5")
 
 
 # 18 variables
