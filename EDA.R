@@ -45,12 +45,11 @@ plot_bar(df.total)
 
 # Correlation of the all variables with the systolic bp from hunt3
 plot_correlation(df.total[,-c(1,19,20,21)], title="Correlation of responses and explanatory variables")
-dev.copy(png,'~/figures/EDA/TotalCorrelation.png') # Save the plot
-dev.off()
-# appendix
+dev.copy(pdf,'~/figures/EDA/TotalCorrelation.pdf') # Save the plot
+dev.off()# appendix
 
 
-cor.mat <- round(cor(df.total[,-c(1,3,7,8,9,10,14,16,19,20,21)]),2)
+cor.mat <- round(cor(df.total[,-c(1,3,7,8,9,10,14,16,18,19,20,21,22)]),2)
 ggplot(data=melt(cor.mat))+
   geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
@@ -59,9 +58,8 @@ ggplot(data=melt(cor.mat))+
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  ggtitle("Correlation of continuous response and explanatory variables ")
-dev.copy(png,'~/figures/EDA/ContinuousCorrelation.png') # Save the plot
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))
+dev.copy(pdf,'~/figures/EDA/ContinuousCorrelation.pdf') # Save the plot
 dev.off()
 ### Comment: Negative correlation Birthyear and cholestrol (ie. cholestrol goes up with age)
 ### biggest negative correlation with response (SystolicBP3) was birthyear
@@ -80,25 +78,22 @@ DiastolicBP3.uncorr[df.total$BPMed3] <- df.total$DiastolicBP3[df.total$BPMed3]-1
 res.p1 <- ggplot(data=df.total)+
   geom_histogram(mapping = aes(SystolicBP3), binwidth=1)+
   geom_vline(xintercept = 140, color="red")+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Systolic")
 res.p2 <- ggplot(data=df.total)+
   geom_histogram(mapping = aes(DiastolicBP3), binwidth=1)+
   geom_vline(xintercept = 90, color="red")+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Diastolic")
-grid.arrange(res.p1,res.p2,nrow=1, left="#Participants", top="Blood pressure from HUNT3")
-dev.copy(png,'~/figures/EDA/SysDia3.png') # Save the plot
+grid.arrange(res.p1,res.p2,nrow=1, left="#Participants", top="Blood pressure")
+dev.copy(pdf,'~/figures/EDA/SysDia3.pdf') # Save the plot
 dev.off()
 ### Comment: many people are hypertensive, see most have problem with systolic
 ### spike 121 and 122 certain values for systolic 
-
-
-
 
 
 ## BINARY HYPERTENSION VARIABLE
@@ -108,11 +103,8 @@ sum(df.total$SystolicHyp)/length(df.total$SystolicBP3)
 
 ggplot(data=df.total)+
   geom_bar(aes(SystolicHyp))+
-  theme(axis.title.x = element_blank(),
-        plot.title = element_text(size = 16))+
-  labs(y="#Participants")+
-  ggtitle("Systolic hypertension")
-dev.copy(png,'~/figures/EDA/SysHyp.png') # Save the plot
+  labs(y="#Participants", x="Systolic hypertension")
+dev.copy(pdf,'~/figures/EDA/SysHyp.pdf') # Save the plot
 dev.off()
 ### Comment: approximately 19% is hypertensive 
 ## different plots, commented out
@@ -149,20 +141,22 @@ dev.off()
 ## Systolic
 sys.med.p1 <-ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=SystolicBP3.uncorr, fill=BPMed3), binwidth = 1)+
-  geom_vline(xintercept = 140)+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        plot.title = element_text(size = 12))+
+  geom_vline(xintercept = mean(df.total$SystolicBP3[!df.total$BPMed3]))+
+  geom_vline(xintercept = mean(SystolicBP3.uncorr[df.total$BPMed3]), color="blue")+
+  theme(axis.title.y = element_blank(),
+    plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Uncorrected")
 sys.med.p2 <-ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=SystolicBP3, fill=BPMed3), binwidth=1)+
-  geom_vline(xintercept = 140)+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        plot.title = element_text(size = 12))+
+  geom_vline(xintercept = mean(df.total$SystolicBP3[!df.total$BPMed3]))+
+  geom_vline(xintercept = mean(df.total$SystolicBP3[df.total$BPMed3]), color="blue")+
+  theme(axis.title.y = element_blank(),
+    plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Corrected")
-grid.arrange(sys.med.p1,sys.med.p2,nrow=1, left="#Participants", top="Systolic blood pressure from HUNT3")
-dev.copy(png,'~/figures/EDA/SysCorrection3.png') # Save the plot
+grid.arrange(sys.med.p1,sys.med.p2,nrow=1, left="#Participants", top="Systolic blood pressure")
+dev.copy(pdf,'~/figures/EDA/SysCorrection3.pdf') # Save the plot
 dev.off()
 ### OBS: this is a stacked histogram
 
@@ -175,19 +169,19 @@ dev.off()
 dias.med.p1 <- ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=DiastolicBP3, fill=BPMed3), binwidth = 1)+
   geom_vline(xintercept = 90)+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Corrected")
 dias.med.p2 <- ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=DiastolicBP3.uncorr, fill=BPMed3), binwidth=1)+ 
   geom_vline(xintercept = 90)+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Uncorrected")
-grid.arrange(dias.med.p2,dias.med.p1,nrow=1, left="#Participants", top="Diastolic blood pressure from HUNT3")
-dev.copy(png,'~/figures/EDA/DiaCorrection3.png') # Save the plot
+grid.arrange(dias.med.p2,dias.med.p1,nrow=1, left="#Participants", top="Diastolic blood pressure")
+dev.copy(pdf,'~/figures/EDA/DiaCorrection3.pdf') # Save the plot
 dev.off()
 ### Comment:  very slightly heavier right tail for corrected than uncorrected,
 
@@ -208,33 +202,25 @@ dev.off()
 ########### BP for subgroups ##################3
 ill.p1<-ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=SystolicBP3, fill= Diabetes3), binwidth = 1)+
-  geom_vline(xintercept = mean(df.total$SystolicBP3))+
+  geom_vline(xintercept = mean(df.total$SystolicBP3[!df.total$Diabetes3]))+
   geom_vline(xintercept = mean(df.total$SystolicBP3[df.total$Diabetes3]), color="blue")+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Diabetes")
 
 ill.p2 <-ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=SystolicBP3, fill=CVD3), binwidth = 1)+
-  geom_vline(xintercept = mean(df.total$SystolicBP3))+
+  geom_vline(xintercept = mean(df.total$SystolicBP3[!df.total$CVD3]))+
   geom_vline(xintercept = mean(df.total$SystolicBP3[df.total$CVD3]), color="blue")+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("CVD")
 
-ill.p3<-ggplot(data=df.total)+
-  geom_histogram(mapping = aes(x=SystolicBP3, fill=BPMed3), binwidth = 1)+
-  geom_vline(xintercept = mean(df.total$SystolicBP3))+
-  geom_vline(xintercept = mean(df.total$SystolicBP3[df.total$BPMed3]), color="blue")+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        plot.title = element_text(size = 12))+
-  ggtitle("Blood pressure medication")
 # use corrected version of blood pressure here
-grid.arrange(ill.p1,ill.p2, ill.p3,nrow=1, left="#Participants", top="Systolic blood pressure from HUNT3")
-dev.copy(png,'~/figures/EDA/SysEval3.png') # Save the plot
+grid.arrange(ill.p1,ill.p2, nrow=1, left="#Participants", top="Systolic blood pressure")
+dev.copy(pdf,'~/figures/EDA/SysEval3.pdf') # Save the plot
 dev.off()
 ### Comment: group with diabetes and group with cvd have higher mean bp than total group
 ## seems that group with diabetes and group with cvd have similar mean
@@ -260,24 +246,13 @@ df.basic <- data.frame("Sex"=df.total$Sex, "Birthyear"=df.total$BirthYear)
 df.basic.res <- data.frame("Sex"=df.total$Sex, "Birthyear"=df.total$BirthYear,
                            "SystolicBP3"=df.total$SystolicBP3, "SystolicHyp"=df.total$SystolicHyp)
 
-# DataExplorer
-# plot_histogram(df.basic)
-# plot_bar(df.basic)
-# plot_boxplot(df.basic, by="Sex")
-# plot_boxplot(data.frame("Sex"=df$Sex,"SystolicBP3"=df$SystolicBP3), by="Sex")
-# plot_correlation(data.frame(df.basic, df$SystolicBP3))
-# 
-
-
 ####### Inspect variables ---------------------------------------------
 ## Continuous variable
 ggplot(data=df.basic)+
   geom_histogram(mapping = aes(x=Birthyear), binwidth=1)+
-  theme(axis.title.x = element_blank(),
-        plot.title = element_text(size = 14))+
-  labs(y="#Participants")+
-  ggtitle("Birthyear")
-dev.copy(png,'~/figures/EDA/BasicInfo/Birthyear.png') # Save the plot
+  theme(plot.title = element_text(size = 14))+
+  labs(y="#Participants", x="Birthyear")
+dev.copy(pdf,'~/figures/EDA/BasicInfo/Birthyear.pdf') # Save the plot
 dev.off()
 ### Comment: see cut-off value, since have to be 20 years to enter study
 ### mean birthyear=1953.74, ie. mean age HUNT2 was approx 43, mean age HUNT3 was approx. 54
@@ -287,11 +262,8 @@ dev.off()
 ## Categorical variable
 ggplot(data=df.basic)+
   geom_bar(mapping = aes(x=Sex))+
-  theme(axis.title.x = element_blank(),
-        plot.title = element_text(size = 14))+
-  labs(y="#Participants")+
-  ggtitle("Sex")
-dev.copy(png,'~/figures/EDA/BasicInfo/Sex.png') # Save the plot
+  labs(y="#Participants")
+dev.copy(pdf,'~/figures/EDA/BasicInfo/Sex.pdf') # Save the plot
 dev.off()
 ### Comment: significantly more females in the study.
 ### Check if this is the case in these age groups in the population in general
@@ -300,9 +272,8 @@ dev.off()
 ## Correlation BP Categorical variable
 ggplot(data=df.basic.res)+
   geom_boxplot(mapping = aes(x=Sex,y=SystolicBP3))+
-  labs(y="Systolic blood pressure")+
-  ggtitle("Sex vs. systolic blood pressure from HUNT3")
-dev.copy(png,'~/figures/EDA/BasicInfo/SexVSBP.png') # Save the plot
+  labs(y="Systolic blood pressure [mmHg]")
+dev.copy(pdf,'~/figures/EDA/BasicInfo/SexVSBP.pdf') # Save the plot
 dev.off()
 ### Comment: males have higher median bp, but highest bp belongs to a woman, and lowest bp to man
 
@@ -310,7 +281,7 @@ dev.off()
 # ggplot(data=df.basic.res)+
 #   geom_bar(mapping = aes(x=Sex,fill=SystolicHyp))+
 #   ggtitle("Sex vs.Hypertension")
-# dev.copy(png,'~/figures/EDA/CorrBinSex.png') # Save the plot
+# dev.copy(pdf,'~/figures/EDA/CorrBinSex.pdf') # Save the plot
 # dev.off()
 
 count.mat <- aggregate(rep(1, length(df.total$SystolicHyp)),by=list(df.total$Sex, df.total$SystolicHyp), FUN=sum)
@@ -328,7 +299,7 @@ count.mat
 #         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
 #   ggtitle("Sex vs. Hypertension")+
 #   xlab("Sex") + ylab("Hypertension")
-# dev.copy(png,'~/figures/EDA/BasicInfo/CorrBinSexTotalPerc.png') # Save the plot
+# dev.copy(pdf,'~/figures/EDA/BasicInfo/CorrBinSexTotalPerc.pdf') # Save the plot
 # dev.off()
 
 # relative percentage
@@ -346,9 +317,8 @@ ggplot(data=count.mat.2)+
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  ggtitle("Sex vs. hypertension at HUNT3")+
   xlab("Sex") + ylab("Hypertension")
-dev.copy(png,'~/figures/EDA/BasicInfo/CorrBinSexRelPerc.png') # Save the plot
+dev.copy(pdf,'~/figures/EDA/BasicInfo/CorrBinSexRelPerc.pdf') # Save the plot
 dev.off()
 
 
@@ -357,9 +327,8 @@ dev.off()
 cat("Correlation Birthyear and SystolicBP3: ",cor(df.total$BirthYear, df.total$SystolicBP3), sep=" ")
 ggplot(data=df.basic.res)+
   geom_point(mapping = aes(x=Birthyear, y=SystolicBP3), alpha=1/7)+
-  labs(y="Systolic blood pressure")+
-  ggtitle("Birthyear vs. systolic blood pressure from HUNT3")
-dev.copy(png,'~/figures/EDA/BasicInfo/CorrContBirthyear.png') # Save the plot
+  labs(y="Systolic blood pressure [mmHg]")
+dev.copy(pdf,'~/figures/EDA/BasicInfo/CorrContBirthyear.pdf') # Save the plot
 dev.off()
 ### Comment: See both from calculation and plot that there is a negative correlation between birthyear and bp
 ### but also that there are som outliers that doesn't follow this trend
@@ -367,9 +336,8 @@ dev.off()
 # Correlation hyp continuous variable
 ggplot(data=df.basic.res)+
   geom_boxplot(mapping = aes(x=SystolicHyp,y=Birthyear))+
-  labs(x="Systolic hypertension")+
-  ggtitle("Birthyear vs. hypertension at HUNT3")
-dev.copy(png,'~/figures/EDA/BasicInfo/CorrBinBirthyear.png') # Save the plot
+  labs(x="Systolic hypertension")
+dev.copy(pdf,'~/figures/EDA/BasicInfo/CorrBinBirthyear.pdf') # Save the plot
 dev.off()
 ### Comment: see that people with systolic hypertension are older.  
 
@@ -386,18 +354,18 @@ plot_histogram(df.bp)
 ## Continuous variables
 bp.p1 <-ggplot(data=df.bp)+
   geom_histogram(mapping = aes(x=SystolicBP2), binwidth=1)+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Systolic")
 bp.p2 <- ggplot(data=df.bp)+
   geom_histogram(mapping = aes(x=DiastolicBP2), binwidth=1)+
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
+  theme(axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
   ggtitle("Diastolic")
 grid.arrange(bp.p2, bp.p1, nrow=1, left="#Participants", top="Blood pressure from HUNT2")
-dev.copy(png,'~/figures/EDA/BloodPressure/CorrBinBirthyear.png') # Save the plot
+dev.copy(pdf,'~/figures/EDA/BloodPressure/BP2.pdf') # Save the plot
 dev.off()
 ### Comment: see cut-off value for both, seems escpecially abrupt for systolic
 ### might be because diastolic decreases with age
@@ -411,20 +379,17 @@ cat("The mean dias bp at HUNT2 was ", mean(df.total$DiastolicBP2), "and at HUNT3
 ## Categorical variables
 ggplot(data=df.bp)+
   geom_bar(mapping = aes(x=BPHigPar))+
-  theme(axis.title.x = element_blank(),
-        plot.title = element_text(size = 12))+
-  labs(y="#Participants")+
-  ggtitle("Hypertensive parents")
-dev.copy(png,'~/figures/EDA/BloodPressure/HypertensiveParents.png') # Save the plot
+  theme(plot.title = element_text(size = 12))+
+  labs(y="#Participants", x="Hypertensive parents")
+dev.copy(pdf,'~/figures/EDA/BloodPressure/HypertensiveParents.pdf') # Save the plot
 dev.off()
 ### Comment: almost 50% as many people who have hypertensive parents as who haven't got hypertensive parents
 
 # Correlation categorical variables
 ggplot(data=df.bp.res)+
   geom_boxplot(mapping = aes(x=BPHigPar,y=SystolicBP3))+
-  labs(x="Hypertensive parents",y="Systolic blood pressure")+
-  ggtitle("Hypertensive parents vs. SystolicBP3")
-dev.copy(png,'~/figures/EDA/BloodPressure/HypertensiveParentsVSBP.png') # Save the plot
+  labs(x="Hypertensive parents",y="Systolic blood pressure [mmHg]")
+dev.copy(pdf,'~/figures/EDA/BloodPressure/HypertensiveParentsVSBP.pdf') # Save the plot
 dev.off()
 ### Comment: very slighty higher median bp for people with hypertenive parents
 ### smaller effect than we thought?
@@ -439,9 +404,8 @@ ggplot(data=melt(cor.mat.bp))+
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  ggtitle("Correlation of continous BP variables")
-dev.copy(png,'~/figures/EDA/BloodPressure/CorrContBP.png') # Save the plot
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))
+dev.copy(pdf,'~/figures/EDA/BloodPressure/CorrContBP.pdf') # Save the plot
 dev.off()
 ### Comment: see that positive correlations between all (as expected)
 ### stronger correlations between dias and sys in same survey
@@ -459,8 +423,8 @@ bp.bc2 <-ggplot(data=df.bp.res)+
         axis.title.y = element_blank(),
         plot.title = element_text(size = 12))+
   ggtitle("Diastolic")
-grid.arrange(bp.bc1, bp.bc2, nrow=1, left="Blood pressure from HUNT2",bottom="Systolic hypertension HUNT3")
-dev.copy(png,'~/figures/EDA/BloodPressure/CorrBinBP.png') # Save the plot
+grid.arrange(bp.bc1, bp.bc2, nrow=1, left="Blood pressure HUNT2 [mmHg]",bottom="Systolic hypertension HUNT3")
+dev.copy(pdf,'~/figures/EDA/BloodPressure/CorrBinBP.pdf') # Save the plot
 dev.off()
 ### Comment: as expected
 
@@ -496,9 +460,8 @@ ggplot(data=count.mat.bp)+
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  ggtitle("Hypertensive vs. hypertension at HUNT3")+
   xlab("Hypertensive parents") + ylab("Hypertension")
-dev.copy(png,'~/figures/EDA/BloodPressure/CorrBinBPHigParRelPerc.png') # Save the plot
+dev.copy(pdf,'~/figures/EDA/BloodPressure/CorrBinBPHigParRelPerc.pdf') # Save the plot
 dev.off()
 ## Very similar to results from sex
 
@@ -513,11 +476,8 @@ df.life.res <- data.frame("BMI"=df.total$BMI2, "Smoking"=df.total$Smoking2, "PAI
 # Continuous variables
 ggplot(data=df.life)+
   geom_histogram(mapping = aes(x=BMI), binwidth=1)+
-  theme(axis.title.x = element_blank(),
-        plot.title = element_text(size = 12))+
-  labs(y="#Participants")+
-  ggtitle("BMI from HUNT2")
-dev.copy(png,'~/figures/EDA/Life/BMI.png') # Save the plot
+  labs(y="#Participants", x="BMI")
+dev.copy(pdf,'~/figures/EDA/Life/BMI.pdf') # Save the plot
 dev.off()
 ### Comment: long right tail, not symmetric, big variation
 ### mean 25.31 
@@ -526,40 +486,33 @@ dev.off()
 # Categorical variables
 life.p2 <-ggplot(data=df.life)+
   geom_bar(mapping = aes(x=PAI))+
-  theme(axis.title.x = element_blank(),
-        axis.title.y=element_blank())+
-  coord_cartesian(ylim = c(0,9000))+
-  ggtitle("PAI")
+  theme(axis.title.y=element_blank())+
+  labs(x="PAI")
 
 life.p3 <-ggplot(data=df.life)+
   geom_bar(mapping = aes(x=RecPA))+
-  theme(axis.title.x = element_blank(),
-        axis.title.y=element_blank())+
-  coord_cartesian(ylim = c(0,9000))+
-  ggtitle("RecPA")
+  theme(axis.title.y=element_blank())+
+  labs(x="RecPA")
 grid.arrange(life.p2, life.p3, nrow=1, left="#Participants")
-dev.copy(png,'~/figures/EDA/Life/PhysicalActivity.png') # Save the plot
+dev.copy(pdf,'~/figures/EDA/Life/PhysicalActivity.pdf') # Save the plot
 dev.off()
 
 
 #### fikse slik at nivåene på smoking blir riktig, prøv å slette alt og kjøre alt på nytt 
 life.p1 <-ggplot(data=df.life)+
   geom_bar(mapping = aes(x=Smoking))+
-  theme(axis.title.x = element_blank(),
-        axis.title.y=element_blank(),
+  theme(axis.title.y=element_blank(),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1))+
-  coord_cartesian(ylim = c(0,9000))+
-  ggtitle("Smoking")
+  labs(x="Smoking")
+        
 
 life.p4 <-ggplot(data=df.life)+
   geom_bar(mapping = aes(x=Education))+
-  theme(axis.title.x = element_blank(),
-        axis.title.y=element_blank(),
+  theme(axis.title.y=element_blank(),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1))+
-        coord_cartesian(ylim = c(0,9000))+
-  ggtitle("Education")
+  labs(x="Education")
 grid.arrange(life.p1, life.p4, nrow=1, left="#Participants")
-dev.copy(png,'~/figures/EDA/Life/SmokEduc.png') # Save the plot
+dev.copy(pdf,'~/figures/EDA/Life/SmokEduc.pdf') # Save the plot
 dev.off()
 
 ### Comment: all levels of these are well-represented
@@ -569,9 +522,8 @@ dev.off()
 cat("Correlation BMI and SystolicBP3: ",cor(df.total$BMI, df.total$SystolicBP3))
 ggplot(data=df.life.res)+
   geom_point(mapping = aes(x=BMI, y=SystolicBP3), alpha=1/7)+
-  labs(y="Systolic blood pressure")+
-  ggtitle("BMI vs. systolic blood pressure from HUNT3")
-dev.copy(png,'~/figures/EDA/Life/CorrContBMIvsBP.png') # Save the plot
+  labs(y="Systolic blood pressure [mmHg]")
+dev.copy(pdf,'~/figures/EDA/Life/CorrContBMIvsBP.pdf') # Save the plot
 dev.off()
 
 ### Comment: from both calculation and plot, we see a slight positive correlation
@@ -581,44 +533,43 @@ dev.off()
 ## Correlation hyp continuous variables
 ggplot(data=df.life.res)+
   geom_boxplot(mapping = aes(x=SystolicHyp,y=BMI))+
-  labs(x="Systolic hypertension")+
-  ggtitle("BMI versus systolic hypertension from HUNT3")
-dev.copy(png,'~/figures/EDA/Life/CorrBinBMIvsHyp.png') # Save the plot
+  labs(x="Systolic hypertension")
+dev.copy(pdf,'~/figures/EDA/Life/CorrBinBMIvsHyp.pdf') # Save the plot
 dev.off()
 
 ## Correlation categorical variables
 life.c1 <-ggplot(data=df.life.res)+
   geom_boxplot(mapping = aes(x=Smoking,y=SystolicBP3))+
-  theme(axis.title.x = element_blank())+
-  labs(y="Systolic blood pressure")+
-  ggtitle("Smoking vs. SystolicBP3")
+  theme(axis.title.y = element_blank())+
+  labs(x="Smoking")
 
-life.c2 <- ggplot(data=df.life.res)+
-  geom_boxplot(mapping = aes(x=PAI,y=SystolicBP3))+
-  theme(axis.title.x = element_blank())+
-  labs(y="Systolic blood pressure")+
-  ggtitle("PAI vs. SystolicBP3")
-
-life.c3 <- ggplot(data=df.life.res)+
-  geom_boxplot(mapping = aes(x=RecPA,y=SystolicBP3))+
-  theme(axis.title.x = element_blank())+
-  labs(y="Systolic blood pressure")+
-  ggtitle("RecPA vs. SystolicBP3")
 
 life.c4 <- ggplot(data=df.life.res)+
   geom_boxplot(mapping = aes(x=Education,y=SystolicBP3))+
-  theme(axis.title.x = element_blank())+
-  labs(y="Systolic blood pressure")+
-  ggtitle("Education vs. SystolicBP3")
+  theme(axis.title.y = element_blank())+
+  labs(x="Education")
 
-grid.arrange(life.c2, life.c1, life.c3,life.c4, nrow=2)
-dev.copy(png,'~/figures/EDA/Life/CorrContCat.png') # Save the plot
+grid.arrange(life.c1,life.c4, nrow=1, left="Systolic blood pressure [mmHg]")
+dev.copy(pdf,'~/figures/EDA/Life/CorrContSmokEduc.pdf') # Save the plot
 dev.off()
-### Comment: not very big effect of any of these
+### Comment: not very big effect of any of th
 ### see some negative correlation between bp and physical activity 
 ### somewhat higher for previous daily smoker (but that might be due to age)
 ### might be same reason for pattern in education, seems like it
 
+
+life.c2 <- ggplot(data=df.life.res)+
+  geom_boxplot(mapping = aes(x=PAI,y=SystolicBP3))+
+  theme(axis.title.y = element_blank())+
+  labs(x="PAI")
+
+life.c3 <- ggplot(data=df.life.res)+
+  geom_boxplot(mapping = aes(x=RecPA,y=SystolicBP3))+
+  theme(axis.title.y = element_blank())+
+  labs(x="RecPA")
+grid.arrange(life.c2, life.c3, nrow=1, left="Systolic blood pressure [mmHg]")
+dev.copy(pdf,'~/figures/EDA/Life/CorrContPA.pdf') # Save the plot
+dev.off()
 
 # check the negative correlation with physical activity
 mean(df.total$SystolicBP3[df.total$RecPA])
@@ -628,58 +579,136 @@ mean(df.total$SystolicBP3[df.total$PAI=="High"])
 mean(df.total$SystolicBP3[df.total$PAI=="Low"])
 
 # Check correlation smoking and birthyear
-ggplot(data=df.life.res)+
+life.corr1 <- ggplot(data=df.life.res)+
   geom_boxplot(mapping = aes(x=Smoking,y=df.total$BirthYear))+
-  labs(y="Birthyear")+
-  ggtitle("Smoking vs. birthyear")
-dev.copy(png,'~/figures/EDA/Life/SmokingVSBirthyear.png') # Save the plot
-dev.off()
+  theme(axis.title.y = element_blank())
+#dev.copy(pdf,'~/figures/EDA/Life/SmokingVSBirthyear.pdf') # Save the plot
+#dev.off()
 
 # Check correlation education and birthyear
-ggplot(data=df.life.res)+
+life.corr2<- ggplot(data=df.life.res)+
   geom_boxplot(mapping = aes(x=Education,y=df.total$BirthYear))+
-  labs(y="Birthyear")+
-  ggtitle("Education vs. birthyear")
-dev.copy(png,'~/figures/EDA/Life/EducationVSBirthyear.png') # Save the plot
+  theme(axis.title.y = element_blank())
+grid.arrange(life.corr1, life.corr2, nrow=1, left="Birthyear")
+dev.copy(pdf,'~/figures/EDA/Life/CorrSmokEducBY.pdf') # Save the plot
 dev.off()
 
-####################################### FIKSE ALT UNDER DETTE 
+### Correlation binary 
+
+# Smoking
+count.mat.smok <- aggregate(rep(1, length(df.total$SystolicHyp)),by=list(df.total$Smoking2, df.total$SystolicHyp), FUN=sum)
+count.mat.smok$x[count.mat.smok$Group.1=="Never"] <- count.mat.smok$x[count.mat.smok$Group.1=="Never"]*100/sum(count.mat.smok$x[count.mat.smok$Group.1=="Never"])
+count.mat.smok$x[count.mat.smok$Group.1=="Previous"] <- count.mat.smok$x[count.mat.smok$Group.1=="Previous"]*100/sum(count.mat.smok$x[count.mat.smok$Group.1=="Previous"])
+count.mat.smok$x[count.mat.smok$Group.1=="Current"] <- count.mat.smok$x[count.mat.smok$Group.1=="Current"]*100/sum(count.mat.smok$x[count.mat.smok$Group.1=="Current"])
+count.mat.smok
+
+ggplot(data=count.mat.smok)+
+  geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
+  scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
+  geom_text(aes(x=Group.1, y=Group.2,label = round(x,2)), color = "black", size = 4)+
+  theme(axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  xlab("Smoking") + ylab("Hypertension")
+dev.copy(pdf,'~/figures/EDA/Life/CorrBinSmokingRelPerc.pdf') # Save the plot
+dev.off()
+
+## PAI
+count.mat.pai <- aggregate(rep(1, length(df.total$SystolicHyp)),by=list(df.total$PAI2, df.total$SystolicHyp), FUN=sum)
+count.mat.pai$x[count.mat.pai$Group.1=="Low"] <- count.mat.pai$x[count.mat.pai$Group.1=="Low"]*100/sum(count.mat.pai$x[count.mat.pai$Group.1=="Low"])
+count.mat.pai$x[count.mat.pai$Group.1=="Moderate"] <- count.mat.pai$x[count.mat.pai$Group.1=="Moderate"]*100/sum(count.mat.pai$x[count.mat.pai$Group.1=="Moderate"])
+count.mat.pai$x[count.mat.pai$Group.1=="High"] <- count.mat.pai$x[count.mat.pai$Group.1=="High"]*100/sum(count.mat.pai$x[count.mat.pai$Group.1=="High"])
+count.mat.pai
+
+ggplot(data=count.mat.pai)+
+  geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
+  scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
+  geom_text(aes(x=Group.1, y=Group.2,label = round(x,2)), color = "black", size = 4)+
+  theme(axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  xlab("PAI") + ylab("Hypertension")
+dev.copy(pdf,'~/figures/EDA/Life/CorrBinPAIRelPerc.pdf') # Save the plot
+dev.off()
+
+
+## RecPA
+count.mat.recpa <- aggregate(rep(1, length(df.total$SystolicHyp)),by=list(df.total$RecPA2, df.total$SystolicHyp), FUN=sum)
+count.mat.recpa$x[count.mat.recpa$Group.1] <- count.mat.recpa$x[count.mat.recpa$Group.1]*100/sum(count.mat.recpa$x[count.mat.recpa$Group.1])
+count.mat.recpa$x[!count.mat.recpa$Group.1] <- count.mat.recpa$x[!count.mat.recpa$Group.1]*100/sum(count.mat.recpa$x[!count.mat.recpa$Group.1])
+count.mat.recpa
+
+ggplot(data=count.mat.recpa)+
+  geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
+  scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
+  geom_text(aes(x=Group.1, y=Group.2,label = round(x,2)), color = "black", size = 4)+
+  theme(axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  xlab("RecPA") + ylab("Hypertension")
+dev.copy(pdf,'~/figures/EDA/Life/CorrBinRecPARelPerc.pdf') # Save the plot
+dev.off()
+
+### Education
+count.mat.educ <- aggregate(rep(1, length(df.total$SystolicHyp)),by=list(df.total$Education2, df.total$SystolicHyp), FUN=sum)
+count.mat.educ$x[count.mat.educ$Group.1=="Level 1"] <- count.mat.educ$x[count.mat.educ$Group.1=="Level 1"]*100/sum(count.mat.educ$x[count.mat.educ$Group.1=="Level 1"])
+count.mat.educ$x[count.mat.educ$Group.1=="Level 2"] <- count.mat.educ$x[count.mat.educ$Group.1=="Level 2"]*100/sum(count.mat.educ$x[count.mat.educ$Group.1=="Level 2"])
+count.mat.educ$x[count.mat.educ$Group.1=="Level 3"] <- count.mat.educ$x[count.mat.educ$Group.1=="Level 3"]*100/sum(count.mat.educ$x[count.mat.educ$Group.1=="Level 3"])
+count.mat.educ$x[count.mat.educ$Group.1=="Level 4"] <- count.mat.educ$x[count.mat.educ$Group.1=="Level 4"]*100/sum(count.mat.educ$x[count.mat.educ$Group.1=="Level 4"])
+count.mat.educ$x[count.mat.educ$Group.1=="Level 5"] <- count.mat.educ$x[count.mat.educ$Group.1=="Level 5"]*100/sum(count.mat.educ$x[count.mat.educ$Group.1=="Level 5"])
+count.mat.educ
+
+ggplot(data=count.mat.educ)+
+  geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
+  scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
+  geom_text(aes(x=Group.1, y=Group.2,label = round(x,2)), color = "black", size = 4)+
+  theme(axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  xlab("Education") + ylab("Hypertension")
+dev.copy(pdf,'~/figures/EDA/Life/CorrBinEducRelPerc.pdf') # Save the plot
+dev.off()
 
 ## Correlation Hyp categorical variable
-life.bc1 <-ggplot(data=df.life.res)+
-  geom_bar(mapping = aes(x=Smoking,fill=SystolicHyp))+
-  ggtitle("Hypertensive parents vs. Systolic hypertension ")
-life.bc2 <-ggplot(data=df.life.res)+
-  geom_bar(mapping = aes(x=PAI,fill=SystolicHyp))+
-  ggtitle("Hypertensive parents vs. Systolic hypertension ")
-life.bc3 <-ggplot(data=df.life.res)+
-  geom_bar(mapping = aes(x=RecPA,fill=SystolicHyp))+
-  ggtitle("Hypertensive parents vs. Systolic hypertension ")
-life.bc4 <-ggplot(data=df.life.res)+
-  geom_bar(mapping = aes(x=Education,fill=SystolicHyp))+
-  ggtitle("Hypertensive parents vs. Systolic hypertension ")
-grid.arrange(life.bc1,life.bc2,life.bc3,life.bc4, nrow=2)
-dev.copy(png,'~/figures/EDA/Life/CorrBinCat.png') # Save the plot
-dev.off()
+# life.bc1 <-ggplot(data=df.life.res)+
+#   geom_bar(mapping = aes(x=Smoking,fill=SystolicHyp))+
+#   ggtitle("Smoking vs. Systolic hypertension ")
+# life.bc2 <-ggplot(data=df.life.res)+
+#   geom_bar(mapping = aes(x=PAI,fill=SystolicHyp))+
+#   ggtitle("PAI vs. Systolic hypertension ")
+# life.bc3 <-ggplot(data=df.life.res)+
+#   geom_bar(mapping = aes(x=RecPA,fill=SystolicHyp))+
+#   ggtitle("RecPA vs. Systolic hypertension ")
+# life.bc4 <-ggplot(data=df.life.res)+
+#   geom_bar(mapping = aes(x=Education,fill=SystolicHyp))+
+#   ggtitle("Education vs. Systolic hypertension ")
+# grid.arrange(life.bc1,life.bc2,life.bc3,life.bc4, nrow=2)
+# dev.copy(pdf,'~/figures/EDA/Life/CorrBinCat.pdf') # Save the plot
+# dev.off()
 
 ### Comment: need to find some other way to display this
 
 ################# BLOOD SAMPLES ###############
 # grfe, creatinine, chol, hdl chol, blood glucose
 
-df.blood <- data.frame("GFRestStag"=df.total$GFRestStag, "Creatinine"=df.total$SeCreaCorr, "Cholestrol"=df.total$SeChol, 
-                       "HDL.Cholestrol"=df.total$SeHDLChol, "Blood.Glucose"=df.total$SeGluNonFast)
-df.blood.res <- data.frame("GFRestStag"=df.total$GFRestStag, "Creatinine"=df.total$SeCreaCorr, "Cholestrol"=df.total$SeChol, 
-                           "HDL.Cholestrol"=df.total$SeHDLChol, "Blood.Glucose"=df.total$SeGluNonFast,
+df.blood <- data.frame("GFR"=df.total$GFR2, "Creatinine"=df.total$Creatinine2, "Cholestrol"=df.total$Cholestrol2, 
+                       "HDL.Cholestrol"=df.total$HDLCholestrol2, "Glucose"=df.total$Glucose2)
+df.blood.res <- data.frame("GFR"=df.total$GFR2, "Creatinine"=df.total$Creatinine2, "Cholestrol"=df.total$Cholestrol2, 
+                           "HDL.Cholestrol"=df.total$HDLCholestrol2, "Glucose"=df.total$Glucose2,
                            "SystolicBP3"=df.total$SystolicBP3, "SystolicHyp"=df.total$SystolicHyp)
 
 plot_histogram(df.blood)
 
 ## Categorical variabel
 ggplot(data=df.blood)+
-  geom_bar(mapping = aes(x=GFRestStag))+
-  ggtitle("GFRestStag")+
-  coord_flip()
+  geom_bar(mapping = aes(x=GFR))+
+  labs(y="#Participants")
+dev.copy(pdf,'~/figures/EDA/BloodSamples/GFR.pdf') # Save the plot
+dev.off()
 ### Comment: see from plot that very few in stage 3, only one in 4, and no one in stage 5
 ### GFR (glomerular filtration rate) how much blood passes through the glomeruli each minute
 ### more is better, below 60 might mean kidney disease
@@ -693,21 +722,23 @@ cat("Participants in Stage 5: ",sum(df.blood$GFRestStag=="Stage 5: GFREst  < 15 
 ## Continuous variables
 blood.p1 <-ggplot(data=df.blood)+
   geom_histogram(mapping = aes(x=Cholestrol), binwidth=0.2)+
-  ggtitle("Cholestrol")
+  labs(y="#Participants", x="Cholestrol [mmol/L]")
 
 blood.p2 <- ggplot(data=df.blood)+
   geom_histogram(mapping = aes(x=HDL.Cholestrol), binwidth=0.2)+
-  ggtitle("HDL.Cholestrol")
+  labs(y="#Participants", x="HDL Cholestrol [mmol/L]")
 
 blood.p3 <-ggplot(data=df.blood)+
   geom_histogram(mapping = aes(x=Creatinine), binwidth=1)+
-  ggtitle("Creatinine")
+  labs(y="#Participants", x="Creatinine [micromol/L]")
 
 blood.p4 <- ggplot(data=df.blood)+
-  geom_histogram(mapping = aes(x=Blood.Glucose), binwidth=0.2)+
-  ggtitle("Blood.Glucose")
+  geom_histogram(mapping = aes(x=Glucose), binwidth=0.2)+
+  labs(y="#Participants", x="Glucose [mmol/L]")
 
-grid.arrange(blood.p2, blood.p1, blood.p3, blood.p4, nrow=2)
+grid.arrange(blood.p2, blood.p1, blood.p3, blood.p4, nrow=2, top="Blood samples")
+dev.copy(pdf,'~/figures/EDA/BloodSamples/continuous.pdf') # Save the plot
+dev.off()
 ### Comment: see outliers in creatinine, and that there are no registered values for 
 ### 12,22,32, 42, 52,62,72,83,93,103, 113
 ### seCreaCorr is calculated, something to do with this?
@@ -717,21 +748,25 @@ grid.arrange(blood.p2, blood.p1, blood.p3, blood.p4, nrow=2)
 # Look into creatinine
 ggplot(data=df.blood)+
   geom_histogram(mapping = aes(x=Creatinine), binwidth=1)+
-  ggtitle("Creatinine")+
+  labs(y="#Participants", x="Creatinine [micromol/L]")+
   coord_cartesian(ylim = c(0,10))
+dev.copy(pdf,'~/figures/EDA/BloodSamples/CreatinineZoom.pdf') # Save the plot
+dev.off()
 sum(df.total$SeCreaCorr==22)
 ## Low creatinine means good kidney function, high means bad
 ## according to wikipedia referance values are 45-90 women and 60-110 mens
 
 ## Correlation categorical variable 
 ggplot(data=df.blood.res)+
-  geom_boxplot(mapping = aes(x=GFRestStag,y=SystolicBP3))+
-  ggtitle("GFRestStag vs. BP")+ coord_flip()
+  geom_boxplot(mapping = aes(x=GFR,y=SystolicBP3))+
+  labs(y="Systolic blood pressure [mmHg]")
+dev.copy(pdf,'~/figures/EDA/BloodSamples/CorrContGFR.pdf') # Save the plot
+dev.off()
 ### Comment: Blood pressure increases as the stages increases (ie the gfrest decreases)
 ### not very big effect, but noticable
 
 ## Correlation continuous variables
-cor.mat.blood <- round(cor(df.blood.res[,-1]),2)
+cor.mat.blood <- round(cor(df.blood.res[,-c(1,7)]),2)
 ggplot(data=melt(cor.mat.blood))+
   geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
@@ -740,8 +775,9 @@ ggplot(data=melt(cor.mat.blood))+
   theme(axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  ggtitle("Correlation blood samples and SystolicBP3")
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))
+dev.copy(pdf,'~/figures/EDA/BloodSamples/CorrContCont.pdf') # Save the plot
+dev.off()
 ### Comment: no very strong correlations,
 ### some positive correlation between blood pressure and cholestrol
 ### negative correlation between hdl.cholestrol and creatinine
@@ -750,23 +786,43 @@ ggplot(data=melt(cor.mat.blood))+
 ## Correlation hyp continuous variables
 blood.bc1 <- ggplot(data=df.blood.res)+
   geom_boxplot(mapping = aes(x=SystolicHyp,y=Cholestrol))+
-  ggtitle("Cholestrol")
+  labs(y="Cholestrol [mmol/L]",x="Hypertension")
 
 blood.bc2 <- ggplot(data=df.blood.res)+
   geom_boxplot(mapping = aes(x=SystolicHyp,y=HDL.Cholestrol))+
-  ggtitle("HDL Cholestrol")
+  labs(y="HDL Cholestrol [mmol/L]", x="Hypertension")
 
 blood.bc3 <- ggplot(data=df.blood.res)+
   geom_boxplot(mapping = aes(x=SystolicHyp,y=Creatinine))+
-  ggtitle("Creatinine")
+  labs(y=" Creatinine [micromol/L]",x="Hypertension")
 
 blood.bc4 <- ggplot(data=df.blood.res)+
-  geom_boxplot(mapping = aes(x=SystolicHyp,y=Blood.Glucose))+
-  ggtitle("Blood glucose")
+  geom_boxplot(mapping = aes(x=SystolicHyp,y=Glucose))+
+  labs(y="Glucose [mmol/L]",x="Hypertension")
 grid.arrange(blood.bc1, blood.bc2, blood.bc3, blood.bc4, nrow=2)
+dev.copy(pdf,'~/figures/EDA/BloodSamples/CorrBinCont.pdf') # Save the plot
+dev.off()
 
+### Correlation categorical hyp
+count.mat.gfr <- aggregate(rep(1, length(df.total$SystolicHyp)),by=list(df.total$GFR2, df.total$SystolicHyp), FUN=sum)
+count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 1"] <- count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 1"]*100/sum(count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 1"])
+count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 2"] <- count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 2"]*100/sum(count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 2"])
+count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 3"] <- count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 3"]*100/sum(count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 3"])
+count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 4"] <- count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 4"]*100/sum(count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 4"])
+count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 5"] <- count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 5"]*100/sum(count.mat.gfr$x[count.mat.gfr$Group.1=="Stage 5"])
+count.mat.gfr
 
-
+ggplot(data=count.mat.gfr)+
+  geom_tile(mapping = aes(x=Group.1,y=Group.2,fill=x))+
+  scale_fill_gradient2(limit = c(0,100), space = "Lab", name="Percentage") +
+  geom_text(aes(x=Group.1, y=Group.2,label = round(x,2)), color = "black", size = 4)+
+  theme(axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  xlab("GFR") + ylab("Hypertension")
+dev.copy(pdf,'~/figures/EDA/BloodSamples/CorrBinGFRRelPerc.pdf') # Save the plot
+dev.off()
 
 
 

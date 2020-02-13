@@ -93,7 +93,7 @@ ill.p3 <-ggplot(data=df.ill)+
 grid.arrange(ill.p1,ill.p2,ill.p3,nrow=3, left="#Participants")
 
 #plot_bar(df.ill) # Most people in the study are healthy. See that the biggest loss comes from hypertensive people
-dev.copy(png,'~/figures/DataCleaning/HealthStatus.png') # Save the plot
+dev.copy(pdf,'~/figures/DataCleaning/HealthStatus.pdf') # Save the plot
 dev.off()
 
 
@@ -105,7 +105,7 @@ df.health <- data.frame("BPMed2"= data$BPMedCu.NT2BLQ1, "SystolicBP2"=data$BPSys
                         "SystolicBP3"=data$BPSystMn23.NT3BLM,"DiastolicBP3"=data$BPDiasMn23.NT3BLM,
                         "BPMed3"=data$BPMedEv.NT3BLQ1)
 plot_missing(df.health, title="Missing values of blood pressure health")
-dev.copy(png,'~/figures/DataCleaning/MissingValuesStep1.png') # Save the plot
+dev.copy(pdf,'~/figures/DataCleaning/MissingValuesStep1.pdf') # Save the plot
 dev.off()
 #Very few missing rows
 
@@ -199,7 +199,7 @@ df.exp.var <- data.frame("PID"=data.1$PID.108676,"BirthYear"=data.1$BirthYear, "
 # Plot showing the missing values
 
 plot_missing(df.exp.var[,-1], title="Missing values in explanatory variables")
-dev.copy(png,'~/figures/DataCleaning/MissingValuesStep2.png') # Save the plot
+dev.copy(pdf,'~/figures/DataCleaning/MissingValuesStep2.pdf') # Save the plot
 dev.off()
 # SO MANY MISSING VALUES OF ALCOHOL; AND ALCOHOL NOT ONE OF MAIN RISK FACTORS;
 # SO WE WON'T KEEP ALCOHOL AS EXPLANATORY FOR NOW
@@ -301,7 +301,7 @@ df.eval.var.2 <- data.frame("HeartAttack"=data.2$CarInfEv.NT3BLQ1, "AnginaPector
                           "Stroke"=data.2$ApoplEv.NT3BLQ1, "Diabetes"=data.2$DiaEv.NT3BLQ1, 
                           "Glucose"=data.2$SeGluNonFast.NT3BLM)
 plot_missing(df.eval.var.2, title="Missing values in evaluation variables")
-dev.copy(png,'~/figures/DataCleaning/MissingValuesStep3.png') # Save the plot
+dev.copy(pdf,'~/figures/DataCleaning/MissingValuesStep3.pdf') # Save the plot
 dev.off()
 
 ### Remove all who have missing values for cvd at HUNT3
@@ -363,12 +363,12 @@ df.total <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "S
                       "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3)
 # No missing  values 
 plot_missing(df.total, title = "Missing values in relevant data set") 
-dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.png') # Save the plot
+dev.copy(pdf,'~/figures/DataCleaning/MissingValuesDF.pdf') # Save the plot
 dev.off()
 
 # No missing values
 #plot_missing(df.eval)
-#dev.copy(png,'~/figures/DataCleaning/MissingValuesDF.EVAL.png') # Save the plot
+#dev.copy(pdf,'~/figures/DataCleaning/MissingValuesDF.EVAL.pdf') # Save the plot
 #dev.off()
 
 #Overview of data sets
