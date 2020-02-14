@@ -21,7 +21,7 @@ source("R code/DataCleaning.R")
 
 
 ### ADD BINARY HYPERTENSION VARIABLE
-df.total$SystolicHyp <- df.total$SystolicBP3>140
+df.total$SystolicHyp <- df.total$SystolicBP3>=140
 
 
 introduce(df.total)
@@ -44,7 +44,7 @@ plot_bar(df.total)
 
 
 # Correlation of the all variables with the systolic bp from hunt3
-plot_correlation(df.total[,-c(1,19,20,21)], title="Correlation of responses and explanatory variables")
+plot_correlation(df.total[,-c(1,18,19,20,21,22)])
 dev.copy(pdf,'~/figures/EDA/TotalCorrelation.pdf') # Save the plot
 dev.off()# appendix
 
@@ -106,7 +106,9 @@ ggplot(data=df.total)+
   labs(y="#Participants", x="Systolic hypertension")
 dev.copy(pdf,'~/figures/EDA/SysHyp.pdf') # Save the plot
 dev.off()
-### Comment: approximately 19% is hypertensive 
+### Comment: approximately 20% is hypertensive 
+
+sum(df.total$SystolicHyp)/length(df.total$PID)
 ## different plots, commented out
 ##### Compare corrected and uncorrected blood pressure
 #plot_histogram(data.frame(SystolicBP3.uncorr,df$SystolicBP3))
@@ -395,7 +397,7 @@ dev.off()
 ### smaller effect than we thought?
 
 # Correlation BP continuous variables
-cor.mat.bp <- round(cor(data.frame("SystolicBP2"=df.total$SystolicBP2,"DiastolicBP2"=df.total$DiastolicBP2,"SystolicBP3"=df.total$SystolicBP3,"DiastolicBP3"=df.total$DiastolicBP3)),2)
+cor.mat.bp <- round(cor(data.frame("SystolicBP2"=df.total$SystolicBP2,"DiastolicBP2"=df.total$DiastolicBP2,"SystolicBP3"=df.total$SystolicBP3)),2)
 ggplot(data=melt(cor.mat.bp))+
       geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
@@ -827,6 +829,13 @@ dev.off()
 
 
 
+###### Check overlap systolic hypertension and general hypertension
 
 
-
+hypertensive <- df.total$SystolicBP3>=140|df.total$DiastolicBP3>=90|df.total$BPMed3
+sum(hypertensive)
+hyper.not.sys <- hypertensive & df.total$SystolicBP3<140
+sum(hyper.not.sys)
+# 534 of 4199 hypertensives are not systolic hypertensive
+# ie. approx 13 %
+sum(hyper.not.sys)/sum(hypertensive)

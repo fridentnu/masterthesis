@@ -68,7 +68,7 @@ indexNT2.CVD <- data$CarInfEv.NT2BLQ1=="Ja" | data$CarAngEv.NT2BLQ1=="Ja" | data
 indexNT2.dia <- data$DiaEv.NT2BLQ1=="Ja" | data$SeGluNonFast.NT2BLM>=11.1
 
 # History of hypertension at time of HUNT2
-indexNT2.hyp <- data$BPSystMn23.NT2BLM>140 | data$BPDiasMn23.NT2BLM>90 |data$BPMedCu.NT2BLQ1=="N\xe5" | data$BPMedCu.NT2BLQ1=="F\xf8r, men ikke n\xe5"
+indexNT2.hyp <- data$BPSystMn23.NT2BLM>=140 | data$BPDiasMn23.NT2BLM>=90 |data$BPMedCu.NT2BLQ1=="N\xe5" | data$BPMedCu.NT2BLQ1=="F\xf8r, men ikke n\xe5"
 
 df.ill <-data.frame("CVD"=indexNT2.CVD, "Hypertension"=indexNT2.hyp, "Diabetes"=indexNT2.dia)
 
@@ -142,7 +142,7 @@ df.health <- data.frame("BPMed2"= data.1$BPMedCu.NT2BLQ1, "SystolicBPMean2"=data
 plot_missing(df.health)
 
 
-# Now 19748 participants
+# Now 19126 participants
 introduce(data.1)
 
 ############# STEP 2 #######################
@@ -323,7 +323,7 @@ df.eval.var.3 <- data.frame("Heart Attack"=data.3$CarInfEv.NT3BLQ1, "Ang.Pec"=da
 plot_missing(df.eval.var.3)
 
 introduce(data.3)
-# 17926
+# 17365
 
 
 #### PEOPLE WITH DIABETES AT HUNT3
