@@ -8,6 +8,7 @@ library(reshape2)
 
 
 
+
 # Sources
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
 # https://blog.datascienceheroes.com/exploratory-data-analysis-in-r-intro/
@@ -94,6 +95,26 @@ dev.copy(pdf,'~/figures/EDA/SysDia3.pdf') # Save the plot
 dev.off()
 ### Comment: many people are hypertensive, see most have problem with systolic
 ### spike 121 and 122 certain values for systolic 
+
+# check if systolic 3 is approx normal
+qqnorm(df.total$SystolicBP3)
+qqline(df.total$SystolicBP3, col = "steelblue", lwd = 2)
+# seems like data have heavier right tail, and lighter left tail
+
+df.total$SysDiff <- df.total$SystolicBP3-df.total$SystolicBP2
+
+# distribution of difference between HUNT3 and HUNT2
+ggplot(data=df.total)+
+  geom_histogram(mapping = aes(SysDiff), binwidth=1)+
+  theme(axis.title.y = element_blank(),
+        plot.title = element_text(size = 12))+
+  labs(x="[mmHg]")+
+  ggtitle("Systolic HUNT3 - HUNT2")
+
+
+qqnorm(df.total$SysDiff)
+qqline(df.total$SysDiff, col = "steelblue", lwd = 2)
+# heavier right tail
 
 
 ## BINARY HYPERTENSION VARIABLE
