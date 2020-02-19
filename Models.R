@@ -26,9 +26,15 @@ full.pred.mod <- lm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + Diastol
 diff.pred.mod <- lm(SysDiff ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
                       PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholestrol2 + HDLCholestrol2 +
                       Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
+
 small.pred.mod <- lm(SystolicBP3 ~ BirthYear + BMI2 + SystolicBP2 + DiastolicBP2 + 
                       PAI2+ BPHigPar2 + HDLCholestrol2 + Education2, data=df.total.sc)
 
+full.design.mat <- model.matrix(full.pred.mod)
+
+# check that should use confidence
+full.var.coeff <- var(full.pred.mod$residuals)*solve(t(full.design.mat)%*%full.design.mat)
+full.pred.var1 <- t(full.design.mat[1,])%*%full.var.coeff%*%full.design.mat[1,]
 
 summary(full.pred.mod)
 summary(diff.pred.mod)
@@ -37,19 +43,36 @@ summary(small.pred.mod)
 # ie. same residuals, but smaller degree of variance explained by the model in diff
 # small model slightly higher adjusted r
 
-full.predictions <- predict(full.pred.mod, se.fit=TRUE)
+full.predictions <- predict(full.pred.mod, interval="confidence")
 # fordelingen til prediksjonen til alle sammen 
+head(full.predictions)
 
-diff.predictions <- predict(diff.pred.mod, se.fit=TRUE)
+diff.predictions <- predict(diff.pred.mod, interval="confidence")
 
-small.predictions <- predict(small.pred.mod, se.fit=TRUE)
+small.predictions <- predict(small.pred.mod, interval="confidence")
 
-mean(full.predictions$se.fit)
-mean(diff.predictions$se.fit)
-# same residuals
 
-mean(small.predictions$se.fit)
-#smaller residuals
+## Standard error of fitted values
+full.pred.se <- predict(full.pred.mod, se.fit=T)$se.fit
+small.pred.se <- predict(small.pred.mod, se.fit=T)$se.fit
+diff.pred.se <- predict(diff.pred.mod, se.fit=T)$se.fit
+
+
+## Mean of standard deviation of fitted values
+mean(full.pred.se)
+mean(small.pred.se)
+mean(diff.pred.se)
+
+## Sigma, standard deviation of reisuduals
+full.sigma <- sd(full.pred.mod$residuals)
+diff.sigma <- sd(diff.pred.mod$residuals)
+small.sigma <- sd(small.pred.mod$residuals)
+# residual standard deviation is equal for all three models
+
+
+
+
+
 
 
 ################################# EVALUATION ######################################3
@@ -64,7 +87,7 @@ diff <-ggplot(data=diff.pred.mod)+
 small <-ggplot(data=small.pred.mod)+
   geom_histogram(aes(small.pred.mod$fitted.values), binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
-  xlab(" predicted small model")
+  xlab("Predicted systolic BP, small model")
 
 
 fit <-ggplot(data=full.pred.mod)+
@@ -76,7 +99,7 @@ res <-ggplot(data=df.total.sc)+
   geom_histogram(aes(df.total.sc$SystolicBP3), binwidth = 1)+
   coord_cartesian(xlim=c(0,200),ylim=c(0,800))+
   xlab("Observed systolic blood pressure")
-grid.arrange(res,fit,small,nrow=3)
+grid.arrange(res,fit,diff,small,nrow=4)
 
 
 
@@ -84,18 +107,6 @@ grid.arrange(res,fit,small,nrow=3)
 summary(df.total.sc$SystolicBP3)
 summary(full.pred.mod$fitted.values)
 summary(df.total$SystolicBP2)
-
-
-
-
-
-pred.int.full <- predict(full.pred.mod, interval = "prediction")
-
-# Fikse dette plottet
-#ggplot(cbind(df.total.sc,pred.int.full))+
-#  geom_point(aes(y=fit,x=df.total.sc$PID))+ 
-#  geom_line(aes(y = lwr), color = "red", linetype = "dashed")+
-#  geom_line(aes(y = upr), color = "red", linetype = "dashed")
 
 
 ### Coefficients
@@ -165,3 +176,11 @@ ggplot(data=alt.pred.mod)+
 sqrt(mean(residuals(alt.pred.mod)**2))
 
 # a little bit worse 
+
+
+
+##########################
+
+# variance and standard deviation for each participants response
+full.var.y <- predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
+full.sd.y<- sqrt(full.var.y)

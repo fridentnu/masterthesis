@@ -4,6 +4,7 @@ library(DataExplorer) # EDA package in R
 library(gridExtra)
 library(tidyverse) 
 library(viridis)
+library(grid)
 
 
 ##### OBS: HUSK Å LAGRE KILDER
@@ -75,22 +76,25 @@ df.ill <-data.frame("CVD"=indexNT2.CVD, "Hypertension"=indexNT2.hyp, "Diabetes"=
 ill.p1 <-ggplot(data=df.ill)+
   geom_bar(mapping = aes(x=CVD))+
   theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank())+
+        axis.title.y = element_blank(),
+        plot.title = element_text(size = 20, face = "bold"))+
   coord_flip()+
   ggtitle("CVD")
 ill.p2 <-ggplot(data=df.ill)+
   geom_bar(mapping = aes(x=Diabetes))+
   theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank())+
+        axis.title.y = element_blank(),
+        plot.title = element_text(size = 20, face = "bold"))+
   coord_flip()+
   ggtitle("Diabetes")
 ill.p3 <-ggplot(data=df.ill)+
   geom_bar(mapping = aes(x=Hypertension))+
   theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank())+
+        axis.title.y = element_blank(),
+        plot.title = element_text(size = 20, face = "bold"))+
   coord_flip()+
   ggtitle("Hypertension")
-grid.arrange(ill.p1,ill.p2,ill.p3,nrow=3, left="#Participants")
+grid.arrange(ill.p1,ill.p2,ill.p3,nrow=3, left=textGrob("#Participants", gp=gpar(fontsize=20,font=8), rot=90))
 
 #plot_bar(df.ill) # Most people in the study are healthy. See that the biggest loss comes from hypertensive people
 dev.copy(pdf,'~/figures/DataCleaning/HealthStatus.pdf') # Save the plot
@@ -149,7 +153,7 @@ introduce(data.1)
 ## Possible explanatory variables
 # Systolic bp at HUNT2, diastolic bp at HUNt2, hypertensive parents, age, sex, PAI,
 # RecPA (above/below recommended physical activity),
-# BMI, alcohol, smoking, total cholestrol, HDL cholestrol
+# BMI, alcohol, smoking, total Cholesterol, HDL Cholesterol
 # non-fasting glucose (cut-off >11.1), 
 # GRFE, creatinine, educational level
 
@@ -192,7 +196,7 @@ alcohol.total.NT2 <-data.1$AlcBeL2WN.NT2BLQ1+data.1$AlcLiL2WN.NT2BLQ1+data.1$Alc
 
 df.exp.var <- data.frame("PID"=data.1$PID.108676,"BirthYear"=data.1$BirthYear, "Sex"=data.1$Sex, "BMI"=data.1$Bmi.NT2BLM, 
                                "PAI"=data.1$PAI.NT2, "BPHigParEv"=data.1$BPHigParEv.NT2,"RecPA"=data.1$RecPA.NT2, "Smoking"=data.1$SmoStat.NT2BLQ1,
-                               "Cholestrol"=data.1$SeChol.NT2BLM, "HDLCholestrol"=data.1$SeHDLChol.NT2BLM, "Glucose"= data.1$SeGluNonFast.NT2BLM,
+                               "Cholesterol"=data.1$SeChol.NT2BLM, "HDLCholesterol"=data.1$SeHDLChol.NT2BLM, "Glucose"= data.1$SeGluNonFast.NT2BLM,
                                "GFRestStag"=data.1$GFREstStag.NT2BLM, "Creatinine"=data.1$SeCreaCorr.NT2BLM, "Education"=data.1$Educ.NT2BLQ1,
                                "Alcohol"=alcohol.total.NT2, "SystolicBP"=data.1$BPSystMn23.NT2BLM, "DiastolicBP"=data.1$BPDiasMn23.NT2BLM)
 
@@ -225,7 +229,7 @@ indexNT2.miss.smok <- is.na(data.1$SmoStat.NT2BLQ1)
 #sum(indexNT2.miss.alc, na.rm=T)
 #data <- data[!indexNT2.miss.alc,]
 
-# Checking if missing values in HDL cholestrol
+# Checking if missing values in HDL Cholesterol
 sum(is.na(data.1$SeHDLChol.NT2BLM))
 indexNT2.miss.hdlchol <- is.na(data.1$SeHDLChol.NT2BLM) 
 
@@ -357,7 +361,7 @@ df.eval <- data.frame("Diabetes3"=data.3$DiaCurr.NT3, "CVD3"= data.3$CVD.NT3, "B
 df.total <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "Sex"=data.3$Sex, "BMI2"=data.3$Bmi.NT2BLM, 
                       "SystolicBP2"=data.3$BPSystMn23.NT2BLM, "DiastolicBP2"=data.3$BPDiasMn23.NT2BLM, "PAI2"=data.3$PAI.NT2, 
                       "RecPA2"=data.3$RecPA.NT2, "BPHigPar2"=data.3$BPHigParEv.NT2, "Smoking2"=data.3$SmoStat.NT2BLQ1, 
-                      "Cholestrol2"=data.3$SeChol.NT2BLM, "HDLCholestrol2"=data.3$SeHDLChol.NT2BLM, "Glucose2"= data.3$SeGluNonFast.NT2BLM, 
+                      "Cholesterol2"=data.3$SeChol.NT2BLM, "HDLCholesterol2"=data.3$SeHDLChol.NT2BLM, "Glucose2"= data.3$SeGluNonFast.NT2BLM, 
                       "GFR2"=data.3$GFREstStag.NT2BLM, "Creatinine2"=data.3$SeCreaCorr.NT2BLM, "Education2"=data.3$Educ.NT2BLQ1, 
                       "SystolicBP3"=data.3$BPSystMn23.NT3BLM,"DiastolicBP3"=data.3$BPDiasMn23.NT3BLM,"Diabetes3"=data.3$DiaCurr.NT3,
                       "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3)
