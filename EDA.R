@@ -4,7 +4,7 @@ library(Hmisc)
 library(DataExplorer)
 library(gridExtra)
 library(reshape2)
-
+library(forcats)
 
 
 
@@ -846,10 +846,20 @@ dev.off()
 ### GFR (glomerular filtration rate) how much blood passes through the glomeruli each minute
 ### more is better, below 60 might mean kidney disease
 
-cat("Participants in Stage 3: ", sum(df.blood$GFRestStag=="Stage 3: GFREst 30-59 ml/min"))
-cat("Participants in Stage 4: ", sum(df.blood$GFRestStag=="Stage 4: GFREst 15-29 ml/min"))
-cat("Participants in Stage 5: ",sum(df.blood$GFRestStag=="Stage 5: GFREst  < 15 ml/min"))
+cat("Participants in Stage 3: ", sum(df.blood$GFR=="Stage 3"))
+cat("Participants in Stage 4: ", sum(df.blood$GFR=="Stage 4"))
+cat("Participants in Stage 5: ",sum(df.blood$GFR=="Stage 5"))
 
+
+
+df.total$GFR2<-df.total$GFR2 %>% fct_collapse("Stage 345" = c("Stage 3","Stage 4", "Stage 5"))
+
+ggplot(data=df.total)+
+  geom_bar(mapping = aes(x=GFR2))+
+  theme(axis.title.y = element_text(size = 24),
+        axis.title.x = element_text(size=24), 
+        axis.text = element_text(size=16))+
+  labs(y="#Participants")
 
 
 ## Continuous variables

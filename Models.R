@@ -20,15 +20,15 @@ describe(df.total.sc)
 ################################# MODELS ###########################################
 
 full.pred.mod <- lm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
-                      PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholestrol2 + HDLCholestrol2 +
+                      PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
                       Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
 
 diff.pred.mod <- lm(SysDiff ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
-                      PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholestrol2 + HDLCholestrol2 +
+                      PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
                       Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
 
 small.pred.mod <- lm(SystolicBP3 ~ BirthYear + BMI2 + SystolicBP2 + DiastolicBP2 + 
-                      PAI2+ BPHigPar2 + HDLCholestrol2 + Education2, data=df.total.sc)
+                      PAI2+ BPHigPar2 + HDLCholesterol2 + Education2, data=df.total.sc)
 
 full.design.mat <- model.matrix(full.pred.mod)
 

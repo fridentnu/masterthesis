@@ -71,6 +71,11 @@ indexNT2.dia <- data$DiaEv.NT2BLQ1=="Ja" | data$SeGluNonFast.NT2BLM>=11.1
 # History of hypertension at time of HUNT2
 indexNT2.hyp <- data$BPSystMn23.NT2BLM>=140 | data$BPDiasMn23.NT2BLM>=90 |data$BPMedCu.NT2BLQ1=="N\xe5" | data$BPMedCu.NT2BLQ1=="F\xf8r, men ikke n\xe5"
 
+
+# percentage hypertensive
+sum(indexNT2.hyp, na.rm = T)/length(data$PID.108676)
+
+
 df.ill <-data.frame("CVD"=indexNT2.CVD, "Hypertension"=indexNT2.hyp, "Diabetes"=indexNT2.dia)
 
 ill.p1 <-ggplot(data=df.ill)+
