@@ -915,12 +915,12 @@ sum(df.total$SeCreaCorr==22)
 ## according to wikipedia referance values are 45-90 women and 60-110 mens
 
 ## Correlation categorical variable 
-ggplot(data=df.blood.res)+
-  geom_boxplot(mapping = aes(x=GFR,y=SystolicBP3))+
+ggplot(data=df.total)+
+  geom_boxplot(mapping = aes(x=GFR2,y=SystolicBP3))+
   theme(axis.title.y = element_text(size = 24),
         axis.title.x = element_text(size=24), 
         axis.text = element_text(size=16))+
-  labs(y="Systolic blood pressure [mmHg]")
+  labs(y="Systolic blood pressure [mmHg]", x="GFR")
 dev.copy(pdf,'~/figures/EDA/BloodSamples/CorrContGFR.pdf') # Save the plot
 dev.off()
 ### Comment: Blood pressure increases as the stages increases (ie the gfrest decreases)

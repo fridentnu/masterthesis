@@ -43,13 +43,13 @@ summary(small.pred.mod)
 # ie. same residuals, but smaller degree of variance explained by the model in diff
 # small model slightly higher adjusted r
 
-full.predictions <- predict(full.pred.mod, interval="confidence")
+full.predictions <- predict(full.pred.mod, interval="prediction")
 # fordelingen til prediksjonen til alle sammen 
 head(full.predictions)
 
-diff.predictions <- predict(diff.pred.mod, interval="confidence")
+diff.predictions <- predict(diff.pred.mod, interval="prediction")
 
-small.predictions <- predict(small.pred.mod, interval="confidence")
+small.predictions <- predict(small.pred.mod, interval="prediction")
 
 
 ## Standard error of fitted values
@@ -135,7 +135,7 @@ ggplot(data=full.pred.mod)+
 sqrt(mean(residuals(full.pred.mod)**2))
 
 
-# Accuracy
+### Accuracy fitted full model
 
 pred.hyper <-full.pred.mod$fitted.values>=140
 true.hyper <- df.total$SystolicHyp
@@ -159,28 +159,116 @@ true.hyper <- df.total$SystolicHyp
 # 16.6% of hypertension not predicted
 
 
-
-
-############################# Alternative model #######################
-
-alt.pred.mod <- lm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2  + 
-                      PAI2 + RecPA2 + BPHigPar2 + Cholestrol2 + HDLCholestrol2 +
-                      Glucose2 + GFR2 + Creatinine2, data=df.total.sc)
-
-
-ggplot(data=alt.pred.mod)+
-  geom_point(mapping=aes(x=df.total$SystolicBP3, y=abs(alt.pred.mod$residuals)))+
-  labs(x="Observed systolic blood pressure", y= "Absolute value of residuals")
-
-# RMSE
-sqrt(mean(residuals(alt.pred.mod)**2))
-
-# a little bit worse 
-
-
-
-##########################
+#################### Distribution of prediction full model
 
 # variance and standard deviation for each participants response
 full.var.y <- predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
 full.sd.y<- sqrt(full.var.y)
+
+# probability that each systolic pressure is equal to or above 140 mmHg, given full model
+prob.hyp.full.pred <-pnorm(140, mean=full.pred.mod$fitted.values, sd=full.sd.y, lower.tail = F)
+prob.hyp.full.pred
+
+# mean of probabilities of systolic hypertension
+exp.prob.hyp.full.pred <- mean(1-pnorm(140, mean=full.pred.mod$fitted.values, sd=full.sd.y))
+exp.prob.hyp.full.pred
+
+### Prob hypertension
+
+# Observed systolic hypertension and predicted probability of hypertension over 30%
+hyp.pred.obs <- df.total$SystolicHyp  & prob.hyp.full.pred > 0.30
+  
+sum(hyp.pred.obs)/length(df.total$SystolicHyp)  
+# only 11% of the participants were both observed hypertensive and had more than 30% pred prob of hyp  
+  
+
+sum(hyp.pred.obs)/sum(df.total$SystolicHyp)  
+# 56% of the observed hypertensive had more than 30% pred prob of hyp
+
+
+
+hyp.pred.not.obs <- (!df.total$SystolicHyp)  & prob.hyp.full.pred > 0.30
+
+sum(hyp.pred.not.obs)/length(df.total$SystolicHyp)
+# 15% of the participants are non hypertensive and have more than 30% pred prob of hypertension
+
+sum(hyp.pred.not.obs)/sum(!df.total$SystolicHyp) 
+# 19% of the nonhypertensive have more than 30 chance of hypertension
+
+
+### Prediction intervals full model
+
+## Prøve å plotte prediksjonsintervall og observerte verdier
+df.total.sort <- df.total[order(df.total$SystolicBP3),]
+
+## observed systolic hypertension sorted
+ggplot(data=full.pred.mod)+
+  geom_point(mapping=aes(x=c(1:length(df.total.sort$PID)), y=df.total.sort$SystolicBP3))
+
+
+# sort the fitted values
+full.fit.val.sort <- full.pred.mod$fitted.values[order(full.pred.mod$fitted.values)]
+
+## fitted systolic hypertension sorted
+ggplot(data=full.pred.mod)+
+  geom_point(mapping=aes(x=c(1:length(df.total.sort$PID)), y=full.fit.val.sort))
+
+
+### Full model
+
+df.pred.obs <- data.frame("Observed"=df.total$SystolicBP3, "Fitted"=full.predictions[,1],
+                          "Lower"=full.predictions[,2], "Upper"=full.predictions[,3])
+
+
+df.pred.obs.sort <- df.pred.obs[order(df.pred.obs$Fitted),]
+df.pred.obs.sort$Participant <- c(1:length(df.total.sort$PID))
+  
+ggplot(data=df.pred.obs.sort)+
+  geom_point(mapping=aes(x=Participant, y=Observed), alpha=0.4)+
+  geom_point(mapping=aes(x=Participant, y=Fitted, col="blue"))+
+  geom_line(mapping = aes(x=Participant, y=Lower,col="red"))+
+  geom_line(mapping = aes(x=Participant, y=Upper,col="red"))+
+  labs(x="Participants", y= "Systolic blood pressure")
+
+df.pred.obs.sort %>%
+  mutate( bin=cut_width(x=Participant, width=2000, boundary=0) ) %>%
+  ggplot( aes(x=bin, y=Observed) ) +
+  geom_boxplot()
+
+above.upper <- 100*sum(df.pred.obs.sort$Observed>df.pred.obs.sort$Upper)/length(df.pred.obs.sort$Observed)
+# only 3.83% above upper prediction interval limit
+
+
+below.lower <- 100*sum(df.pred.obs.sort$Observed<df.pred.obs.sort$Lower)/length(df.pred.obs.sort$Observed)
+# Only 1.35% below lower prediction interval limit
+
+
+
+
+
+#### Small model
+
+df.pred.obs.small <- data.frame("Observed"=df.total$SystolicBP3, "Fitted"=small.predictions[,1],
+                          "Lower"=small.predictions[,2], "Upper"=small.predictions[,3])
+
+
+df.pred.obs.small.sort <- df.pred.obs.small[order(df.pred.obs.small$Fitted),]
+df.pred.obs.small.sort$Participant <- c(1:length(df.total.sort$PID))
+
+ggplot(data=df.pred.obs.small.sort)+
+  geom_point(mapping=aes(x=Participant, y=Observed), alpha=0.4)+
+  geom_point(mapping=aes(x=Participant, y=Fitted, col="blue"))+
+  geom_line(mapping = aes(x=Participant, y=Lower,col="red"))+
+  geom_line(mapping = aes(x=Participant, y=Upper,col="red"))+
+  labs(x="Participants", y= "Systolic blood pressure")
+
+above.upper.small <- 100*sum(df.pred.obs.small.sort$Observed>df.pred.obs.small.sort$Upper)/length(df.pred.obs.small.sort$Observed)
+above.upper.small
+# only 3.82% above upper prediction interval limit
+
+
+below.lower.small <- 100*sum(df.pred.obs.small.sort$Observed<df.pred.obs.small.sort$Lower)/length(df.pred.obs.small.sort$Observed)
+below.lower.small
+# Only 1.39% below lower prediction interval limit
+
+
