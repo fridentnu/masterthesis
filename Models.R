@@ -1,6 +1,7 @@
 
 library(scales)
-
+library(scoringRules) # crps
+library(DescTools) # brier score
 
 
 source("R code/EDA.R")
@@ -22,6 +23,13 @@ describe(df.total.sc)
 full.pred.mod <- lm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
                       PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
                       Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
+full.pred.mod.log <- lm(log(SystolicBP3) ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
+                      PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
+                      Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
+
+full.pred.mod.gamma <- glm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
+                      PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
+                      Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc, family=Gamma(link = "identity"))
 
 
 small.pred.mod <- lm(SystolicBP3 ~ BirthYear + BMI2 + SystolicBP2 + DiastolicBP2 + 
@@ -30,6 +38,8 @@ small.pred.mod <- lm(SystolicBP3 ~ BirthYear + BMI2 + SystolicBP2 + DiastolicBP2
 
 #### Summary of models
 summary(full.pred.mod)
+summary(full.pred.mod.gamma)
+summary(full.pred.mod.log)
 summary(small.pred.mod)
 # same residual standard error, but diff has smaller multiple r squared
 # ie. same residuals, but smaller degree of variance explained by the model in diff
@@ -77,16 +87,25 @@ small <-ggplot(data=small.pred.mod)+
 
 
 fit <-ggplot(data=full.pred.mod)+
-  geom_histogram(aes(full.pred.mod$fitted.values), binwidth = 1)+
+  geom_histogram(aes(full.pred.mod$fitted.values),binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
   xlab("Fitted values, full model")
 
+fit.gamma <-ggplot(data=full.pred.mod.gamma)+
+  geom_histogram(aes(full.pred.mod.gamma$fitted.values),binwidth = 1)+
+  coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
+  xlab("Fitted values, full model gamma")
+
+fit.log <-ggplot(data=full.pred.mod.log)+
+  geom_histogram(aes(exp(full.pred.mod.log$fitted.values)),binwidth = 1)+
+  coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
+  xlab("Fitted values, full model log")
 res <-ggplot(data=df.total.sc)+
   geom_histogram(aes(df.total.sc$SystolicBP3), binwidth = 1)+
   coord_cartesian(xlim=c(0,200),ylim=c(0,800))+
   xlab("Observed systolic blood pressure")
 
-grid.arrange(res,fit,small,nrow=3)
+grid.arrange(res,fit,fit.gamma, fit.log,nrow=4)
 
 
 ## Similar mean, but much smaller variance
@@ -251,7 +270,7 @@ ggplot(df.residual.exp.var)+
 ################################  HYPERTENSION PREDICTION ##############################################
 
 #### Fitted values
-pred.hyper <-full.pred.mod$fitted.values>=140
+pred.hyper <-full.pred.mod.log$fitted.values>=140
 true.hyper <- df.total$SystolicHyp
 
 
@@ -422,6 +441,29 @@ diff <-ggplot(data=diff.pred.mod)+
   geom_histogram(aes(diff.pred.mod$fitted.values+df.total$SystolicBP2), binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
   xlab(" Systolic blood pressure HUNT2 + predicted diff")
+
+
+
+################################## CRPS ##########################
+
+full.crps <- crps(y=df.total.sc$SystolicBP3,family="normal", mean=full.pred.mod$fitted.values, sd=full.sd.y)
+
+mean(full.crps)
+
+df.crps <- data.frame("Observed"=df.total.sc$SystolicBP3, "CRPS"=full.crps)
+df.crps[order(df.crps$Observed),]
+plot(df.crps$Observed, df.crps$CRPS)
+# ligner på absolute error av residuals
+
+
+
+############################# Brier Score ####################
+
+BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.pred)
+# the smaller the better, range between 0 and 1
+
+
+
 
 ################################### Own calculations
 
