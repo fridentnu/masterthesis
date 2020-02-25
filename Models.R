@@ -23,6 +23,7 @@ describe(df.total.sc)
 full.pred.mod <- lm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
                       PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
                       Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
+
 full.pred.mod.log <- lm(log(SystolicBP3) ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
                       PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
                       Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
@@ -100,6 +101,8 @@ fit.log <-ggplot(data=full.pred.mod.log)+
   geom_histogram(aes(exp(full.pred.mod.log$fitted.values)),binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
   xlab("Fitted values, full model log")
+# dette viser median og ikke forventning
+
 res <-ggplot(data=df.total.sc)+
   geom_histogram(aes(df.total.sc$SystolicBP3), binwidth = 1)+
   coord_cartesian(xlim=c(0,200),ylim=c(0,800))+
@@ -302,6 +305,11 @@ full.sd.y<- sqrt(full.var.y)
 prob.hyp.full.pred <-pnorm(140, mean=full.pred.mod$fitted.values, sd=full.sd.y, lower.tail = F)
 prob.hyp.full.pred
 
+ggplot(data.frame(prob.hyp.full.pred))+
+  geom_hist(aes(prob.hyp.full.pred))
+
+hist(prob.hyp.full.pred)
+
 # mean of probabilities of systolic hypertension
 exp.prob.hyp.full.pred <- mean(prob.hyp.full.pred)
 exp.prob.hyp.full.pred
@@ -447,6 +455,7 @@ diff <-ggplot(data=diff.pred.mod)+
 ################################## CRPS ##########################
 
 full.crps <- crps(y=df.total.sc$SystolicBP3,family="normal", mean=full.pred.mod$fitted.values, sd=full.sd.y)
+# justert absoluttfeil
 
 mean(full.crps)
 
@@ -463,6 +472,9 @@ BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.pred)
 # the smaller the better, range between 0 and 1
 
 
+# sjekke dersom alle har sannsynlighet på 0.19 (den forventa sannsynligheten basert på obsevrajsonene)
+
+# mer til å sammenligne med Framingham
 
 
 ################################### Own calculations

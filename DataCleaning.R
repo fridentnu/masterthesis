@@ -181,6 +181,8 @@ data.1$RecPA.NT2 <- MeetsPARecomed_NT2
 # One or both parents have hypertension
 indexNT2.BPHigParEv <- data.1$BPHigFathEv.NT2BLQ2== "Far - h\xf8yt BT" | data.1$BPHigMothEv.NT2BLQ2== "Mor - h\xf8yt BT" 
 
+
+
 # Not answered the question
 indexNT2.miss.fam.bp.high <- is.na(data.1$BPHigFamNon.NT2BLQ2) & is.na(data.1$BPHigBrotEv.NT2BLQ2) & 
   is.na(data.1$BPHigFathEv.NT2BLQ2) & is.na(data.1$BPHigChiEv.NT2BLQ2) & is.na(data.1$BPHigSistEv.NT2BLQ2) & 
@@ -193,6 +195,7 @@ data.1$BPHigParEv.NT2 <- indexNT2.BPHigParEv
 # Parents don't have hypertension if haven't answered that parents have hypertension
 # but have answered the question
 data.1$BPHigParEv.NT2[is.na(indexNT2.BPHigParEv) & !indexNT2.miss.fam.bp.high] <-FALSE
+
 
 
 # total number of units of alcohol within last two weeks
@@ -365,7 +368,8 @@ df.eval <- data.frame("Diabetes3"=data.3$DiaCurr.NT3, "CVD3"= data.3$CVD.NT3, "B
 
 df.total <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "Sex"=data.3$Sex, "BMI2"=data.3$Bmi.NT2BLM, 
                       "SystolicBP2"=data.3$BPSystMn23.NT2BLM, "DiastolicBP2"=data.3$BPDiasMn23.NT2BLM, "PAI2"=data.3$PAI.NT2, 
-                      "RecPA2"=data.3$RecPA.NT2, "BPHigPar2"=data.3$BPHigParEv.NT2, "Smoking2"=data.3$SmoStat.NT2BLQ1, 
+                      "RecPA2"=data.3$RecPA.NT2, "BPHigPar2"=data.3$BPHigParEv.NT2, "BPHigFath2"=data.3$BPHigFathEv.NT2BLQ2,
+                      "BPHigMoth2"=data.3$BPHigMothEv.NT2BLQ2, "Smoking2"=data.3$SmoStat.NT2BLQ1, 
                       "Cholesterol2"=data.3$SeChol.NT2BLM, "HDLCholesterol2"=data.3$SeHDLChol.NT2BLM, "Glucose2"= data.3$SeGluNonFast.NT2BLM, 
                       "GFR2"=data.3$GFREstStag.NT2BLM, "Creatinine2"=data.3$SeCreaCorr.NT2BLM, "Education2"=data.3$Educ.NT2BLQ1, 
                       "SystolicBP3"=data.3$BPSystMn23.NT3BLM,"DiastolicBP3"=data.3$BPDiasMn23.NT3BLM,"Diabetes3"=data.3$DiaCurr.NT3,
