@@ -375,7 +375,7 @@ df.total <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "S
                       "SystolicBP3"=data.3$BPSystMn23.NT3BLM,"DiastolicBP3"=data.3$BPDiasMn23.NT3BLM,"Diabetes3"=data.3$DiaCurr.NT3,
                       "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3)
 # No missing  values 
-plot_missing(df.total, title = "Missing values in relevant data set") 
+plot_missing(df.total[,-c(10,11)], title = "Missing values in relevant data set") 
 dev.copy(pdf,'~/figures/DataCleaning/MissingValuesDF.pdf') # Save the plot
 dev.off()
 

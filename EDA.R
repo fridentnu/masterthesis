@@ -43,14 +43,13 @@ plot_histogram(df.total)
 plot_bar(df.total)  
 ## Comment: most levels are well represented, excpect stage 3,4 and 5 in GFRest
 
-
 # Correlation of the all variables with the systolic bp from hunt3
-plot_correlation(df.total[,-c(1,18,19,20,21,22)])
+plot_correlation(df.total[,-c(1,10,11,20,21,22,23,24)])
 dev.copy(pdf,'~/figures/EDA/TotalCorrelation.pdf') # Save the plot
 dev.off()# appendix
 
 
-cor.mat <- round(cor(df.total[,-c(1,3,7,8,9,10,14,16,18,19,20,21,22)]),2)
+cor.mat <- round(cor(df.total[,-c(1,3,7,8,9,10,11,12,16,18,20,21,22,23,24)]),2)
 ggplot(data=melt(cor.mat))+
   geom_tile(mapping = aes(x=Var1, y=Var2, fill=value))+
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
