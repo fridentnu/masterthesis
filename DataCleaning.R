@@ -415,5 +415,7 @@ levels(df.total$GFR2)<- c("Stage 1", "Stage 2", "Stage 3", "Stage 4", "Stage 5")
 # 18 variables
 str(df)
 
+#############################
 
+save(df.total, file="MyData/DataCleaning.df.total.RData")
 

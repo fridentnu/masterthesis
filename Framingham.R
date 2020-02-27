@@ -1,10 +1,10 @@
 
 
-source("R code/EDA.R")
+
+load("MyData/EDA.df.total.RData")
 
 
 # Framingham model 
-
 
 BPHigMothEv <-df.total$BPHigMoth2== "Mor - h\xf8yt BT"
 BPHigMothEv[is.na(df.total$BPHigMoth2)] <- FALSE
@@ -308,6 +308,8 @@ mean(fram.risk.ad.age)
 hist(fram.risk.ad.age)
 
 
+####### SAVE ######
 
+save(fram.risk.ad.age, fram.risk, file="MyData/Framingham.RData")
 
 

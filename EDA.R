@@ -16,8 +16,7 @@ library(forcats)
 # http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization 
 
 # Load data set from DataCleaning
-source("R code/DataCleaning.R")
-
+load("MyData/DataCleaning.df.total.RData")
 ########################## Overview ####################3
 
 
@@ -997,3 +996,11 @@ sum(hyper.not.sys)
 # 534 of 4199 hypertensives are not systolic hypertensive
 # ie. approx 13 %
 sum(hyper.not.sys)/sum(hypertensive)
+
+
+
+
+#############################
+
+save(df.total, file="MyData/EDA.df.total.RData")
+

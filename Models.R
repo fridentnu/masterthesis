@@ -1,7 +1,8 @@
 #library(scales)
 
 
-source("R code/EDA.R")
+load("MyData/EDA.df.total.RData")
+
 ############################## STANDARDIZATION ###############################################
 ### Standardize the continuous variables to make it easier to compare effects
 ## subtract the mean and divide by the standard deviance
@@ -322,3 +323,9 @@ full.design.mat <- model.matrix(full.pred.mod)
 # check that should use confidence
 full.var.coeff <- var(full.pred.mod$residuals)*solve(t(full.design.mat)%*%full.design.mat)
 full.pred.var1 <- t(full.design.mat[1,])%*%full.var.coeff%*%full.design.mat[1,]
+
+
+################# SAVE ########################################
+
+save(df.total.sc, full.pred.mod, small.pred.mod, full.pred.mod.gamma, 
+     small.pred.mod, equal.prob.mod, constant.pred.mod, file="MyData/Models.RData")
