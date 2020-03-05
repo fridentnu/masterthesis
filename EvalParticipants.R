@@ -5,8 +5,7 @@ source("R code/Evaluation.R")
 
 
 hist(df.total$SystolicBP3)
-
-#df.order.obs <- data.frame("DF"=df.total, "Full"=full.pred.mod)
+df.order.obs <- df.total
 df.order.obs <- df.order.obs[order(df.total$SystolicBP3),]
 
 #############################################################################
@@ -24,6 +23,15 @@ index.1
 
 pred.full.1 <- full.pred.mod$fitted.values[index.1]
 pred.full.1
+
+pred.small.1 <- small.pred.mod$fitted.values[index.1]
+pred.small.1
+
+pred.full.gamma.1 <- full.pred.mod.gamma$fitted.values[index.1]
+pred.full.gamma.1
+
+pred.small.gamma.1 <- small.pred.mod.gamma$fitted.values[index.1]
+pred.small.gamma.1
 
 
 start.1 <- df.total$SystolicBP2[index.1]
@@ -47,7 +55,10 @@ prob.hyp.full.pred[index.1]
 prob.hyp.small.pred[index.1]
 
 # full gamma
-#prob.hyp.ful.gamma.pred[index.1]
+prob.hyp.full.gamma.pred[index.1]
+
+# small gamma
+prob.hyp.small.gamma.pred[index.1]
 
 # framingham
 fram.risk.ad.age[index.1]
@@ -190,4 +201,66 @@ legend("topright", legend=c("BP 2", "BP 3", "Pred 3"),
 # Example 5, CVD
 
 
+resid.cvd.full <- df.total$SystolicBP3[df.total$CVD3]- full.pred.mod$fitted.values[df.total$CVD3]
+
+sd(resid.cvd.full)
+sd(full.pred.mod$residuals)
+mean(resid.cvd.full)
+mean(full.pred.mod$residuals)
+
+sd(resid.cvd.full)
+sd(full.pred.mod$residuals)
+
+hist(resid.cvd.full)
+hist(full.pred.mod$residuals)
+
+# Framingham, percentage of hypertensive people with cvd who have more than 50% framingham risk
+fram.ad.age.accu<- sum(fram.risk.ad.age>0.5&df.total$SystolicHyp)/sum(df.total$SystolicHyp)
+sum(fram.risk.ad.age>0.5&df.total$SystolicHyp&df.total$CVD3)/sum(df.total$SystolicHyp[df.total$CVD3])
+
+
+
+
 # Example 6, Diabetes
+resid.diabetes <- df.total$SystolicBP3[df.total$Diabetes3]- full.pred.mod$fitted.values[df.total$Diabetes3]
+
+
+mean(resid.diabetes)
+mean(full.pred.mod$residuals)
+
+sd(resid.diabetes)
+sd(full.pred.mod$residuals)
+
+hist(resid.diabetes)
+hist(full.pred.mod$residuals)
+
+# Framingham, percentage of hypertensive people with diabetes who have more than 50% framingham risk
+sum(fram.ad.age.accu[df.total$Diabetes3])/sum(df.total$SystolicHyp[df.total$Diabetes3])
+
+# Example 7, BP Med
+
+resid.bpmed.uncorr<- (df.total$SystolicBP3[df.total$BPMed3]-15)- full.pred.mod$fitted.values[df.total$BPMed3]
+resid.bpmed.corr<- (df.total$SystolicBP3[df.total$BPMed3])- full.pred.mod$fitted.values[df.total$BPMed3]
+
+
+mean(df.total$SystolicBP2[df.total$BPMed3])
+mean(df.total$SystolicBP3[df.total$BPMed3])
+
+
+mean(resid.bpmed.corr)
+mean(resid.bpmed.uncorr)
+
+mean(full.pred.mod$residuals)
+# does not predict high enough blood pressure. Maybe shouldn't have such big effect of blood pressure?
+
+sd(resid.bpmed.corr)
+sd(full.pred.mod$residuals)
+
+hist(resid.bpmed.corr)
+hist(full.pred.mod$residuals)
+
+# Framingham, percentage of hypertensive people on bpmed who have more than 50% framingham risk
+sum(fram.risk.ad.age>0.5 & df.total$SystolicHyp & df.total$BPMed3)/sum(df.total$SystolicHyp[df.total$BPMed3])
+
+# definitely the biggest difference for residuals, mean residual was 12
+

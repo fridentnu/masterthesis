@@ -8,11 +8,11 @@ library(MASS)
 load("MyData/Models.RData")
 load("MyData/Framingham.RData")
 
-
+###### OBSERVATIONS #######
+obs.hyp <- sum(df.total$SystolicHyp)/length(df.total$SystolicHyp)
+obs.hyp
 
 ######################### DISTRIBUTIONS ###########################
-
-
 ### FULL MODEL
 # Variance and standard deviation for each participants response
 full.var.y <- predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
@@ -27,7 +27,7 @@ hist(prob.hyp.full.pred)
 
 # mean of probabilities of systolic hypertension
 exp.prob.hyp.full.pred <- mean(prob.hyp.full.pred)
-exp.prob.hyp.full.pred
+round(100*exp.prob.hyp.full.pred,3)
 # Expected number of hypertensives are nearly 20% of population
 
 
@@ -45,33 +45,107 @@ hist(prob.hyp.small.pred)
 
 # mean of probabilities of systolic hypertension
 exp.prob.hyp.small.pred <- mean(prob.hyp.small.pred)
-exp.prob.hyp.small.pred
+round(100*exp.prob.hyp.small.pred,3)
 # Expected number of hypertensives are nearly 20% of population 
 
 
 ### FULL GAMMA
 
-full.gamma.var <- predict(full.pred.mod.gamma, se.fit = T)$se.fit**2 + predict(full.pred.mod.gamma, se.fit = T)$residual.scale**2
-full.gamma.sd <- sqrt(full.gamma.var)
+### ALT 1, add dispersion in predict++
+# full.gamma.var <- predict(full.pred.mod.gamma, se.fit = T)$se.fit**2 + predict(full.pred.mod.gamma, se.fit = T)$residual.scale**2
+# full.gamma.sd <- sqrt(full.gamma.var)
+# full.gamma.shape= mean(full.pred.mod.gamma$fitted.values)**2/full.gamma.var
+# full.gamma.rate= mean(full.pred.mod.gamma$fitted.values)/full.gamma.var
+# prob.hyp.full.gamma.pred <-pgamma(140, shape=full.gamma.shape, rate=full.gamma.rate, lower.tail = F)
+# hist(prob.hyp.full.gamma.pred)
 
+### ALT 2
+# can I use this function??
+#full.gamma.shape <- gamma.shape(full.pred.mod.gamma)
+#prob.hyp.full.gamma.pred <-pgamma(140, shape=full.gamma.shape$alpha, lower.tail = F)
+#hist(prob.hyp.full.gamma.pred)
 
-#### GJELDER DETTE FREMDELES NÅR DET ER DISPERSJONSPARAMETER??
-full.gamma.shape= mean(full.pred.mod.gamma$fitted.values)**2/full.gamma.var
-full.gamma.rate= mean(full.pred.mod.gamma$fitted.values)/full.gamma.var
+### ALT 3
 
-prob.hyp.full.gamma.pred <-pgamma(140, shape=full.gamma.shape, rate=full.gamma.rate, lower.tail = F)
+full.gamma.shape <- 1/summary(full.pred.mod.gamma)$dispersion
+full.gamma.shape
+
+full.gamma.rate <- full.gamma.shape/full.pred.mod.gamma$fitted.values
+
+prob.hyp.full.gamma.pred <-pgamma(140, shape=full.gamma.shape,rate=full.gamma.rate, lower.tail = F)
 
 hist(prob.hyp.full.gamma.pred)
 
 
-# can I use this function??
-full.gamma.shape <- gamma.shape(full.pred.mod.gamma)
+### Er dette riktig måte å gjøre det på? 
+# eller git dette ikke mening siden jeg nå plotter alle fordelingene over hverandre?
+#skal jeg i steden for x bruke de faktiske blodtrykkene til deltagerne?
+# ser ganske normalfordelt ut med bare en rate (eks. rate[100])
 
-#prob.hyp.full.gamma.pred <-pgamma(140, shape=full.gamma.shape$alpha, scale=full.gamma.scale, lower.tail = F)
+# scatterplot
+x <- seq(50, 250, length=17365)
+hx <- dgamma(x,shape=full.gamma.shape,rate=full.gamma.rate[c(1,2)])
+plot(x,hx, type="l")
 
+
+# Boxplot
+data.frame("x"=x) %>%
+  mutate( bin=cut_width(x, width=5, boundary=0) ) %>%
+  ggplot( aes(x=bin, y=hx) ) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size=16),
+        axis.text.y=element_text(size=16),
+        axis.title.x = element_text(size = 24),
+        axis.title.y = element_text(size = 24))+
+  labs(x="Systolic blood pressure [mmHg]", x="Density")
+
+#### Snodig cut-off
+
+
+## just checking that I code correctly ------------------------------------------
+data.frame("x"=seq(-2,2, length=100)) %>%
+  mutate( bin=cut_width(x, width=0.5, boundary=0) ) %>%
+  ggplot( aes(x=bin, y=dnorm(x)) ) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size=16),
+        axis.text.y=element_text(size=16),
+        axis.title.x = element_text(size = 24),
+        axis.title.y = element_text(size = 24))+
+  labs(x="Systolic blood pressure [mmHg]", x="Density")
+
+plot(seq(-2,2, length=100),dnorm(seq(-2,2, length=100)))
+
+#----------------------------------------------------------------------------------
+
+
+# mean of probabilities of systolic hypertension
+exp.prob.hyp.full.gamma.pred <- mean(prob.hyp.full.gamma.pred)
+round(100*exp.prob.hyp.full.gamma.pred,3)
+# Expected number of hypertensives are nearly 20% of population
 
 
 ### SMALL GAMMA
+
+small.gamma.shape <- 1/summary(small.pred.mod.gamma)$dispersion
+small.gamma.shape
+
+small.gamma.rate <- small.gamma.shape/small.pred.mod.gamma$fitted.values
+
+prob.hyp.small.gamma.pred <-pgamma(140, shape=small.gamma.shape,rate=small.gamma.rate, lower.tail = F)
+
+hist(prob.hyp.small.gamma.pred)
+
+
+# mean of probabilities of systolic hypertension
+exp.prob.hyp.small.gamma.pred <- mean(prob.hyp.small.gamma.pred)
+round(100*exp.prob.hyp.small.gamma.pred,3)
+# Expected number of hypertensives are nearly 20% of population
+
+
+#### Framingham
+
+round(100*mean(fram.risk.ad.age),3)
+
 
 
 ########################## RMSE ########################################
@@ -79,26 +153,32 @@ full.gamma.shape <- gamma.shape(full.pred.mod.gamma)
 
 ### FULL MODEL
 full.rmse <- predict(full.pred.mod, se.fit=T)$residual.scale
-full.rmse
+round(full.rmse,3)
 
 ### SMALL MODEL
 small.rmse <- predict(small.pred.mod, se.fit=T)$residual.scale
-small.rmse
+round(small.rmse,3)
 
 
 ### FULL GAMMA 
-full.gamma.rmse <- predict(full.pred.mod.gamma, se.fit=T)$residual.scale
-full.gamma.rmse
+# full.gamma.rmse <- predict(full.pred.mod.gamma, se.fit=T)$residual.scale
+# round(full.gamma.rmse,3)
+# 
+# full.gamma.rmse <-sqrt(mean(residuals(full.pred.mod.gamma)**2))
+# full.gamma.rmse
+
+full.gamma.rmse <-sqrt(mean((df.total$SystolicBP3-full.pred.mod.gamma$fitted.values)**2))
+round(full.gamma.rmse,3)
 
 ### SMALL GAMMA
-small.gamma.rmse <- predict(small.pred.mod.gamma, se.fit=T)$residual.scale
-small.gamma.rmse
+small.gamma.rmse <- sqrt(mean((df.total$SystolicBP3-small.pred.mod.gamma$fitted.values)**2))
+round(small.gamma.rmse,3)
 
 ### MUCH SMALLER RMSE FOR GAMMA WHY??
 
 ### CONSTANT
 constant.rmse <- sqrt(mean((df.total$SystolicBP3-df.total$SystolicBP2)**2))
-constant.rmse
+round(constant.rmse,3)
 
 
 ######################### CRPS ##########################################
@@ -106,7 +186,7 @@ constant.rmse
 
 ### FULL MODEL
 full.crps <- crps(y=df.total.sc$SystolicBP3,family="normal", mean=full.pred.mod$fitted.values, sd=full.sd.y)
-mean(full.crps)
+round(mean(full.crps),3)
 
 df.crps <- data.frame("Observed"=df.total.sc$SystolicBP3, "CRPS"=full.crps)
 df.crps[order(df.crps$Observed),]
@@ -115,49 +195,49 @@ plot(df.crps$Observed, df.crps$CRPS)
 
 ### SMALL MODEL
 small.crps <- crps(y=df.total.sc$SystolicBP3,family="normal", mean=small.pred.mod$fitted.values, sd=small.sd.y)
-mean(small.crps)
+round(mean(small.crps),3)
 
 
 #### FULL GAMMA 
-full.gamma.crps <- crps_gamma(y=df.total.sc$SystolicBP3,shape=2, rate=1) ##### NEED TO FIND PARAMETERS
-mean(full.gamma.crps)
+full.gamma.crps <- crps_gamma(y=df.total.sc$SystolicBP3,shape=full.gamma.shape, rate=full.gamma.rate) 
+round(mean(full.gamma.crps),3)
 
 
 ### SMALL GAMMA
-small.gamma.crps <- crps_gamma(y=df.total.sc$SystolicBP3,shape=2, rate=1) ##### NEED TO FIND PARAMETERS
-mean(small.gamma.crps)
+small.gamma.crps <- crps_gamma(y=df.total.sc$SystolicBP3,shape=small.gamma.shape, rate=small.gamma.rate)
+round(mean(small.gamma.crps),3)
 
 ######################## BRIER SCORE ###################################
 
 ### FULL MODEL
-BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.pred)
+round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.pred),5)
 # 0.13254599
 # the smaller the better, range between 0 and 1
 
 ### SMALL MODEL
-BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.pred)
+round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.pred),5)
 # 0.1325129
 
 
 ### FULL MODEL GAMMA
-#BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.gamma.pred)
-
+round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.gamma.pred),5)
+# 0.1324363
 
 ### SMALL MODEL GAMMA
-#BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.gamma.pred)
-
+round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.gamma.pred),5)
+# 0.1324363
 
 ### SAME PROB FOR ALL 
-BrierScore(resp=df.total.sc$SystolicHyp, pred=equal.prob.mod)
+round(BrierScore(resp=df.total.sc$SystolicHyp, pred=equal.prob.mod),5)
 # 0.1572847
 
 ############ Framingham 
 ##### Without age adjustment
-BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk)
+round(BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk),5)
 # 0.1382371
 
 #### With age adjustment
-BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk.ad.age)
+round(BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk.ad.age),5)
 # 0.1347959
 
 ### Comment: the framingingham model with age adjustment had slightly better Brier score 
@@ -165,6 +245,11 @@ BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk.ad.age)
 
 ########################################## PIT DIAGRAM #######################################
 # probability integral transform
+# should be uniform if response comes from the given distribution
+# see that for all distributions there are disproportionally many outside right tail
+# see that distribution of responses are more skewed than prediction distribution
+# more clearly for normal than for gamma (as expected)
+# samme trends as observed for the plot of the fitted values
 
 
 ### FULL MODEL
@@ -180,79 +265,70 @@ hist(prob.obs.small.pred)
 
 
 ### FULL GAMMA
+prob.obs.full.gamma.pred <- pgamma(df.total$SystolicBP3, shape=full.gamma.shape, rate=full.gamma.rate)
+hist(prob.obs.full.gamma.pred)
 
-# need to find shape and scale parameters
 
 ### SMALL GAMMA
+prob.obs.small.gamma.pred <- pgamma(df.total$SystolicBP3, shape=small.gamma.shape, rate=small.gamma.rate)
+hist(prob.obs.small.gamma.pred)
 
 
-# need to find shape and scale parameters
+
+########################## Sensitivity and Specificity  ############### 
+
+### FULL MODEL
+# Sensitivity
+# Hypertensive and predicted hypertensive
+round(100*sum(full.pred.mod$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+
+# Specificity
+# Not hypertensive and not predicted hypertensive
+round(100*sum(full.pred.mod$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
 
 
-######### Predictions ########
+### SMALL MODEL
+# Sensitivity
+# Hypertensive and predicted hypertensive
+round(100*sum(small.pred.mod$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+
+# Specificity
+# Not hypertensive and not predicted hypertensive
+round(100*sum(small.pred.mod$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
 
 
-# #### Fitted values
-# pred.hyper <-full.pred.mod$fitted.values>=140
-# true.hyper <- df.total$SystolicHyp
-# 
-# 
-# 100*sum(pred.hyper)/length(pred.hyper)
-# # Only 5.4% predicted hypertensive
-# 
-# 100*sum(true.hyper)/length(true.hyper)
-# # versus 19.6 % observed hypertenive
-# 
-# 
-# # hypertensive in prediction and in observation
-# 100*sum(pred.hyper & true.hyper)/length(true.hyper)
-# 
-# # hypertensive in pred but not in observation
-# 100*sum(pred.hyper & !true.hyper)/length(true.hyper)
-# # 2.4 %
-# 
-# 100*sum(!pred.hyper & true.hyper)/length(true.hyper)
-# # 16.6% of hypertension not predicted
-# 
-# 
-# ###### Expected hypertension from prediction distribution
-# 
-# # variance and standard deviation for each participants response
-# full.var.y <- predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
-# full.sd.y<- sqrt(full.var.y)
-# 
-# # probability that each systolic pressure is equal to or above 140 mmHg, given full model
-# prob.hyp.full.pred <-pnorm(140, mean=full.pred.mod$fitted.values, sd=full.sd.y, lower.tail = F)
-# prob.hyp.full.pred
-# 
-# 
-# hist(prob.hyp.full.pred)
-# 
-# # mean of probabilities of systolic hypertension
-# exp.prob.hyp.full.pred <- mean(prob.hyp.full.pred)
-# exp.prob.hyp.full.pred
-# # Expected number of hypertensives are nearly 20% of population, stemmer dette? 
-# 
-# ###### Probability of hypertension with different cut-offs
-# 
-# # Observed systolic hypertension and predicted probability of hypertension over 30%
-# hyp.pred.obs <- df.total$SystolicHyp  & prob.hyp.full.pred > 0.30
-# 
-# sum(hyp.pred.obs)/length(df.total$SystolicHyp)  
-# # only 11% of the participants were both observed hypertensive and had more than 30% pred prob of hyp  
-# 
-# sum(hyp.pred.obs)/sum(df.total$SystolicHyp)  
-# # 56% of the observed hypertensive had more than 30% pred prob of hyp
-# 
-# hyp.pred.not.obs <- (!df.total$SystolicHyp)  & prob.hyp.full.pred > 0.30
-# 
-# sum(hyp.pred.not.obs)/length(df.total$SystolicHyp)
-# # 15% of the participants are non hypertensive and have more than 30% pred prob of hypertension
-# 
-# sum(hyp.pred.not.obs)/sum(!df.total$SystolicHyp) 
-# # 19% of the nonhypertensive have more than 30 chance of hypertension
-# 
-# 
+### FULL GAMMA
+# Sensitivity
+# Hypertensive and predicted hypertensive
+round(100*sum(full.pred.mod.gamma$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+
+# Specificity
+# Not hypertensive and not predicted hypertensive
+round(100*sum(full.pred.mod.gamma$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+
+### SMALL GAMMA
+# Sensitivity
+# Hypertensive and predicted hypertensive
+round(100*sum(small.pred.mod.gamma$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+
+# Specificity
+# Not hypertensive and not predicted hypertensive
+round(100*sum(small.pred.mod.gamma$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+
+### FRAMINGHAM
+# Sensitivity
+# Hypertensive and over 50% risk for hypertension
+round(100*sum(fram.risk.ad.age>0.5&df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+
+# Specificity
+# not hypertensive and under or equal to 50% risk for hypertension
+round(100*sum(fram.risk.ad.age<=0.5 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+
+# specificity is very good, which is as expected since we started with all negatives
+# sensitivity is less good,
+# but we see that there are still realtively more people with predicted hypertension in group of obs hyp
+# than in group with non.obs
+
 # ### Prediction intervals full model
 # 
 # ## Prøve å plotte prediksjonsintervall og observerte verdier

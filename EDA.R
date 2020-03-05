@@ -25,7 +25,7 @@ df.total$SystolicHyp <- df.total$SystolicBP3>=140
 
 
 introduce(df.total)
-describe(df.total)
+#describe(df.total)
 # gmd= Gini mean distance, mean absolute difference between any pair of observations
 ### Comment: doesn't seem to be any single extreme outliers
 ### Lower minimum values for BP at HUNT3 than HUNT2
@@ -39,7 +39,7 @@ plot_histogram(df.total)
 ### and see from width of plots that there are some outliers
 
 # Categorical variables
-plot_bar(df.total)  
+#plot_bar(df.total)  
 ## Comment: most levels are well represented, excpect stage 3,4 and 5 in GFRest
 
 # Correlation of the all variables with the systolic bp from hunt3

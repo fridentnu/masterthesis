@@ -14,7 +14,7 @@ df.total.sc[,c(2,4,5,6,13,14,15,17)] <- scale(df.total.sc[,c(2,4,5,6,13,14,15,17
 
 plot_histogram(df.total.sc)
 
-describe(df.total.sc)
+#describe(df.total.sc)
 
 ################################# MODELS ###########################################
 
@@ -51,7 +51,7 @@ mean(constant.pred.mod)
 # dispersion parameter for full gamma very slightly better
 # AIC for small gamma sligthly smaller
 
-################################# FITTED VALUES ######################################3
+################################# FITTED VALUES ######################################
 
 
 small <-ggplot(data=small.pred.mod)+
@@ -100,10 +100,10 @@ mean(small.pred.mod.gamma$fitted.values)
 # higher than sysbp2
 
 ##################################### Coefficients ###############################
-df.coef.full <- data.frame(full.pred.mod$coefficients)
-df.coef.small <- data.frame(small.pred.mod$coefficients)
-df.coef.full.gamma <- data.frame(full.pred.mod.gamma$coefficients)
-df.coef.small.gamma <- data.frame(small.pred.mod.gamma$coefficients)
+df.coef.full <- summary(full.pred.mod)$coefficients
+df.coef.small <- summary(small.pred.mod)$coefficients
+df.coef.full.gamma <- summary(full.pred.mod.gamma)$coefficients
+df.coef.small.gamma <- summary(small.pred.mod.gamma)$coefficients
 
 df.coef.full
 # intercept, systolic, then birthyear, then diastolic, then parental hyp, then bmi

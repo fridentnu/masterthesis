@@ -160,7 +160,6 @@ mean(fram.risk)
 hist(fram.risk)
 
 
-
 ######## adjust age #######
 fram.risk.ad.age.fun <- function(){
   score <- rep(0,length(df.total$PID))
@@ -306,6 +305,7 @@ fram.risk.ad.age <- fram.risk.ad.age.fun()
 mean(fram.risk.ad.age)
 
 hist(fram.risk.ad.age)
+
 
 
 ####### SAVE ######
