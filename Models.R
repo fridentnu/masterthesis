@@ -105,9 +105,40 @@ df.coef.small <- summary(small.pred.mod)$coefficients
 df.coef.full.gamma <- summary(full.pred.mod.gamma)$coefficients
 df.coef.small.gamma <- summary(small.pred.mod.gamma)$coefficients
 
-df.coef.full
-# intercept, systolic, then birthyear, then diastolic, then parental hyp, then bmi
 
+# Full linear model
+df.coef.full <- data.frame(round(df.coef.full[-1,-3], 3))
+df.coef.full$ExplanatoryVariables <- row.names(df.coef.full)
+df.coef.full <- df.coef.full[,c(4,1,2,3)]
+colnames(df.coef.full)<-c("Exp. Variable","Estimate", "Std. Error", "p-value")
+df.coef.full
+write.csv(df.coef.full,"Tables/FullCoeff.csv", row.names = FALSE)
+
+
+# Small linear model
+df.coef.small <- data.frame(round(df.coef.small[-1,-3], 3))
+df.coef.small$ExplanatoryVariables <- row.names(df.coef.small)
+df.coef.small <- df.coef.small[,c(4,1,2,3)]
+colnames(df.coef.small)<-c("Exp. Variable","Estimate", "Std. Error", "p-value")
+df.coef.small
+write.csv(df.coef.small,"Tables/SmallCoeff.csv", row.names = FALSE)
+
+# Full gamma model
+df.coef.full.gamma <- data.frame(round(df.coef.full.gamma[-1,-3], 3))
+df.coef.full.gamma$ExplanatoryVariables <- row.names(df.coef.full.gamma)
+df.coef.full.gamma <- df.coef.full.gamma[,c(4,1,2,3)]
+colnames(df.coef.full.gamma)<-c("Exp. Variable","Estimate", "Std. Error", "p-value")
+df.coef.full.gamma
+write.csv(df.coef.full.gamma,"Tables/FullGammaCoeff.csv", row.names = FALSE)
+
+
+# Small gamma model
+df.coef.small.gamma <- data.frame(round(df.coef.small.gamma[-1,-3], 3))
+df.coef.small.gamma$ExplanatoryVariables <- row.names(df.coef.small.gamma)
+df.coef.small.gamma <- df.coef.small.gamma[,c(4,1,2,3)]
+colnames(df.coef.small.gamma)<-c("Exp. Variable","Estimate", "Std. Error", "p-value")
+df.coef.small.gamma
+write.csv(df.coef.small.gamma,"Tables/SmallGammaCoeff.csv", row.names = FALSE)
 
 
 ################################### RESIDUALS ################################
