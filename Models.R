@@ -18,17 +18,17 @@ plot_histogram(df.total.sc)
 
 ################################# MODELS ###########################################
 
-full.pred.mod <- lm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
+full.pred.mod <- glm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
                       PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
-                      Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc)
+                      Glucose2 + GFR2 + Creatinine2 + Education2, family= gaussian(link="identity"), data=df.total.sc)
 
 full.pred.mod.gamma <- glm(SystolicBP3 ~ BirthYear + Sex + BMI2 + SystolicBP2 + DiastolicBP2 + 
                       PAI2 + RecPA2 + BPHigPar2 + Smoking2 + Cholesterol2 + HDLCholesterol2 +
                       Glucose2 + GFR2 + Creatinine2 + Education2, data=df.total.sc, family=Gamma(link = "identity"))
 
 
-small.pred.mod <- lm(SystolicBP3 ~ BirthYear + BMI2 + SystolicBP2 + DiastolicBP2 + 
-                      PAI2+ BPHigPar2 + HDLCholesterol2 + Education2, data=df.total.sc)
+small.pred.mod <- glm(SystolicBP3 ~ BirthYear + BMI2 + SystolicBP2 + DiastolicBP2 + 
+                      PAI2+ BPHigPar2 + HDLCholesterol2 + Education2, family=gaussian(link="identity"),data=df.total.sc)
 
 small.pred.mod.gamma <- glm(SystolicBP3 ~ BirthYear + BMI2 + SystolicBP2 + DiastolicBP2 + 
                        PAI2+ BPHigPar2 + HDLCholesterol2 + Education2, data=df.total.sc, family=Gamma(link = "identity"))

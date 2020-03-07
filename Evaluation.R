@@ -2,8 +2,8 @@
 library(scoringRules) # crps
 library(DescTools) # brier score
 library(MASS)
-
-
+library(pROC)
+library(ResourceSelection)
 
 load("MyData/Models.RData")
 load("MyData/Framingham.RData")
@@ -323,6 +323,68 @@ round(100*sum(fram.risk.ad.age>0.5&df.total$SystolicHyp)/sum(df.total$SystolicHy
 # Specificity
 # not hypertensive and under or equal to 50% risk for hypertension
 round(100*sum(fram.risk.ad.age<=0.5 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+
+
+
+
+############################# C-stat ########################
+
+cstat.full<-Cstat(full.pred.mod)
+
+cstat.small <- Cstat(small.pred.mod)
+
+cstat.full.gamma<- Cstat(full.pred.mod.gamma)  # biggest cstat
+
+cstat.small.gamma <- Cstat(small.pred.mod.gamma)
+
+max(cstat.full,cstat.small,cstat.full.gamma,cstat.small.gamma)
+
+
+
+
+############################ ROC ##########################
+plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140)), main="full")
+
+plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140)), main="small")
+
+plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140)), main="full gamma")
+
+plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140)), main="small gamma")
+
+plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5)), main="Framingham")
+
+############################ AUC #############################
+
+auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140))
+
+auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140))
+
+auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140))
+
+auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140))
+
+auc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5))
+
+
+########################### Hosmer-Lemeshow ##################
+
+
+hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140), g=20)
+
+hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140), g=20)
+
+hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140), g=20)
+
+hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140), g=20)
+
+hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5), g=20)
+
+# Model not well specified for any of the models since the p-value is below 0.05
+
+
+
+
+### -----------------------------------------------------------------------------
 
 # specificity is very good, which is as expected since we started with all negatives
 # sensitivity is less good,
