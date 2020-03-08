@@ -15,7 +15,20 @@ obs.hyp
 ######################### DISTRIBUTIONS ###########################
 ### FULL MODEL
 # Variance and standard deviation for each participants response
-full.var.y <- predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
+
+full.design.mat <- model.matrix(full.pred.mod)
+
+# check that should use confidence
+full.var.coeff <- var(full.pred.mod$residuals)*solve(t(full.design.mat)%*%full.design.mat)
+full.exp.var <- rep(0,length(df.total$PID))
+
+for(i in 1:length(df.total$PID)){
+  full.exp.var[i] <- t(full.design.mat[i,])%*%full.var.coeff%*%full.design.mat[i,]
+}
+mean(predict(full.pred.mod, se.fit=T)$se.fit**2 - full.exp.var)
+
+# Alternative: predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
+full.var.y <- full.exp.var + mean((df.total$SystolicBP3-full.pred.mod$fitted.values)**2)
 full.sd.y<- sqrt(full.var.y)
 
 # probability that each systolic pressure is equal to or above 140 mmHg
@@ -33,7 +46,19 @@ round(100*exp.prob.hyp.full.pred,3)
 
 ### SMALL MODEL
 # Variance and standard deviation for each participants response
-small.var.y <- predict(small.pred.mod, se.fit=T)$se.fit**2 + predict(small.pred.mod, se.fit=T)$residual.scale**2
+small.design.mat <- model.matrix(small.pred.mod)
+
+# check that should use confidence
+small.var.coeff <- var(small.pred.mod$residuals)*solve(t(small.design.mat)%*%small.design.mat)
+small.exp.var <- rep(0,length(df.total$PID))
+
+for(i in 1:length(df.total$PID)){
+  small.exp.var[i] <- t(small.design.mat[i,])%*%small.var.coeff%*%small.design.mat[i,]
+}
+mean(predict(small.pred.mod, se.fit=T)$se.fit**2 - small.exp.var)
+
+# Alternative: predict(small.pred.mod, se.fit=T)$se.fit**2 + predict(small.pred.mod, se.fit=T)$residual.scale**2
+small.var.y <- small.exp.var + mean((df.total$SystolicBP3-small.pred.mod$fitted.values)**2)
 small.sd.y<- sqrt(small.var.y)
 
 # probability that each systolic pressure is equal to or above 140 mmHg
@@ -152,11 +177,12 @@ round(100*mean(fram.risk.ad.age),3)
 
 
 ### FULL MODEL
-full.rmse <- predict(full.pred.mod, se.fit=T)$residual.scale
+full.rmse <- sqrt(mean((df.total$SystolicBP3-full.pred.mod$fitted.values)**2))
 round(full.rmse,3)
 
+
 ### SMALL MODEL
-small.rmse <- predict(small.pred.mod, se.fit=T)$residual.scale
+small.rmse <- sqrt(mean((df.total$SystolicBP3-small.pred.mod$fitted.values)**2))
 round(small.rmse,3)
 
 
@@ -352,6 +378,10 @@ plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted
 plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140)), main="small gamma")
 
 plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5)), main="Framingham")
+
+#plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(prob.hyp.full.pred>0.5)), main="full")
+
+
 
 ############################ AUC #############################
 

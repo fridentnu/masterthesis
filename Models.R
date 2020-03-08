@@ -355,6 +355,12 @@ full.design.mat <- model.matrix(full.pred.mod)
 full.var.coeff <- var(full.pred.mod$residuals)*solve(t(full.design.mat)%*%full.design.mat)
 full.pred.var1 <- t(full.design.mat[1,])%*%full.var.coeff%*%full.design.mat[1,]
 
+full.pred.var <- rep(0,length(df.total$PID))
+
+for(i in 1:length(df.total$PID)){
+  full.pred.var[i] <- t(full.design.mat[i,])%*%full.var.coeff%*%full.design.mat[i,]
+}
+predict(full.pred.mod, se.fit=T)$se.fit**2 - full.pred.var
 
 ################# SAVE ########################################
 
