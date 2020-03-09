@@ -27,8 +27,9 @@ for(i in 1:length(df.total$PID)){
 }
 mean(predict(full.pred.mod, se.fit=T)$se.fit**2 - full.exp.var)
 
-# Alternative: predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
-full.var.y <- full.exp.var + mean((df.total$SystolicBP3-full.pred.mod$fitted.values)**2)
+# Alternative. 
+#full.var.y <- predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
+full.var.y <- full.exp.var + sum((residuals(full.pred.mod)-mean(residuals(full.pred.mod)))**2)/(length(df.total$PID)-1)
 full.sd.y<- sqrt(full.var.y)
 
 # probability that each systolic pressure is equal to or above 140 mmHg
@@ -58,7 +59,7 @@ for(i in 1:length(df.total$PID)){
 mean(predict(small.pred.mod, se.fit=T)$se.fit**2 - small.exp.var)
 
 # Alternative: predict(small.pred.mod, se.fit=T)$se.fit**2 + predict(small.pred.mod, se.fit=T)$residual.scale**2
-small.var.y <- small.exp.var + mean((df.total$SystolicBP3-small.pred.mod$fitted.values)**2)
+small.var.y <- small.exp.var + sum((residuals(small.pred.mod)-mean(residuals(small.pred.mod)))**2)/(length(df.total$PID)-1)
 small.sd.y<- sqrt(small.var.y)
 
 # probability that each systolic pressure is equal to or above 140 mmHg

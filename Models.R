@@ -360,7 +360,7 @@ full.pred.var <- rep(0,length(df.total$PID))
 for(i in 1:length(df.total$PID)){
   full.pred.var[i] <- t(full.design.mat[i,])%*%full.var.coeff%*%full.design.mat[i,]
 }
-predict(full.pred.mod, se.fit=T)$se.fit**2 - full.pred.var
+predict(full.pred.mod, se.fit=T)$se.fit**2 - mean(full.pred.var)
 
 ################# SAVE ########################################
 
