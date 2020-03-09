@@ -40,8 +40,8 @@ prob.hyp.full.pred
 hist(prob.hyp.full.pred)
 
 # mean of probabilities of systolic hypertension
-exp.prob.hyp.full.pred <- mean(prob.hyp.full.pred)
-round(100*exp.prob.hyp.full.pred,3)
+exp.prob.hyp.full.pred <- round(100*mean(prob.hyp.full.pred),3)
+exp.prob.hyp.full.pred
 # Expected number of hypertensives are nearly 20% of population
 
 
@@ -70,8 +70,8 @@ prob.hyp.small.pred
 hist(prob.hyp.small.pred)
 
 # mean of probabilities of systolic hypertension
-exp.prob.hyp.small.pred <- mean(prob.hyp.small.pred)
-round(100*exp.prob.hyp.small.pred,3)
+exp.prob.hyp.small.pred <- round(100*mean(prob.hyp.small.pred),3)
+exp.prob.hyp.small.pred
 # Expected number of hypertensives are nearly 20% of population 
 
 
@@ -145,8 +145,8 @@ plot(seq(-2,2, length=100),dnorm(seq(-2,2, length=100)))
 
 
 # mean of probabilities of systolic hypertension
-exp.prob.hyp.full.gamma.pred <- mean(prob.hyp.full.gamma.pred)
-round(100*exp.prob.hyp.full.gamma.pred,3)
+exp.prob.hyp.full.gamma.pred <- round(100*mean(prob.hyp.full.gamma.pred),3)
+exp.prob.hyp.full.gamma.pred
 # Expected number of hypertensives are nearly 20% of population
 
 
@@ -163,28 +163,28 @@ hist(prob.hyp.small.gamma.pred)
 
 
 # mean of probabilities of systolic hypertension
-exp.prob.hyp.small.gamma.pred <- mean(prob.hyp.small.gamma.pred)
-round(100*exp.prob.hyp.small.gamma.pred,3)
+exp.prob.hyp.small.gamma.pred <- round(100*mean(prob.hyp.small.gamma.pred),3)
+exp.prob.hyp.small.gamma.pred
 # Expected number of hypertensives are nearly 20% of population
 
 
 #### Framingham
 
-round(100*mean(fram.risk.ad.age),3)
-
+exp.prob.hyp.fram <- round(100*mean(fram.risk.ad.age),3)
+exp.prob.hyp.fram
 
 
 ########################## RMSE ########################################
 
 
 ### FULL MODEL
-full.rmse <- sqrt(mean((df.total$SystolicBP3-full.pred.mod$fitted.values)**2))
-round(full.rmse,3)
+full.rmse <- round(sqrt(mean((df.total$SystolicBP3-full.pred.mod$fitted.values)**2)),3)
+full.rmse
 
 
 ### SMALL MODEL
-small.rmse <- sqrt(mean((df.total$SystolicBP3-small.pred.mod$fitted.values)**2))
-round(small.rmse,3)
+small.rmse <- round(sqrt(mean((df.total$SystolicBP3-small.pred.mod$fitted.values)**2)),3)
+small.rmse
 
 
 ### FULL GAMMA 
@@ -194,14 +194,13 @@ round(small.rmse,3)
 # full.gamma.rmse <-sqrt(mean(residuals(full.pred.mod.gamma)**2))
 # full.gamma.rmse
 
-full.gamma.rmse <-sqrt(mean((df.total$SystolicBP3-full.pred.mod.gamma$fitted.values)**2))
-round(full.gamma.rmse,3)
+full.gamma.rmse <-round(sqrt(mean((df.total$SystolicBP3-full.pred.mod.gamma$fitted.values)**2)),3)
+full.gamma.rmse
 
 ### SMALL GAMMA
-small.gamma.rmse <- sqrt(mean((df.total$SystolicBP3-small.pred.mod.gamma$fitted.values)**2))
-round(small.gamma.rmse,3)
+small.gamma.rmse <- round(sqrt(mean((df.total$SystolicBP3-small.pred.mod.gamma$fitted.values)**2)),3)
+small.gamma.rmse
 
-### MUCH SMALLER RMSE FOR GAMMA WHY??
 
 ### CONSTANT
 constant.rmse <- sqrt(mean((df.total$SystolicBP3-df.total$SystolicBP2)**2))
@@ -212,8 +211,8 @@ round(constant.rmse,3)
 # justert absoluttfeil
 
 ### FULL MODEL
-full.crps <- crps(y=df.total.sc$SystolicBP3,family="normal", mean=full.pred.mod$fitted.values, sd=full.sd.y)
-round(mean(full.crps),3)
+full.crps <- round(mean(crps(y=df.total.sc$SystolicBP3,family="normal", mean=full.pred.mod$fitted.values, sd=full.sd.y)),3)
+full.crps
 
 df.crps <- data.frame("Observed"=df.total.sc$SystolicBP3, "CRPS"=full.crps)
 df.crps[order(df.crps$Observed),]
@@ -221,37 +220,41 @@ plot(df.crps$Observed, df.crps$CRPS)
 # ligner på absolute error av residuals
 
 ### SMALL MODEL
-small.crps <- crps(y=df.total.sc$SystolicBP3,family="normal", mean=small.pred.mod$fitted.values, sd=small.sd.y)
-round(mean(small.crps),3)
+small.crps <- round(mean(crps(y=df.total.sc$SystolicBP3,family="normal", mean=small.pred.mod$fitted.values, sd=small.sd.y)),3)
+small.crps
 
 
 #### FULL GAMMA 
-full.gamma.crps <- crps_gamma(y=df.total.sc$SystolicBP3,shape=full.gamma.shape, rate=full.gamma.rate) 
-round(mean(full.gamma.crps),3)
+full.gamma.crps <- round(mean(crps_gamma(y=df.total.sc$SystolicBP3,shape=full.gamma.shape, rate=full.gamma.rate)),3)
+full.gamma.crps
 
 
 ### SMALL GAMMA
-small.gamma.crps <- crps_gamma(y=df.total.sc$SystolicBP3,shape=small.gamma.shape, rate=small.gamma.rate)
-round(mean(small.gamma.crps),3)
+small.gamma.crps <- round(mean(crps_gamma(y=df.total.sc$SystolicBP3,shape=small.gamma.shape, rate=small.gamma.rate)),3)
+small.gamma.crps
 
 ######################## BRIER SCORE ###################################
 
 ### FULL MODEL
-round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.pred),5)
+full.brier <- round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.pred),5)
+full.brier 
 # 0.13254599
 # the smaller the better, range between 0 and 1
 
 ### SMALL MODEL
-round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.pred),5)
+small.brier<- round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.pred),5)
+small.brier
 # 0.1325129
 
 
 ### FULL MODEL GAMMA
-round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.gamma.pred),5)
+full.gamma.brier<- round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.full.gamma.pred),5)
+full.gamma.brier
 # 0.1324363
 
 ### SMALL MODEL GAMMA
-round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.gamma.pred),5)
+small.gamma.brier<-round(BrierScore(resp=df.total.sc$SystolicHyp, pred=prob.hyp.small.gamma.pred),5)
+small.gamma.brier
 # 0.1324363
 
 ### SAME PROB FOR ALL 
@@ -259,12 +262,10 @@ round(BrierScore(resp=df.total.sc$SystolicHyp, pred=equal.prob.mod),5)
 # 0.1572847
 
 ############ Framingham 
-##### Without age adjustment
-round(BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk),5)
-# 0.1382371
 
 #### With age adjustment
-round(BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk.ad.age),5)
+fram.brier<- round(BrierScore(resp=df.total.sc$SystolicHyp, pred=fram.risk.ad.age),5)
+fram.brier
 # 0.1347959
 
 ### Comment: the framingingham model with age adjustment had slightly better Brier score 
@@ -307,62 +308,62 @@ hist(prob.obs.small.gamma.pred)
 ### FULL MODEL
 # Sensitivity
 # Hypertensive and predicted hypertensive
-round(100*sum(full.pred.mod$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+full.sens<- round(100*sum(full.pred.mod$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
 
 # Specificity
 # Not hypertensive and not predicted hypertensive
-round(100*sum(full.pred.mod$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+full.spec<- round(100*sum(full.pred.mod$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
 
 
 ### SMALL MODEL
 # Sensitivity
 # Hypertensive and predicted hypertensive
-round(100*sum(small.pred.mod$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+small.sens <-round(100*sum(small.pred.mod$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
 
 # Specificity
 # Not hypertensive and not predicted hypertensive
-round(100*sum(small.pred.mod$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+small.spec <- round(100*sum(small.pred.mod$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
 
 
 ### FULL GAMMA
 # Sensitivity
 # Hypertensive and predicted hypertensive
-round(100*sum(full.pred.mod.gamma$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+full.gamma.sens <- round(100*sum(full.pred.mod.gamma$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
 
 # Specificity
 # Not hypertensive and not predicted hypertensive
-round(100*sum(full.pred.mod.gamma$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+full.gamma.spec <- round(100*sum(full.pred.mod.gamma$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
 
 ### SMALL GAMMA
 # Sensitivity
 # Hypertensive and predicted hypertensive
-round(100*sum(small.pred.mod.gamma$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+small.gamma.sens <- round(100*sum(small.pred.mod.gamma$fitted.values>=140 & df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
 
 # Specificity
 # Not hypertensive and not predicted hypertensive
-round(100*sum(small.pred.mod.gamma$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+small.gamma.spec <- round(100*sum(small.pred.mod.gamma$fitted.values<140 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
 
 ### FRAMINGHAM
 # Sensitivity
 # Hypertensive and over 50% risk for hypertension
-round(100*sum(fram.risk.ad.age>0.5&df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+fram.sens <- round(100*sum(fram.risk.ad.age>0.5&df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
 
 # Specificity
 # not hypertensive and under or equal to 50% risk for hypertension
-round(100*sum(fram.risk.ad.age<=0.5 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
+fram.spec <- round(100*sum(fram.risk.ad.age<=0.5 & !df.total$SystolicHyp)/sum(!df.total$SystolicHyp),3)
 
 
 
 
 ############################# C-stat ########################
 
-cstat.full<-Cstat(full.pred.mod)
+cstat.full<-round(Cstat(full.pred.mod),5)
 
-cstat.small <- Cstat(small.pred.mod)
+cstat.small <- round(Cstat(small.pred.mod),5)
 
-cstat.full.gamma<- Cstat(full.pred.mod.gamma)  # biggest cstat
+cstat.full.gamma<- round(Cstat(full.pred.mod.gamma),5)  # biggest cstat
 
-cstat.small.gamma <- Cstat(small.pred.mod.gamma)
+cstat.small.gamma <- round(Cstat(small.pred.mod.gamma),5)
 
 max(cstat.full,cstat.small,cstat.full.gamma,cstat.small.gamma)
 
@@ -386,34 +387,60 @@ plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5)), ma
 
 ############################ AUC #############################
 
-auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140))
+full.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140))),5)
 
-auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140))
+small.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140))),5)
 
-auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140))
+full.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140))),5)
 
-auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140))
+small.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140))),5)
 
-auc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5))
+fram.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5))),5)
 
 
 ########################### Hosmer-Lemeshow ##################
 
 
-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140), g=20)
+full.hoslem <- hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140), g=20)
 
-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140), g=20)
+small.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140), g=20)
 
-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140), g=20)
+full.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140), g=20)
 
-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140), g=20)
+small.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140), g=20)
 
-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5), g=20)
+fram.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5), g=20)
 
 # Model not well specified for any of the models since the p-value is below 0.05
 
 
+# Expected % hypertensive, RMSE, Brier, CRPS, Sensitivity, specificity, c-stat, auc, hoslem p
 
+full.eval <- c(exp.prob.hyp.full.pred, full.rmse, full.brier, 
+               full.crps, full.sens, full.spec, cstat.full, full.auc, round(full.hoslem$p.value,5))
+
+small.eval <-c(exp.prob.hyp.small.pred, small.rmse, small.brier, small.crps,
+               small.sens, small.spec,cstat.small, small.auc, round(small.hoslem$p.value,5))
+
+full.gamma.eval <-c(exp.prob.hyp.full.gamma.pred, full.gamma.rmse, full.gamma.brier,
+                    full.gamma.crps, full.gamma.sens, full.gamma.spec, cstat.full.gamma, 
+                    full.gamma.auc, round(full.gamma.hoslem$p.value,5))
+
+small.gamma.eval <-c(exp.prob.hyp.small.gamma.pred, small.gamma.rmse, small.gamma.brier, 
+                     small.gamma.crps, small.gamma.sens, small.gamma.spec, cstat.small.gamma, 
+                     small.gamma.auc, round(small.gamma.hoslem$p.value,5))
+
+fram.eval <-c(exp.prob.hyp.fram, "NA", fram.brier, "NA", fram.sens,
+              fram.spec, "NA", fram.auc, round(fram.hoslem$p.value,5))
+
+
+eval.methods <- c("Exp. Hyp", "RMSE", "BrierScore", "CRPS",
+                  "Sensitivity %", "Specificity %", "C-stat", "AUC", "HosLem p-val")
+
+df.eval <- data.frame("Eval.Method"=eval.methods, "Full.Gauss"=full.eval, 
+                      "Small.Gauss"=small.eval, "Full.Gamma"=full.gamma.eval, 
+                      "Small.Gamma"=small.gamma.eval, "Framingham"=fram.eval)
+write.csv(df.eval,"Tables/Eval/TotalEval.csv", row.names = FALSE)
 
 ### -----------------------------------------------------------------------------
 
