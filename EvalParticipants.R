@@ -9,13 +9,13 @@ df.order.obs <- df.total
 df.order.obs <- df.order.obs[order(df.total$SystolicBP3),]
 
 #############################################################################
-# Example 1, participant #20, BP 88, diabetes, not cvd or bpmed
+# Example 1, participant #20, BP3 88, diabetes, not cvd or bpmed
 
 
-obs.1 <- df.order.obs$SystolicBP3[20]
+obs.1 <- df.order.obs$SystolicBP3[16000]
 obs.1
 
-pid.1 <- df.order.obs$PID[20]
+pid.1 <- df.order.obs$PID[16000]
 pid.1
 
 index.1 <- match(pid.1, df.total$PID)
@@ -74,6 +74,53 @@ abline(v=full.pred.mod$fitted.values[index.1], col="blue")
 legend("topright", legend=c("BP 2", "BP 3", "Pred 3"),
        col=c("green","red", "blue"),lty=1)
 
+
+plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.1], sd=full.sd.y[index.1]), type="l", col="blue",
+     ylab="Probability", xlab="Systolic blood pressure")
+lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.1], sd=small.sd.y[index.1]), col="green")
+lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.1]), col="brown")
+lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.1]), col="orange")
+abline(v=df.total$SystolicBP2[index.1], col="magenta")
+abline(v=df.total$SystolicBP3[index.1], col="red")
+abline(v=full.pred.mod$fitted.values[index.1], col="blue")
+abline(v=small.pred.mod$fitted.values[index.1], col="green")
+abline(v=full.pred.mod.gamma$fitted.values[index.1], col="brown")
+abline(v=small.pred.mod.gamma$fitted.values[index.1], col="orange")
+legend("topright", legend=c("BP 2", "BP 3", "M1", "M2", "M3", "M4"),
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
+
+### Comment:
+# for index 1 (20) BP2= 135 , BP3=88, (not on bpmed), full and small gamma eqivalent, same for full and small gamma, and all have same fitted values
+# for index 1 (1000), BP2=123,BP3=105, all predictions very similar
+# for index 1 (10000), BP2=120, BP3=128, gaussian and gamma quite similar, gamma has a very slightly heavier right tail identical fitted value
+# for index 1 (16000), BP2= 127, BP3= 151, 
+# for index 1 (17200), BP2= 132, BP3=174, very similar, gamma very slightly heavier right tail 
+# generally very similar but gamma has very slightly heavier right tail 
+# fitted values generally slightly higher than BP2
+
+
+
+### New model, where prediction is just adding 6 to systolic bp
+mean(df.total$SystolicBP3)-mean(df.total$SystolicBP2)
+add.six.pred <- df.total$SystolicBP2+4.016
+round(sqrt(mean((df.total$SystolicBP3-add.six.pred)**2)),3)
+# our model just perform slightly better than just adding the difference between means to systolicbp2
+
+
+num.decrease.pred<- rep(0, length(df.total$PID))
+num.decrease.obs <- rep(0, length(df.total$PID))
+for(i in 1:length(df.total$PID)){
+  if(df.total$SystolicBP3[i]<df.total$SystolicBP2[i]){
+    num.decrease.obs[i]<-1
+    if(full.pred.mod$fitted.values[i]<df.total$SystolicBP2){
+      num.decrease.pred[i]=1
+    }
+  }
+}
+sum(num.decrease.obs)
+sum(num.decrease.pred)
+sum(num.decrease.pred)/sum(num.decrease.obs)
+## Not able to spot decrease very well, but it is not as dumb as just adding 4 either
 #######################################################################################
 
 # Example 2, participant #10 000, 128, not on BP med, CVD or diabetes

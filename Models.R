@@ -163,7 +163,6 @@ plot.residual.full <- df.residual.full %>%
 plot.residual.full
 # Not homoscedastic variance in residuals
 
-
 #### Small model 
 df.residual.small <- data.frame("Observed"=df.total.sc$SystolicBP3, "Residuals"=small.pred.mod$residuals)
 plot.residual.small <- df.residual.small %>%

@@ -1,4 +1,4 @@
-library(funModeling) 
+#library(funModeling) 
 library(tidyverse) 
 library(Hmisc)
 library(DataExplorer)
