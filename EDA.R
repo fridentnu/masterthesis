@@ -7,8 +7,6 @@ library(reshape2)
 library(forcats)
 
 
-
-
 # Sources
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
 # https://blog.datascienceheroes.com/exploratory-data-analysis-in-r-intro/

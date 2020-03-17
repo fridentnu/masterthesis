@@ -383,6 +383,7 @@ plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5)), ma
 
 #plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(prob.hyp.full.pred>0.5)), main="full")
 
+# plot ROC til framingham og en av de andre modellene i samme plott. trenger ikke flere
 
 
 ############################ AUC #############################
@@ -396,20 +397,46 @@ full.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.nume
 small.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140))),5)
 
 fram.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5))),5)
+fram.auc
 
+fram.auc.func <- function(df.total){
+  c.stat <- 0
+  #everyone
+  for(i in 1:length(df.total$PID)){
+    # hypertensive
+    if(df.total$SystolicHyp[i]==TRUE){
+      # everyone
+      for(j in 1:length(df.total$PID)){
+        #not hypertensive
+        if(df.total$SystolicHyp[j]==FALSE){
+          if(fram.risk.ad.age[i]>fram.risk.ad.age[j]){
+            c.stat <- c.stat+1 
+          }else if(fram.risk.ad.age[i]==fram.risk.ad.age[j]){
+            c.stat <- c.stat+0.5
+          }
+        }
+      }
+    }
+  }
+  c.stat <- c.stat/(sum(df.total$SystolicHyp)*sum(!df.total$SystolicHyp))
+  return(c.stat)
+}
 
+fram.auc <- fram.auc.func(df.total)
+fram.auc
+# 0.7748346
 ########################### Hosmer-Lemeshow ##################
 
 
-full.hoslem <- hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140), g=20)
+full.hoslem <- hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140), g=10)
 
-small.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140), g=20)
+small.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140), g=10)
 
-full.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140), g=20)
+full.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140), g=10)
 
-small.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140), g=20)
+small.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140), g=10)
 
-fram.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5), g=20)
+fram.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5), g=10)
 
 # Model not well specified for any of the models since the p-value is below 0.05
 
