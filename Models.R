@@ -175,75 +175,75 @@ ggplot(data=full.pred.mod)+
   geom_point(mapping=aes(x=df.total$SystolicBP3, y=full.pred.mod$residuals))+
   labs(x="Observed systolic blood pressure", y= "Residuals")
 
-df.residual.full <- data.frame("Observed"=df.total.sc$SystolicBP3, "Residuals"=full.pred.mod$residuals)
+df.residual.full <- data.frame("Fitted"=full.pred.mod$fitted.values, "Residuals"=full.pred.mod$residuals)
 plot.residual.full <- df.residual.full %>%
-  mutate( bin=cut_width(x=Observed, width=10, boundary=0) ) %>%
+  mutate( bin=cut_width(x=Fitted, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Observed systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
+  xlab("Fitted systolic blood pressure [mmHg]") + ylab("Residuals")+
   ggtitle("Full Gaussian model")
 plot.residual.full
-dev.copy(pdf,'~/figures/Models/ResObsFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/ResFitFullGauss.pdf') # Save the plot
 dev.off()
 # Not homoscedastic variance in residuals
 
 #### Small model 
-df.residual.small <- data.frame("Observed"=df.total.sc$SystolicBP3, "Residuals"=small.pred.mod$residuals)
+df.residual.small <- data.frame("Fitted"=small.pred.mod$fitted.values, "Residuals"=small.pred.mod$residuals)
 plot.residual.small <- df.residual.small %>%
-                    mutate( bin=cut_width(x=Observed, width=10, boundary=0) ) %>%
+                    mutate( bin=cut_width(x=Fitted, width=10, boundary=0) ) %>%
                     ggplot( aes(x=bin, y=Residuals )) +
                     geom_boxplot()+
                     theme(axis.title.x = element_text(size=14),
                           axis.title.y = element_text(size=14),
                           axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
                           axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-                    xlab("Observed systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
-  ggittle("Small Gaussian model")
+                    xlab("Fitted systolic blood pressure [mmHg]") + ylab("Residuals")+
+  ggtitle("Small Gaussian model")
 # Not homoscedastic variance in residuals
 plot.residual.small
-dev.copy(pdf,'~/figures/Models/ResObsSmallGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/ResFitSmallGauss.pdf') # Save the plot
 dev.off()
 # not homoscedastic variance, residuals increasing the further you get from the mean
 
 
 ###### Full gamma model #######
 
-df.residual.full.gamma <- data.frame("Observed"=df.total.sc$SystolicBP3, "Residuals"=full.pred.mod.gamma$residuals)
+df.residual.full.gamma <- data.frame("Fitted"=full.pred.mod.gamma$fitted.values, "Residuals"=full.pred.mod.gamma$residuals)
 plot.residual.full.gamma <- df.residual.full.gamma %>%
-  mutate( bin=cut_width(x=Observed, width=10, boundary=0) ) %>%
+  mutate( bin=cut_width(x=Fitted, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Observed systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
+  xlab("Fitted systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
   ggtitle("Full gamma model")
 plot.residual.full.gamma
-dev.copy(pdf,'~/figures/Models/ResObsFullGamma.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/ResFitFullGamma.pdf') # Save the plot
 dev.off()
 # Not homoscedastic variance in residuals
 
 
 #### Small gamma model 
-df.residual.small.gamma <- data.frame("Observed"=df.total.sc$SystolicBP3, "Residuals"=small.pred.mod.gamma$residuals)
+df.residual.small.gamma <- data.frame("Fitted"=small.pred.mod.gamma$fitted.values, "Residuals"=small.pred.mod.gamma$residuals)
 plot.residual.small.gamma <- df.residual.small.gamma %>%
-  mutate( bin=cut_width(x=Observed, width=10, boundary=0) ) %>%
+  mutate( bin=cut_width(x=Fitted, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Observed systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
+  xlab("Fitted systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
   ggtitle("Small gamma model")
 # Not homoscedastic variance in residuals
 plot.residual.small.gamma
-dev.copy(pdf,'~/figures/Models/ResObsSmallGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/ResFitSmallGamma.pdf') # Save the plot
 dev.off()
 
 
@@ -260,9 +260,9 @@ plot.residual.constant <- df.residual.constant %>%
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
   xlab("Observed systolic blood pressure") + ylab("Residuals")+
   ggtitle("Constant")
-# Not homoscedastic variance in residuals
+# Not homoscedastic variance in 
 plot.residual.constant
-
+ 
 ###########  Residuals versus explanatory variables ###########
 
 ##### FULL MODEL #########
@@ -379,6 +379,44 @@ ggplot(df.residual.exp.var)+
 dev.copy(pdf,'~/figures/Models/ResEducFullGauss.pdf') # Save the plot
 dev.off()
 
+
+
+
+
+
+#################### COMPARE RESIDUALS
+
+df.diff.res <- data.frame("DiffGauss"=full.pred.mod$residuals-small.pred.mod$residuals,
+                          "DiffGamma"=full.pred.mod.gamma$residuals-small.pred.mod.gamma$residuals,
+                          "DiffModSmall"=small.pred.mod$residuals-small.pred.mod.gamma$residuals, 
+                          "DiffModFull"=full.pred.mod$residuals-full.pred.mod.gamma$residuals, 
+                          "Participants"=c(1:length(df.total$PID)))
+
+# Difference in residuals gauss
+df.diff.res %>%
+  mutate( bin=cut_width(x=Participants, width=1000, boundary=0) ) %>%
+  ggplot( aes(x=bin, y= DiffGauss)) +
+  geom_boxplot()
+
+# Difference in residuals gamma
+df.diff.res %>%
+  mutate( bin=cut_width(x=Participants, width=1000, boundary=0) ) %>%
+  ggplot( aes(x=bin, y= DiffGamma)) +
+  geom_boxplot()
+
+# Difference in residuals small gauss and small gamma
+df.diff.res %>%
+  mutate( bin=cut_width(x=Participants, width=1000, boundary=0) ) %>%
+  ggplot( aes(x=bin, y= DiffModSmall)) +
+  geom_boxplot()
+
+# Difference in residuals full gauss and full gamma
+df.diff.res %>%
+  mutate( bin=cut_width(x=Participants, width=1000, boundary=0) ) %>%
+  ggplot( aes(x=bin, y= DiffModFull)) +
+  geom_boxplot()
+
+# mer likhet mellom modellene av samme størrelse enn modellene av samme type
 
 ################################### Own calculations
 

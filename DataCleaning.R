@@ -20,7 +20,7 @@ library(grid)
 ########## LOAD DATA ###################
 
 # Data Study Cohort I (all participants from HUNT2 and/or HUNT3)
-data <- read.spss("Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.frame=T)
+data <- read.spss("/mnt/work/Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.frame=T)
 # får feilmelding om duplicated levels men når jeg sjekker levels så er de unike
 
 ###### Quick overview #######
@@ -276,7 +276,7 @@ introduce(data.2)
 # Data tillegg contains an extra variable, BPMedSiEffEv.NT3CvdQ, 
 # which can be used in combination with BPMedEv.NT3BLQ1
 # to figure out who uses bp med at time of hunt3
-data.bp.med <- read.spss("Data/2019-12-19_108676_Data_tillegg.sav", to.data.frame=T)
+data.bp.med <- read.spss("/mnt/work/Data/2019-12-19_108676_Data_tillegg.sav", to.data.frame=T)
 
 # Extract relevant variables PID and BPMedSiEffEv 
 data.bp.med <- data.frame("PID.108676"= data.bp.med$PID.108676, "BPMedSiEffEv.NT3CvdQ"=data.bp.med$BPMedSiEffEv.NT3CvdQ)

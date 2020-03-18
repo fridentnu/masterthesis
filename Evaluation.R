@@ -355,66 +355,27 @@ fram.spec <- round(100*sum(fram.risk.ad.age<=0.5 & !df.total$SystolicHyp)/sum(!d
 
 
 
+
+
+
 ############################# C-stat ########################
 
-cstat.full<-round(Cstat(full.pred.mod),5)
 
-cstat.small <- round(Cstat(small.pred.mod),5)
-
-cstat.full.gamma<- round(Cstat(full.pred.mod.gamma),5)  # biggest cstat
-
-cstat.small.gamma <- round(Cstat(small.pred.mod.gamma),5)
-
-max(cstat.full,cstat.small,cstat.full.gamma,cstat.small.gamma)
-
-
-
-
-############################ ROC ##########################
-plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140)), main="full")
-
-plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140)), main="small")
-
-plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140)), main="full gamma")
-
-plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140)), main="small gamma")
-
-plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5)), main="Framingham")
-
-#plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(prob.hyp.full.pred>0.5)), main="full")
-
-# plot ROC til framingham og en av de andre modellene i samme plott. trenger ikke flere
-
-
-############################ AUC #############################
-
-full.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140))),5)
-
-small.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140))),5)
-
-full.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140))),5)
-
-small.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140))),5)
-
-fram.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5))),5)
-fram.auc
-
-fram.auc.func <- function(df.total){
+cstat.func <- function(df.total, mod.risk){
   c.stat <- 0
-  #everyone
-  for(i in 1:length(df.total$PID)){
-    # hypertensive
-    if(df.total$SystolicHyp[i]==TRUE){
-      # everyone
-      for(j in 1:length(df.total$PID)){
-        #not hypertensive
-        if(df.total$SystolicHyp[j]==FALSE){
-          if(fram.risk.ad.age[i]>fram.risk.ad.age[j]){
-            c.stat <- c.stat+1 
-          }else if(fram.risk.ad.age[i]==fram.risk.ad.age[j]){
-            c.stat <- c.stat+0.5
-          }
-        }
+  pid.hyp <- df.total$PID[df.total$SystolicHyp==TRUE]
+  pid.nonhyp <- df.total$PID[df.total$SystolicHyp==FALSE]
+  index.hyp <- match(pid.hyp, df.total$PID)
+  index.nonhyp <- match(pid.nonhyp, df.total$PID)
+  
+  #hypertensive
+  for(i in index.hyp){
+    #non-hypertensive
+    for(j in index.nonhyp){
+      if(mod.risk[i]>mod.risk[j]){
+        c.stat <- c.stat+1 
+      }else if(mod.risk[i]==mod.risk[j]){
+        c.stat <- c.stat+0.5
       }
     }
   }
@@ -422,47 +383,44 @@ fram.auc.func <- function(df.total){
   return(c.stat)
 }
 
-fram.auc <- fram.auc.func(df.total)
-fram.auc
+cstat.full<-round(cstat.func(df.total,prob.hyp.full.pred),5)
+cstat.full
+
+cstat.small <- round(cstat.func(df.total,prob.hyp.small.pred),5)
+cstat.small
+
+cstat.full.gamma<- round(cstat.func(df.total,prob.hyp.full.gamma.pred),5)  # biggest cstat
+cstat.full.gamma
+
+cstat.small.gamma <- round(cstat.func(df.total,prob.hyp.small.gamma.pred),5)
+cstat.small.gamma
+
+cstat.fram <- round(cstat.func(df.total,fram.risk.ad.age),5)
+cstat.fram 
 # 0.7748346
-########################### Hosmer-Lemeshow ##################
 
-
-full.hoslem <- hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140), g=10)
-
-small.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140), g=10)
-
-full.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140), g=10)
-
-small.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140), g=10)
-
-fram.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5), g=10)
-
-# Model not well specified for any of the models since the p-value is below 0.05
 
 
 # Expected % hypertensive, RMSE, Brier, CRPS, Sensitivity, specificity, c-stat, auc, hoslem p
 
 full.eval <- c(exp.prob.hyp.full.pred, full.rmse, full.brier, 
-               full.crps, full.sens, full.spec, cstat.full, full.auc, round(full.hoslem$p.value,5))
+               full.crps, full.sens, full.spec, cstat.full)
 
 small.eval <-c(exp.prob.hyp.small.pred, small.rmse, small.brier, small.crps,
-               small.sens, small.spec,cstat.small, small.auc, round(small.hoslem$p.value,5))
+               small.sens, small.spec,cstat.small)
 
 full.gamma.eval <-c(exp.prob.hyp.full.gamma.pred, full.gamma.rmse, full.gamma.brier,
-                    full.gamma.crps, full.gamma.sens, full.gamma.spec, cstat.full.gamma, 
-                    full.gamma.auc, round(full.gamma.hoslem$p.value,5))
+                    full.gamma.crps, full.gamma.sens, full.gamma.spec, cstat.full.gamma)
 
 small.gamma.eval <-c(exp.prob.hyp.small.gamma.pred, small.gamma.rmse, small.gamma.brier, 
-                     small.gamma.crps, small.gamma.sens, small.gamma.spec, cstat.small.gamma, 
-                     small.gamma.auc, round(small.gamma.hoslem$p.value,5))
+                     small.gamma.crps, small.gamma.sens, small.gamma.spec, cstat.small.gamma)
 
 fram.eval <-c(exp.prob.hyp.fram, "NA", fram.brier, "NA", fram.sens,
-              fram.spec, "NA", fram.auc, round(fram.hoslem$p.value,5))
+              fram.spec, cstat.fram)
 
 
 eval.methods <- c("Exp. Hyp", "RMSE", "BrierScore", "CRPS",
-                  "Sensitivity %", "Specificity %", "C-stat", "AUC", "HosLem p-val")
+                  "Sensitivity", "Specificity", "C-statistic")
 
 df.eval <- data.frame("Eval.Method"=eval.methods, "Full.Gauss"=full.eval, 
                       "Small.Gauss"=small.eval, "Full.Gamma"=full.gamma.eval, 
@@ -595,9 +553,53 @@ write.csv(df.eval,"Tables/Eval/TotalEval.csv", row.names = FALSE)
 
 
 
-
-
-
+# 
+# ########################### Hosmer-Lemeshow ##################
+# 
+# 
+# full.hoslem <- hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140), g=10)
+# 
+# small.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140), g=10)
+# 
+# full.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140), g=10)
+# 
+# small.gamma.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140), g=10)
+# 
+# fram.hoslem <-hoslem.test(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5), g=10)
+# 
+# # Model not well specified for any of the models since the p-value is below 0.05
+# 
+# 
+# ############################ ROC ##########################
+# 
+# plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140)), main="full")
+# 
+# plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140)), main="small")
+# 
+# plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140)), main="full gamma")
+# 
+# plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140)), main="small gamma")
+# 
+# plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5)), main="Framingham")
+# 
+# #plot(roc(as.numeric(df.total$SystolicHyp), as.numeric(prob.hyp.full.pred>0.5)), main="full")
+# 
+# # plot ROC til framingham og en av de andre modellene i samme plott. trenger ikke flere
+# 
+# 
+# ############################ AUC #############################
+# 
+# full.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod$fitted.values>=140))),5)
+# 
+# small.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod$fitted.values>=140))),5)
+# 
+# full.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(full.pred.mod.gamma$fitted.values>=140))),5)
+# 
+# small.gamma.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(small.pred.mod.gamma$fitted.values>=140))),5)
+# 
+# fram.auc <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp), as.numeric(fram.risk.ad.age>0.5))),5)
+# fram.auc
+# 
 
 
 

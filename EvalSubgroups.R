@@ -79,24 +79,17 @@ full.sensitivy.cvd <- round(100*sum(full.pred.mod$fitted.values[df.total$CVD3]>=
 full.specificity.cvd <- round(100*sum(full.pred.mod$fitted.values[df.total$CVD3]<140 & !df.total$SystolicHyp[df.total$CVD3])/sum(!df.total$SystolicHyp[df.total$CVD3]),3)
 # worse specificity
 
-# AUC
-full.auc.cvd <-round(as.numeric(auc(as.numeric(df.total$SystolicHyp[df.total$CVD3]), as.numeric(full.pred.mod$fitted.values[df.total$CVD3]>=140))),5)
-# very similar auc
+
 
 # C-stat
-# not possible to find for subgroups
-
-# Hosmer-Lemeshow
-full.hoslem.cvd<- hoslem.test(as.numeric(df.total$SystolicHyp[df.total$CVD3]), 
-                    as.numeric(full.pred.mod$fitted.values[df.total$CVD3]>=140),g=20)
-# slightly better hosmer-lemeshow, but still bad
-
+cstat.cvd<-round(cstat.func(df.total[df.total$CVD3==TRUE,],prob.hyp.full.pred[df.total$CVD3==TRUE]),5)
+cstat.cvd
 
 # Export dataframe with results
 
 df.eval.cvd <- data.frame("RMSE"=round(full.rmse.cvd,3), "BrierScore"=full.brier.cvd, "CRPS"=round(mean(full.crps.cvd),3),
                                "Sensitivity"=full.sensitivy.cvd, "Specificity"=full.specificity.cvd, 
-                               "AUC"=full.auc.cvd, "Hos.Lem p-val"=round(full.hoslem.cvd$p.value,4))
+                               "C-statistic"=cstat.cvd)
 write.csv(df.eval.cvd,"Tables/Eval/CVD.csv", row.names = FALSE)
 
 
@@ -175,21 +168,13 @@ full.sensitivy.diabetes <- round(100*sum(full.pred.mod$fitted.values[df.total$Di
 full.specificity.diabetes<-round(100*sum(full.pred.mod$fitted.values[df.total$Diabetes3]<140 & !df.total$SystolicHyp[df.total$Diabetes3])/sum(!df.total$SystolicHyp[df.total$Diabetes3]),3)
 # wors specificity
 
-# AUC
-full.auc.diabetes <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp[df.total$Diabetes3]), as.numeric(full.pred.mod$fitted.values[df.total$Diabetes3]>=140))),4)
-# slightly better auc
-
 # C-stat
-# not possible to find for subgroups
-
-# Hosmer-Lemeshow
-full.hoslem.diabetes<- hoslem.test(as.numeric(df.total$SystolicHyp[df.total$Diabetes3]), 
-            as.numeric(full.pred.mod$fitted.values[df.total$Diabetes3]>=140),g=20)
-# slightly better hosmer-lemeshow, but still bad
+cstat.diabetes <-round(cstat.func(df.total[df.total$Diabetes3==TRUE,],prob.hyp.full.pred[df.total$Diabetes3==TRUE]),5)
+cstat.diabetes
 
 df.eval.diabetes <- data.frame("RMSE"=round(full.rmse.diabetes,3), "BrierScore"=full.brier.diabetes, "CRPS"=round(mean(full.crps.diabetes),3),
                           "Sensitivity"=full.sensitivy.diabetes, "Specificity"=full.specificity.diabetes, 
-                          "AUC"=full.auc.diabetes, "Hos.Lem p-val"=round(full.hoslem.diabetes$p.value,4))
+                          "C-statistic"=cstat.diabetes)
 write.csv(df.eval.diabetes,"Tables/Eval/Diabetes.csv", row.names = FALSE)
 
 # Example 7, BP Med ##############################################################################
@@ -268,22 +253,16 @@ full.sensitivy.bpmed<- round(100*sum(full.pred.mod$fitted.values[df.total$BPMed3
 full.specificity.bpmed<- round(100*sum(full.pred.mod$fitted.values[df.total$BPMed3]<140 & !df.total$SystolicHyp[df.total$BPMed3])/sum(!df.total$SystolicHyp[df.total$BPMed3]),3)
 # worse specificity
 
-# AUC
-full.auc.bpmed <- round(as.numeric(auc(as.numeric(df.total$SystolicHyp[df.total$BPMed3]), as.numeric(full.pred.mod$fitted.values[df.total$BPMed3]>=140))),4)
-# worse auc
 
 # C-stat
-# not possible to find for subgroups
+cstat.bpmed <-round(cstat.func(df.total[df.total$BPMed3==TRUE,],prob.hyp.full.pred[df.total$BPMed3==TRUE]),5)
+cstat.bpmed
 
-# Hosmer-Lemeshow
-full.hoslem.bpmed<- hoslem.test(as.numeric(df.total$SystolicHyp[df.total$BPMed3]), 
-            as.numeric(full.pred.mod$fitted.values[df.total$BPMed3]>=140),g=20)
-# very bad
 
 
 df.eval.bpmed <- data.frame("RMSE"=round(full.rmse.bpmed,3), "BrierScore"=full.brier.bpmed, "CRPS"=round(mean(full.crps.bpmed),3),
                                "Sensitivity"=full.sensitivy.bpmed, "Specificity"=full.specificity.bpmed, 
-                               "AUC"=full.auc.bpmed, "Hos.Lem p-val"=round(full.hoslem.bpmed$p.value,4))
+                               "C-statistic"=cstat.bpmed)
 write.csv(df.eval.bpmed,"Tables/Eval/BPMed.csv", row.names = FALSE)
 
 
