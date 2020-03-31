@@ -88,6 +88,8 @@ abline(v=full.pred.mod.gamma$fitted.values[index.1], col="brown")
 abline(v=small.pred.mod.gamma$fitted.values[index.1], col="orange")
 legend("topright", legend=c("BP 2", "BP 3", "M1", "M2", "M3", "M4"),
        col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
+dev.copy(pdf,'~/figures/Models/Eval/Participant1.pdf') # Save the plot
+dev.off()
 
 ### Comment:
 # for index 1 (20) BP2= 135 , BP3=88, (not on bpmed), full and small gamma eqivalent, same for full and small gamma, and all have same fitted values

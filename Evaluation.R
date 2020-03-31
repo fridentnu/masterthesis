@@ -5,33 +5,17 @@ library(MASS)
 library(pROC)
 library(ResourceSelection)
 
-load("MyData/Models.RData")
+#load("MyData/Models.RData")
 load("MyData/Framingham.RData")
 
+source("R code/Models.R")
 ###### OBSERVATIONS #######
 obs.hyp <- sum(df.total$SystolicHyp)/length(df.total$SystolicHyp)
 obs.hyp
 
-######################### DISTRIBUTIONS ###########################
-### FULL MODEL
-# Variance and standard deviation for each participants response
+######################### PROBABILITY HYPERTENSION ###########################
 
-full.design.mat <- model.matrix(full.pred.mod)
-
-# check that should use confidence
-full.var.coeff <- var(full.pred.mod$residuals)*solve(t(full.design.mat)%*%full.design.mat)
-full.exp.var <- rep(0,length(df.total$PID))
-
-for(i in 1:length(df.total$PID)){
-  full.exp.var[i] <- t(full.design.mat[i,])%*%full.var.coeff%*%full.design.mat[i,]
-}
-mean(predict(full.pred.mod, se.fit=T)$se.fit**2 - full.exp.var)
-
-# Alternative. 
-#full.var.y <- predict(full.pred.mod, se.fit=T)$se.fit**2 + predict(full.pred.mod, se.fit=T)$residual.scale**2
-full.var.y <- full.exp.var + sum((residuals(full.pred.mod)-mean(residuals(full.pred.mod)))**2)/(length(df.total$PID)-1)
-full.sd.y<- sqrt(full.var.y)
-
+####### FULL MODEL
 # probability that each systolic pressure is equal to or above 140 mmHg
 prob.hyp.full.pred <-pnorm(140, mean=full.pred.mod$fitted.values, sd=full.sd.y, lower.tail = F)
 prob.hyp.full.pred
@@ -44,24 +28,7 @@ exp.prob.hyp.full.pred <- round(100*mean(prob.hyp.full.pred),3)
 exp.prob.hyp.full.pred
 # Expected number of hypertensives are nearly 20% of population
 
-
-### SMALL MODEL
-# Variance and standard deviation for each participants response
-small.design.mat <- model.matrix(small.pred.mod)
-
-# check that should use confidence
-small.var.coeff <- var(small.pred.mod$residuals)*solve(t(small.design.mat)%*%small.design.mat)
-small.exp.var <- rep(0,length(df.total$PID))
-
-for(i in 1:length(df.total$PID)){
-  small.exp.var[i] <- t(small.design.mat[i,])%*%small.var.coeff%*%small.design.mat[i,]
-}
-mean(predict(small.pred.mod, se.fit=T)$se.fit**2 - small.exp.var)
-
-# Alternative: predict(small.pred.mod, se.fit=T)$se.fit**2 + predict(small.pred.mod, se.fit=T)$residual.scale**2
-small.var.y <- small.exp.var + sum((residuals(small.pred.mod)-mean(residuals(small.pred.mod)))**2)/(length(df.total$PID)-1)
-small.sd.y<- sqrt(small.var.y)
-
+########## SMALL MODEL
 # probability that each systolic pressure is equal to or above 140 mmHg
 prob.hyp.small.pred <-pnorm(140, mean=small.pred.mod$fitted.values, sd=small.sd.y, lower.tail = F)
 prob.hyp.small.pred
@@ -92,11 +59,6 @@ exp.prob.hyp.small.pred
 #hist(prob.hyp.full.gamma.pred)
 
 ### ALT 3
-
-full.gamma.shape <- 1/summary(full.pred.mod.gamma)$dispersion
-full.gamma.shape
-
-full.gamma.rate <- full.gamma.shape/full.pred.mod.gamma$fitted.values
 
 prob.hyp.full.gamma.pred <-pgamma(140, shape=full.gamma.shape,rate=full.gamma.rate, lower.tail = F)
 
@@ -151,12 +113,6 @@ exp.prob.hyp.full.gamma.pred
 
 
 ### SMALL GAMMA
-
-small.gamma.shape <- 1/summary(small.pred.mod.gamma)$dispersion
-small.gamma.shape
-
-small.gamma.rate <- small.gamma.shape/small.pred.mod.gamma$fitted.values
-
 prob.hyp.small.gamma.pred <-pgamma(140, shape=small.gamma.shape,rate=small.gamma.rate, lower.tail = F)
 
 hist(prob.hyp.small.gamma.pred)
@@ -169,10 +125,66 @@ exp.prob.hyp.small.gamma.pred
 
 
 #### Framingham
-
 exp.prob.hyp.fram <- round(100*mean(fram.risk.ad.age),3)
 exp.prob.hyp.fram
 
+
+########################### QQPLOT ##################################
+
+
+#### CHECK NORMALITY
+n <- length(df.total$PID)
+
+# Full model
+quant.full.mod <- pnorm(df.total$SystolicBP3, mean=full.pred.mod$fitted.values, sd=full.sd.y)
+quant.sort.full.mod <- sort(quant.full.mod)
+
+plot(c(1:n/n), quant.sort.full.mod, main="QQ-plot, full Gaussian model",
+     ylab="Observed quantiles",xlab="Theoretical quantiles", pch=20)
+lines(c(0:1),c(0,1), col="steelblue",lwd=3)
+dev.copy(pdf,'~/figures/Models/Eval/QQFullGauss.pdf') # Save the plot
+dev.off()
+
+# Full model
+quant.full.mod <- qnorm(c(1:n)/(n+1),mean=full.pred.mod$fitted.values, sd=full.sd.y)
+
+df.quant.full.mod <- data.frame("Quant"=quant.full.mod,"Obs"=df.total$SystolicBP3)
+
+plot(sort(df.total$SystolicBP3), quant.full.mod, main="QQ-plot, full Gaussian model",
+     ylab="Observed quantiles",xlab="Theoretical quantiles", pch=20)
+lines(c(0:200),c(0:200), col="steelblue",lwd=3)
+dev.copy(pdf,'~/figures/Models/Eval/QQFullGaussSources.pdf') # Save the plot
+dev.off()
+
+# Small model
+quant.small.mod <- pnorm(df.total$SystolicBP3,mean=small.pred.mod$fitted.values, sd=small.sd.y)
+quant.sort.small.mod <- sort(quant.small.mod)
+
+plot(c(1:n/n), quant.sort.small.mod, main="QQ-plot, small Gaussian model",
+     ylab="Observed quantiles",xlab="Theoretical quantiles", pch=20)
+lines(c(0:1),c(0,1), col="steelblue",lwd=3)
+dev.copy(pdf,'~/figures/Models/Eval/QQSmallGauss.pdf') # Save the plot
+dev.off()
+
+# Full gamma model
+quant.full.mod.gamma <- pgamma(df.total$SystolicBP3,  shape=full.gamma.shape,rate=full.gamma.rate)
+quant.sort.full.mod.gamma <- sort(quant.full.mod.gamma)
+
+plot(c(1:n/n), quant.sort.full.mod.gamma, main="QQ-plot, full gamma model",
+     ylab="Observed quantiles",xlab="Theoretical quantiles", pch=20)
+lines(c(0:1),c(0,1), col="steelblue",lwd=3)
+dev.copy(pdf,'~/figures/Models/Eval/QQFullGamma.pdf') # Save the plot
+dev.off()
+
+# Small gamma model
+quant.full.mod.gamma <- pgamma(df.total$SystolicBP3,  shape=full.gamma.shape,rate=full.gamma.rate)
+quant.sort.full.mod.gamma <- sort(quant.full.mod.gamma)
+
+plot(c(1:n/n), quant.sort.full.mod.gamma, main="QQ-plot, small gamma model",
+     ylab="Observed quantiles",xlab="Theoretical quantiles", pch=20)
+lines(c(0:1),c(0,1), col="steelblue",lwd=3)
+dev.copy(pdf,'~/figures/Models/Eval/QQSmallGamma.pdf') # Save the plot
+dev.off()
 
 ########################## RMSE ########################################
 
@@ -283,24 +295,28 @@ fram.brier
 ### FULL MODEL
 
 prob.obs.full.pred <- pnorm(df.total$SystolicBP3, mean=full.pred.mod$fitted.values, sd=full.sd.y)
-hist(prob.obs.full.pred)
-
+hist(prob.obs.full.pred,xlab="Quantiles", main="PIT, Full Gaussian")
+dev.copy(pdf,'~/figures/Models/Eval/PITFullGauss.pdf') # Save the plot
+dev.off()
 
 ### SMALL MODEL
 
 prob.obs.small.pred <- pnorm(df.total$SystolicBP3, mean=small.pred.mod$fitted.values, sd=small.sd.y)
-hist(prob.obs.small.pred)
-
+hist(prob.obs.small.pred, xlab="Quantiles", main="PIT, Small Gaussian")
+dev.copy(pdf,'~/figures/Models/Eval/PITSmallGauss.pdf') # Save the plot
+dev.off()
 
 ### FULL GAMMA
 prob.obs.full.gamma.pred <- pgamma(df.total$SystolicBP3, shape=full.gamma.shape, rate=full.gamma.rate)
-hist(prob.obs.full.gamma.pred)
-
+hist(prob.obs.full.gamma.pred, xlab="Quantiles", main="PIT, Full Gamma")
+dev.copy(pdf,'~/figures/Models/Eval/PITFullGamma.pdf') # Save the plot
+dev.off()
 
 ### SMALL GAMMA
 prob.obs.small.gamma.pred <- pgamma(df.total$SystolicBP3, shape=small.gamma.shape, rate=small.gamma.rate)
-hist(prob.obs.small.gamma.pred)
-
+hist(prob.obs.small.gamma.pred, xlab="Quantiles", main="PIT, Small Gamma")
+dev.copy(pdf,'~/figures/Models/Eval/PITSmallGamma.pdf') # Save the plot
+dev.off()
 
 
 ########################## Sensitivity and Specificity  ############### 
