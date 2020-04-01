@@ -102,34 +102,39 @@ plot.residual.constant
 
 ############### Standard deviaton of residuals ############################
 
-
+# remove all intervals with less than 15 participants
 sd.cont.res <- function(df.res){
-  sd.res <- rep(0,length(levels(df.res$bin)))
-  upper.res <- rep(0,length(levels(df.res$bin)))
-  lower.res <- rep(0,length(levels(df.res$bin)))
+  sd.res <- vector()
+  upper.res <- vector()
+  lower.res <- vector()
+  bin <- vector()
+  count=0
   for(i in 1:length(levels(df.res$bin))){
     indexes=which(df.res$bin==levels(df.res$bin)[i])
-    if(length(indexes)==1){next}
+    if(length(indexes)<15){next}
     print(length(indexes))
-    sd.res[i]<- sd(df.res$Residuals[indexes])
+    count=count+1
+    bin <- c(bin,levels(df.res$bin)[i])
+    sd.res<- c(sd.res,sd(df.res$Residuals[indexes]))
     chi_r <-qchisq(0.025,length(indexes)-1, lower.tail=TRUE)
     chi_l <-qchisq(0.025,length(indexes)-1, lower.tail=FALSE)
-    lower.res[i]<- sqrt((length(indexes)-1)*sd.res[i]**2/chi_l)
-    upper.res[i]<- sqrt((length(indexes)-1)*sd.res[i]**2/chi_r)
+    lower.res<- c(lower.res,sqrt((length(indexes)-1)*sd.res[count]**2/chi_l))
+    upper.res<- c(upper.res,sqrt((length(indexes)-1)*sd.res[count]**2/chi_r))
   }
-  return(data.frame("SD"=sd.res, "Lower"=lower.res, "Upper"=upper.res))
+  return(data.frame("SD"=sd.res, "Lower"=lower.res, "Upper"=upper.res, "bin"=bin))
 }
+
 
 ### Full Gaussian
 sd.res.full <- sd.cont.res(df.residual.full)
 sd.res.full
 
-df.residual.full$bin <- factor(df.residual.full$bin , levels = levels(df.residual.full$bin))
+#df.residual.full$bin <- factor(df.residual.full$bin , levels = levels(df.residual.full$bin))
 
 plot.res.sd.full <-ggplot(sd.res.full)+
-  geom_point(aes(x=levels(df.residual.full$bin), y=SD), color="red", shape=8,size=6)+
-  geom_point(aes(x=levels(df.residual.full$bin),y=Lower), shape=18, size=6,color="blue")+
-  geom_point(aes(x=levels(df.residual.full$bin),y=Upper), shape=18, size=6,color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red", shape=8,size=6)+
+  geom_point(aes(x=bin,y=Lower), shape=18, size=6,color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18, size=6,color="blue")+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
@@ -145,12 +150,12 @@ dev.off()
 sd.res.small <- sd.cont.res(df.residual.small)
 sd.res.small
 
-df.residual.small$bin <- factor(df.residual.small$bin , levels = levels(df.residual.small$bin))
+#df.residual.small$bin <- factor(df.residual.small$bin , levels = levels(df.residual.small$bin))
 
 plot.res.sd.small <-ggplot(sd.res.small)+
-  geom_point(aes(x=levels(df.residual.small$bin), y=SD), color="red", size=6, shape=8)+
-  geom_point(aes(x=levels(df.residual.small$bin),y=Lower), shape=18, size=6,color="blue")+
-  geom_point(aes(x=levels(df.residual.small$bin),y=Upper), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red", size=6, shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18, size=6,color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
@@ -167,12 +172,12 @@ dev.off()
 sd.res.full.gamma <- sd.cont.res(df.residual.full.gamma)
 sd.res.full.gamma
 
-df.residual.full.gamma$bin <- factor(df.residual.full.gamma$bin , levels = levels(df.residual.full.gamma$bin))
+#df.residual.full.gamma$bin <- factor(df.residual.full.gamma$bin , levels = levels(df.residual.full.gamma$bin))
 
 plot.res.sd.full.gamma <-ggplot(sd.res.full.gamma)+
-  geom_point(aes(x=levels(df.residual.full.gamma$bin), y=SD), color="red", size=6, shape=8)+
-  geom_point(aes(x=levels(df.residual.full.gamma$bin),y=Lower), shape=18, size=6, color="blue")+
-  geom_point(aes(x=levels(df.residual.full.gamma$bin),y=Upper), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red", size=6, shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18, size=6, color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
@@ -189,12 +194,12 @@ dev.off()
 sd.res.small.gamma <- sd.cont.res(df.residual.small.gamma)
 sd.res.small.gamma
 
-df.residual.small.gamma$bin <- factor(df.residual.small.gamma$bin , levels = levels(df.residual.small.gamma$bin))
+#df.residual.small.gamma$bin <- factor(df.residual.small.gamma$bin , levels = levels(df.residual.small.gamma$bin))
 
 plot.res.sd.small.gamma <-ggplot(sd.res.small.gamma)+
-  geom_point(aes(x=levels(df.residual.small.gamma$bin),y=Lower), shape=18, size=6,color="blue")+
-  geom_point(aes(x=levels(df.residual.small.gamma$bin),y=Upper), shape=18,size=6, color="blue")+
-  geom_point(aes(x=levels(df.residual.small.gamma$bin), y=SD), color="red", size=6,shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18, size=6,color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
@@ -208,7 +213,7 @@ dev.copy(pdf,'~/figures/Models/Residuals/SDResSmallGamma.pdf') # Save the plot
 dev.off()
 ###########  Residuals versus explanatory variables ###########
 
-##### FULL MODEL #########
+##### Small gamma MODEL #########
 
 exp.var.small
 df.residual.exp.var <- data.frame("SystolicBP2"=df.total$SystolicBP2,
@@ -219,7 +224,7 @@ df.residual.exp.var <- data.frame("SystolicBP2"=df.total$SystolicBP2,
                                   "BPHigPar"=df.total$BPHigPar2,
                                   "HDLCholesterol"=df.total$HDLCholesterol2,
                                   "Education"=df.total$Education2,
-                                  "Residuals"=full.pred.mod$residuals)
+                                  "Residuals"=small.pred.mod.gamma$residuals)
 
 plot.residual.sysBP2 <- df.residual.exp.var %>%
   mutate( bin=cut_width(x=SystolicBP2, width=5, boundary=0) ) %>%
@@ -229,10 +234,9 @@ plot.residual.sysBP2 <- df.residual.exp.var %>%
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Systolic blood pressure HUNT2") + ylab("Residuals")+
-  ggtitle("Full Gaussian model")
+  xlab("Systolic blood pressure HUNT2") + ylab("Residuals")
 grid.arrange(plot.residual.sysBP2, nrow=1)
-dev.copy(pdf,'~/figures/Models/Residuals/ResSys2FullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResSys2SmallGamma.pdf') # Save the plot
 dev.off()
 # almost homoscedastic with zero mean, but more outliers for bigger systolic bp2
 # INCLUDE
@@ -246,10 +250,9 @@ plot.residual.diaBP2 <- df.residual.exp.var %>%
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Diastolic blood pressure BP2") + ylab("Residuals")+
-  ggtitle("Full Gaussian model")
+  xlab("Diastolic blood pressure BP2") + ylab("Residuals")
 grid.arrange(plot.residual.diaBP2, nrow=1)
-dev.copy(pdf,'~/figures/Models/Residuals/ResDia2FullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResDia2SmallGamma.pdf') # Save the plot
 dev.off()
 # almost homoscedastic with zero mean, 
 # higher mean for low values
@@ -264,10 +267,9 @@ plot.residual.BMI <- df.residual.exp.var %>%
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("BMI") + ylab("Residuals")+
-  ggtitle("Full Gaussian model")
+  xlab("BMI") + ylab("Residuals")
 grid.arrange(plot.residual.BMI, nrow=1)
-dev.copy(pdf,'~/figures/Models/Residuals/ResBMIFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResBMISmallGamma.pdf') # Save the plot
 dev.off()
 # almost homoscedastic with zero mean, 
 # strange effects towrds upper end (where there are few people)
@@ -280,10 +282,9 @@ plot.residual.birthyear<- df.residual.exp.var %>%
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Birthyear") + ylab("Residuals")+
-  ggtitle("Full Gaussian model")
+  xlab("Birthyear") + ylab("Residuals")
 grid.arrange(plot.residual.birthyear, nrow=1)
-dev.copy(pdf,'~/figures/Models/Residuals/ResBYFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResBYSmallGamma.pdf') # Save the plot
 dev.off()
 # almost homoscedastic with zero mean, 
 # strange effects towrds upper end (where there are few people)
@@ -297,10 +298,9 @@ plot.residual.hdl<- df.residual.exp.var %>%
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("HDL Cholesterol") + ylab("Residuals")+
-  ggtitle("Full Gaussian model")
+  xlab("HDL Cholesterol") + ylab("Residuals")
 grid.arrange(plot.residual.hdl, nrow=1)
-dev.copy(pdf,'~/figures/Models/Residuals/ResHDLFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResHDLSmallGamma.pdf') # Save the plot
 dev.off()
 # almost homoscedastic with zero mean, 
 # strange effects towrds upper end (where there are few people)
@@ -309,17 +309,17 @@ dev.off()
 ## INCLUDE EVEN IF NO EFFECT?
 ggplot(df.residual.exp.var)+
   geom_boxplot(mapping = aes(x=PAI, y=Residuals))
-dev.copy(pdf,'~/figures/Models/Residuals/ResPAIFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResPAISmallGamma.pdf') # Save the plot
 dev.off()
 
 ggplot(df.residual.exp.var)+
   geom_boxplot(mapping = aes(x=BPHigPar, y=Residuals))
-dev.copy(pdf,'~/figures/Models/Residuals/ResBPHigParFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResBPHigParSmallGamma.pdf') # Save the plot
 dev.off()
 
 ggplot(df.residual.exp.var)+
   geom_boxplot(mapping = aes(x=Education, y=Residuals))
-dev.copy(pdf,'~/figures/Models/Residuals/ResEducFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/ResEducSmallGamma.pdf') # Save the plot
 dev.off()
 
 
@@ -328,16 +328,16 @@ dev.off()
 
 
 # Birthyear
-df.residual.by <-  data.frame("BirthYear"=df.total$BirthYear, "Residuals"=full.pred.mod$residuals) %>%
+df.residual.by <-  data.frame("BirthYear"=df.total$BirthYear, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=BirthYear, width=10, boundary=0,dig.lab=5) )
 
 sd.res.by <- sd.cont.res(df.residual.by)
 sd.res.by
 
 plot.res.sd.by <-ggplot(sd.res.by)+
-  geom_point(aes(x=levels(df.residual.by$bin), y=SD), color="red",size=6, shape=8)+
-  geom_point(aes(x=levels(df.residual.by$bin),y=Lower), shape=18, size=6, color="blue")+
-  geom_point(aes(x=levels(df.residual.by$bin),y=Upper), shape=18, size=6, color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red",size=6, shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18, size=6, color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18, size=6, color="blue")+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
@@ -345,20 +345,20 @@ plot.res.sd.by <-ggplot(sd.res.by)+
   xlab("Birthyear") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.by$bin))
 plot.res.sd.by
-dev.copy(pdf,'~/figures/Models/Residuals/SDResBYFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/SDResBYSmallGamma.pdf') # Save the plot
 dev.off()
 
 ## BMI
-df.residual.bmi <-  data.frame("BMI"=df.total$BMI, "Residuals"=full.pred.mod$residuals) %>%
+df.residual.bmi <-  data.frame("BMI"=df.total$BMI, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=BMI, width=10, boundary=0, dig.lab=5) )
 
 sd.res.bmi <- sd.cont.res(df.residual.bmi)
 sd.res.bmi
 
 plot.res.sd.bmi <-ggplot(sd.res.bmi)+
-  geom_point(aes(x=levels(df.residual.bmi$bin), y=SD), color="red", size=6,shape=8)+
-  geom_point(aes(x=levels(df.residual.bmi$bin),y=Lower), shape=18,size=6, color="blue")+
-  geom_point(aes(x=levels(df.residual.bmi$bin),y=Upper), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
@@ -366,21 +366,21 @@ plot.res.sd.bmi <-ggplot(sd.res.bmi)+
   xlab("BMI") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.bmi$bin))
 plot.res.sd.bmi
-dev.copy(pdf,'~/figures/Models/Residuals/SDResBMIFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/SDResBMISmallGamma.pdf') # Save the plot
 dev.off()
 
 ####### Sys2
 
-df.residual.sys2 <-  data.frame("Sys2"=df.total$SystolicBP2, "Residuals"=full.pred.mod$residuals) %>%
+df.residual.sys2 <-  data.frame("Sys2"=df.total$SystolicBP2, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=Sys2, width=10, boundary=0, dig.lab=5) )
 
 sd.res.sys2 <- sd.cont.res(df.residual.sys2)
 sd.res.sys2
 
 plot.res.sd.sys2 <-ggplot(sd.res.sys2)+
-  geom_point(aes(x=levels(df.residual.sys2$bin), y=SD), color="red", size=6,shape=8)+
-  geom_point(aes(x=levels(df.residual.sys2$bin),y=Lower), shape=18,size=6, color="blue")+
-  geom_point(aes(x=levels(df.residual.sys2$bin),y=Upper), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
@@ -388,37 +388,56 @@ plot.res.sd.sys2 <-ggplot(sd.res.sys2)+
   xlab("Systolic blood pressure HUNT2") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.sys2$bin))
 plot.res.sd.sys2
-dev.copy(pdf,'~/figures/Models/Residuals/SDRessys2FullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/SDRessys2SmallGamma.pdf') # Save the plot
 dev.off()
 
 
 ####### Dia2
-df.residual.dia2 <-  data.frame("Dia2"=df.total$DiastolicBP2, "Residuals"=full.pred.mod$residuals) %>%
+df.residual.dia2 <-  data.frame("Dia2"=df.total$DiastolicBP2, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=Dia2, width=10, boundary=0, dig.lab=5) )
 
 sd.res.dia2 <- sd.cont.res(df.residual.dia2)
 sd.res.dia2
 
 plot.res.sd.dia2 <-ggplot(sd.res.dia2)+
-  geom_point(aes(x=levels(df.residual.dia2$bin), y=SD), color="red", size=6,shape=8)+
-  geom_point(aes(x=levels(df.residual.dia2$bin),y=Lower), shape=18,size=6, color="blue")+
-  geom_point(aes(x=levels(df.residual.dia2$bin),y=Upper), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
   theme(axis.title.x = element_text(size=14),
         axis.title.y = element_text(size=14),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Systolic blood pressure HUNT2") + ylab("SD of residuals")+
+  xlab("Diastolic blood pressure HUNT2") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.dia2$bin))
 plot.res.sd.dia2
-dev.copy(pdf,'~/figures/Models/Residuals/SDResDia2FullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/SDResDia2SmallGamma.pdf') # Save the plot
 dev.off()
 
 
+####### HDLChol
+df.residual.hdl <-  data.frame("hdl"=df.total$HDLCholesterol2, "Residuals"=small.pred.mod.gamma$residuals) %>%
+  mutate( bin=cut_width(x=hdl, width=1, boundary=0, dig.lab=5) )
 
+sd.res.hdl <- sd.cont.res(df.residual.hdl)
+sd.res.hdl
+
+plot.res.sd.hdl <-ggplot(sd.res.hdl)+
+  geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
+  geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
+  geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
+  theme(axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  xlab("HDL Cholesterol") + ylab("SD of residuals")+
+  scale_x_discrete(limits=levels(df.residual.hdl$bin))
+plot.res.sd.hdl
+dev.copy(pdf,'~/figures/Models/Residuals/SDResHDLSmallGamma.pdf') # Save the plot
+dev.off()
 
 
 #### PAI
-df.residual.pai <-  data.frame("PAI"=df.total$PAI2, "Residuals"=full.pred.mod$residuals)
+df.residual.pai <-  data.frame("PAI"=df.total$PAI2, "Residuals"=small.pred.mod.gamma$residuals)
 
 sd.pai.res <- function(df.res){
   print(head(df.res$PAI))
@@ -440,7 +459,7 @@ sd.pai.res <- function(df.res){
 sd.pai.res.pai <- sd.pai.res(df.residual.pai)
 sd.pai.res.pai
 
-plot.res.sd.pai <-ggplot(sd.fact.res.pai)+
+plot.res.sd.pai <-ggplot(sd.pai.res.pai)+
   geom_point(aes(x=levels(df.residual.pai$PAI), y=SD), color="red", size=6, shape=8)+
   geom_point(aes(x=levels(df.residual.pai$PAI),y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=levels(df.residual.pai$PAI),y=Upper), shape=18,size=6, color="blue")+
@@ -451,11 +470,50 @@ plot.res.sd.pai <-ggplot(sd.fact.res.pai)+
   xlab("PAI") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.pai$PAI))
 plot.res.sd.pai
-dev.copy(pdf,'~/figures/Models/Residuals/SDResPAIFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/SDResPAISmallGamma.pdf') # Save the plot
 dev.off()
 
+########### Education level
+
+df.residual.edu <-  data.frame("Edu"=df.total$Education2, "Residuals"=small.pred.mod.gamma$residuals)
+
+sd.edu.res <- function(df.res){
+  print(head(df.res$Edu))
+  sd.res <- rep(0,length(levels(df.res$Edu)))
+  upper.res <- rep(0,length(levels(df.res$Edu)))
+  lower.res <- rep(0,length(levels(df.res$Edu)))
+  for(i in 1:length(levels(df.res$Edu))){
+    indexes=which(df.res$Edu==levels(df.res$Edu)[i])
+    if(length(indexes)==1){next}
+    print(length(indexes))
+    sd.res[i]<- sd(df.res$Residuals[indexes])
+    chi_r <-qchisq(0.025,length(indexes)-1, lower.tail=TRUE)
+    chi_l <-qchisq(0.025,length(indexes)-1, lower.tail=FALSE)
+    lower.res[i]<- sqrt((length(indexes)-1)*sd.res[i]**2/chi_l)
+    upper.res[i]<- sqrt((length(indexes)-1)*sd.res[i]**2/chi_r)
+  }
+  return(data.frame("SD"=sd.res, "Lower"=lower.res, "Upper"=upper.res))
+}
+sd.edu.res.edu <- sd.edu.res(df.residual.edu)
+sd.edu.res.edu
+
+plot.res.sd.edu <-ggplot(sd.edu.res.edu)+
+  geom_point(aes(x=levels(df.residual.edu$Edu), y=SD), color="red", size=6, shape=8)+
+  geom_point(aes(x=levels(df.residual.edu$Edu),y=Lower), shape=18,size=6, color="blue")+
+  geom_point(aes(x=levels(df.residual.edu$Edu),y=Upper), shape=18,size=6, color="blue")+
+  theme(axis.title.x = element_text(size=14),
+        axis.title.y = element_text(size=14),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
+        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  xlab("Education level") + ylab("SD of residuals")+
+  scale_x_discrete(limits=levels(df.residual.edu$Edu))
+plot.res.sd.edu
+dev.copy(pdf,'~/figures/Models/Residuals/SDResEducSmallGamma.pdf') # Save the plot
+dev.off()
+
+
 ###### BPHigPar
-df.residual.bphigpar <-  data.frame("BPHigPar"=df.total$BPHigPar2, "Residuals"=full.pred.mod$residuals)
+df.residual.bphigpar <-  data.frame("BPHigPar"=df.total$BPHigPar2, "Residuals"=small.pred.mod.gamma$residuals)
 
 # TRUE
 sd.res.T<- sd(df.residual.bphigpar$Residuals[df.residual.bphigpar$BPHigPar==TRUE])
@@ -483,7 +541,7 @@ plot.res.sd.bphigpar <-ggplot(sd.res.bphigpar)+
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
   xlab("BPHigPar") + ylab("SD of residuals")
 plot.res.sd.bphigpar
-dev.copy(pdf,'~/figures/Models/Residuals/SDResBPHigParFullGauss.pdf') # Save the plot
+dev.copy(pdf,'~/figures/Models/Residuals/SDResBPHigParSmallGamma.pdf') # Save the plot
 dev.off()
 #################### COMPARE RESIDUALS
 

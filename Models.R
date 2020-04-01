@@ -194,7 +194,7 @@ gamma.coeff$SM.Est[c(1,2,4,5,6,7,8,10,14,19,20,21,22)]<- round(df.coef.small.gam
 gamma.coeff$SM.SD[c(1,2,4,5,6,7,8,10,14,19,20,21,22)]<- round(df.coef.small.gamma[,2],3)
 gamma.coeff$SM.p.val[c(1,2,4,5,6,7,8,10,14,19,20,21,22)]<- round(df.coef.small.gamma[,4],3)
 gamma.coeff
-write.csv(gauss.coeff,"Tables/GammaCoeff.csv", row.names = FALSE)
+write.csv(gamma.coeff,"Tables/GammaCoeff.csv", row.names = FALSE)
 
 
 ################################### Own calculations
