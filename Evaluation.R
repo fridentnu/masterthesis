@@ -15,6 +15,9 @@ obs.hyp
 
 ######################### PROBABILITY HYPERTENSION ###########################
 
+
+
+
 ####### FULL MODEL
 # probability that each systolic pressure is equal to or above 140 mmHg
 prob.hyp.full.pred <-pnorm(140, mean=full.pred.mod$fitted.values, sd=full.sd.y, lower.tail = F)
@@ -223,7 +226,7 @@ round(constant.rmse,3)
 # justert absoluttfeil
 
 ### FULL MODEL
-full.crps <- round(mean(crps(y=df.total.sc$SystolicBP3,family="normal", mean=full.pred.mod$fitted.values, sd=full.sd.y)),3)
+full.crps <- round(mean(crps(y=df.total.sc$SystolicBP3,family="normal", mean=full.pred.mod$fitted.values, sd=full.sd.y)),4)
 full.crps
 
 df.crps <- data.frame("Observed"=df.total.sc$SystolicBP3, "CRPS"=full.crps)
@@ -232,17 +235,17 @@ plot(df.crps$Observed, df.crps$CRPS)
 # ligner på absolute error av residuals
 
 ### SMALL MODEL
-small.crps <- round(mean(crps(y=df.total.sc$SystolicBP3,family="normal", mean=small.pred.mod$fitted.values, sd=small.sd.y)),3)
+small.crps <- round(mean(crps(y=df.total.sc$SystolicBP3,family="normal", mean=small.pred.mod$fitted.values, sd=small.sd.y)),4)
 small.crps
 
 
 #### FULL GAMMA 
-full.gamma.crps <- round(mean(crps_gamma(y=df.total.sc$SystolicBP3,shape=full.gamma.shape, rate=full.gamma.rate)),3)
+full.gamma.crps <- round(mean(crps_gamma(y=df.total.sc$SystolicBP3,shape=full.gamma.shape, rate=full.gamma.rate)),4)
 full.gamma.crps
 
 
 ### SMALL GAMMA
-small.gamma.crps <- round(mean(crps_gamma(y=df.total.sc$SystolicBP3,shape=small.gamma.shape, rate=small.gamma.rate)),3)
+small.gamma.crps <- round(mean(crps_gamma(y=df.total.sc$SystolicBP3,shape=small.gamma.shape, rate=small.gamma.rate)),4)
 small.gamma.crps
 
 ######################## BRIER SCORE ###################################

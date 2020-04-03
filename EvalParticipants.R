@@ -12,14 +12,17 @@ df.order.obs <- df.order.obs[order(df.total$SystolicBP3),]
 # Example 1, participant #20, BP3 88, diabetes, not cvd or bpmed
 
 
-obs.1 <- df.order.obs$SystolicBP3[16000]
+obs.1 <- df.order.obs$SystolicBP3[15400]
 obs.1
 
-pid.1 <- df.order.obs$PID[16000]
+pid.1 <- df.order.obs$PID[15400]
 pid.1
 
 index.1 <- match(pid.1, df.total$PID)
 index.1
+
+obs.hunt2.1<- df.total$SystolicBP2[index.1]
+obs.hunt2.1
 
 pred.full.1 <- full.pred.mod$fitted.values[index.1]
 pred.full.1
@@ -76,7 +79,7 @@ legend("topright", legend=c("BP 2", "BP 3", "Pred 3"),
 
 
 plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.1], sd=full.sd.y[index.1]), type="l", col="blue",
-     ylab="Probability", xlab="Systolic blood pressure")
+     ylab="Probability", xlab="Systolic blood pressure [mmHg]")
 lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.1], sd=small.sd.y[index.1]), col="green")
 lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.1]), col="brown")
 lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.1]), col="orange")
@@ -86,7 +89,7 @@ abline(v=full.pred.mod$fitted.values[index.1], col="blue")
 abline(v=small.pred.mod$fitted.values[index.1], col="green")
 abline(v=full.pred.mod.gamma$fitted.values[index.1], col="brown")
 abline(v=small.pred.mod.gamma$fitted.values[index.1], col="orange")
-legend("topright", legend=c("BP 2", "BP 3", "M1", "M2", "M3", "M4"),
+legend("topright", legend=c("BP2", "BP3", "M1", "M2", "M3", "M4"),
        col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
 dev.copy(pdf,'~/figures/Models/Eval/Participant1.pdf') # Save the plot
 dev.off()
@@ -165,6 +168,21 @@ abline(v=full.pred.mod$fitted.values[index.2], col="blue")
 legend("topright", legend=c("BP 2", "BP 3", "Pred 3"),
        col=c("green","red", "blue"),lty=1)
 
+plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.2], sd=full.sd.y[index.2]), type="l", col="blue",
+     ylab="Probability", xlab="Systolic blood pressure [mmHg]")
+lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.2], sd=small.sd.y[index.2]), col="green")
+lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.2]), col="brown")
+lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.2]), col="orange")
+abline(v=df.total$SystolicBP2[index.2], col="magenta")
+abline(v=df.total$SystolicBP3[index.2], col="red")
+abline(v=full.pred.mod$fitted.values[index.2], col="blue")
+abline(v=small.pred.mod$fitted.values[index.2], col="green")
+abline(v=full.pred.mod.gamma$fitted.values[index.2], col="brown")
+abline(v=small.pred.mod.gamma$fitted.values[index.2], col="orange")
+legend("topright", legend=c("BP 2", "BP 3", "M1", "M2", "M3", "M4"),
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
+dev.copy(pdf,'~/figures/Models/Eval/Participant2.pdf') # Save the plot
+dev.off()
 
 # Example 3, participant # 16 000, BP 151, not cvd or diabetes or bpmed
 df.order.obs$SystolicBP3[16000]
@@ -206,21 +224,58 @@ abline(v=full.pred.mod$fitted.values[index.3], col="blue")
 legend("topright", legend=c("BP 2", "BP 3", "Pred 3"),
        col=c("green","red", "blue"),lty=1)
 
+plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.3], sd=full.sd.y[index.3]), type="l", col="blue",
+     ylab="Probability", xlab="Systolic blood pressure [mmHg]")
+lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.3], sd=small.sd.y[index.3]), col="green")
+lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.3]), col="brown")
+lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.3]), col="orange")
+abline(v=df.total$SystolicBP2[index.3], col="magenta")
+abline(v=df.total$SystolicBP3[index.3], col="red")
+abline(v=full.pred.mod$fitted.values[index.3], col="blue")
+abline(v=small.pred.mod$fitted.values[index.3], col="green")
+abline(v=full.pred.mod.gamma$fitted.values[index.3], col="brown")
+abline(v=small.pred.mod.gamma$fitted.values[index.3], col="orange")
+legend("topright", legend=c("BP 2", "BP 3", "M1", "M2", "M3", "M4"),
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
+dev.copy(pdf,'~/figures/Models/Eval/Participant3.pdf') # Save the plot
+dev.off()
+
+
 #############################################################################3
 # Example 4, participant # 17 200, BP 174, healthy
-df.order.obs$SystolicBP3[17200]
+df.order.obs$SystolicBP3[800]
 
-obs.4 <- df.order.obs$SystolicBP3[17200]
+obs.4 <- df.order.obs$SystolicBP3[800]
 obs.4
 
-pid.4 <- df.order.obs$PID[17200]
+pid.4 <- df.order.obs$PID[800]
 pid.4
 
 index.4 <- match(pid.4, df.total$PID)
 index.4
 
+
+
+index.4 <-882
+
+obs.hunt3.4<- df.total$SystolicBP3[index.4]
+obs.hunt3.4
+
+obs.hunt2.4<- df.total$SystolicBP2[index.4]
+obs.hunt2.4
+
 pred.full.4 <- full.pred.mod$fitted.values[index.4]
 pred.full.4
+
+
+pred.small.4 <- small.pred.mod$fitted.values[index.4]
+pred.small.4
+
+pred.full.gamma.4 <- full.pred.mod.gamma$fitted.values[index.4]
+pred.full.gamma.4
+
+pred.small.gamma.4 <- small.pred.mod.gamma$fitted.values[index.4]
+pred.small.gamma.4
 
 
 start.4 <- df.total$SystolicBP2[index.4]
@@ -237,12 +292,20 @@ df.total$Diabetes3[index.4]
 
 prob.hyp.full.pred[index.4]
 
-# Plot prediction distribion
-plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.4], sd=full.sd.y[index.4]),
-     ylab="Probability", xlab="Systolic blood pressure")
-abline(v=df.total$SystolicBP2[index.4], col="green")
+
+plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.4], sd=full.sd.y[index.4]), type="l", col="blue",
+     ylab="Probability", xlab="Systolic blood pressure [mmHg]", ylim=c(0,0.033))
+lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.4], sd=small.sd.y[index.4]), col="green")
+lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.4]), col="brown")
+lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.4]), col="orange")
+abline(v=df.total$SystolicBP2[index.4], col="magenta")
 abline(v=df.total$SystolicBP3[index.4], col="red")
-abline(v=full.pred.mod$fitted.values[index.3], col="blue")
-legend("topright", legend=c("BP 2", "BP 3", "Pred 3"),
-       col=c("green","red", "blue"),lty=1)
+abline(v=full.pred.mod$fitted.values[index.4], col="blue")
+abline(v=small.pred.mod$fitted.values[index.4], col="green")
+abline(v=full.pred.mod.gamma$fitted.values[index.4], col="brown")
+abline(v=small.pred.mod.gamma$fitted.values[index.4], col="orange")
+legend("topright", legend=c("BP2", "BP3", "M1", "M2", "M3", "M4"),
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
+dev.copy(pdf,'~/figures/Models/Eval/Participant4.pdf') # Save the plot
+dev.off()
 
