@@ -298,26 +298,26 @@ fram.brier
 ### FULL MODEL
 
 prob.obs.full.pred <- pnorm(df.total$SystolicBP3, mean=full.pred.mod$fitted.values, sd=full.sd.y)
-hist(prob.obs.full.pred,xlab="Quantiles", main="PIT, Full Gaussian")
+hist(prob.obs.full.pred,xlab="Quantiles", main="PIT, Full Gaussian",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITFullGauss.pdf') # Save the plot
 dev.off()
 
 ### SMALL MODEL
 
 prob.obs.small.pred <- pnorm(df.total$SystolicBP3, mean=small.pred.mod$fitted.values, sd=small.sd.y)
-hist(prob.obs.small.pred, xlab="Quantiles", main="PIT, Small Gaussian")
+hist(prob.obs.small.pred, xlab="Quantiles", main="PIT, Small Gaussian",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITSmallGauss.pdf') # Save the plot
 dev.off()
 
 ### FULL GAMMA
 prob.obs.full.gamma.pred <- pgamma(df.total$SystolicBP3, shape=full.gamma.shape, rate=full.gamma.rate)
-hist(prob.obs.full.gamma.pred, xlab="Quantiles", main="PIT, Full Gamma")
+hist(prob.obs.full.gamma.pred, xlab="Quantiles", main="PIT, Full Gamma",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITFullGamma.pdf') # Save the plot
 dev.off()
 
 ### SMALL GAMMA
 prob.obs.small.gamma.pred <- pgamma(df.total$SystolicBP3, shape=small.gamma.shape, rate=small.gamma.rate)
-hist(prob.obs.small.gamma.pred, xlab="Quantiles", main="PIT, Small Gamma")
+hist(prob.obs.small.gamma.pred, xlab="Quantiles", main="PIT, Small Gamma",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITSmallGamma.pdf') # Save the plot
 dev.off()
 

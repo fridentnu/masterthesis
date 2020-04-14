@@ -4,13 +4,13 @@
 norm.sample <- rnorm(10000, mean=2.5,sd=1)
 
 plot(seq(-3,10, length=100),dnorm(seq(-3,10, length=100),mean=2.5,sd=1),
-     xlab=" ", ylab="Density",main="Density of random sample from N(2.5,1)", pch=18)
+     xlab=" ", ylab="Density",main="Density of random sample from N(2.5,1)", pch=18, cex.main=1.7, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Theory/NormalSample.pdf') # Save the plot
 dev.off()
 
 good.fit.norm <- pnorm(norm.sample, mean=2.5,sd=1)
 hist(good.fit.norm,
-     main="PIT diagram for sample from proposed cdf", xlab="Quantiles")
+     main="PIT diagram for sample from proposed cdf", xlab="Quantiles",cex.main=1.7, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Theory/PITtrueFit.pdf') # Save the plot
 dev.off()
 
@@ -20,16 +20,16 @@ dev.off()
 gamma.sample <- rgamma(10000, shape=3.5, scale=1)
 
 plot(seq(-3,10, length=100),dgamma(seq(-3,10, length=100),shape=3.5,scale=1),ylim=c(0,0.4),
-     pch=18, xlab=" ", ylab="Density", main="Random sample from Gamma(3.5,1)")
+     pch=18, xlab=" ", ylab="Density", main="Random sample from Gamma(3.5,1)",cex.main=1.7, cex.lab=1.4, cex.axis=1.7)
 lines(seq(-3,10, length=100),dnorm(seq(-3,10, length=100),mean=2.5,sd=1), col="blue")
 legend("topright", legend=c("Sample", "Prop. dist."),
-       col=c("black","blue"), lty=c(NA,1), pch=c(18,NA))
+       col=c("black","blue"), lty=c(NA,1), pch=c(18,NA), cex=0.9)
 dev.copy(pdf,'~/figures/Theory/HeavyTailSample.pdf') # Save the plot
 dev.off()
 
 heavy.tail.fit <- pnorm(gamma.sample, mean=2.5,sd=1)
 hist(heavy.tail.fit,
-     main="PIT diagram for sample with too heavy right tail", xlab="Quantiles")
+     main="PIT diagram for sample with too heavy right tail", xlab="Quantiles",cex.main=1.6, cex.lab=1.4, cex.axis=1.7)
 
 dev.copy(pdf,'~/figures/Theory/HeavyTail.pdf') # Save the plot
 dev.off()
@@ -38,15 +38,15 @@ dev.off()
 norm.light.sample <- rnorm(10000, mean=2.5, sd=0.5)
 
 plot(seq(-3,10, length=100),dnorm(seq(-3,10, length=100),mean=2.5,sd=0.5), pch=18, xlab=" ", ylab="Density",
-     main = "Random sample from N(2.5,0.5)")
+     main = "Random sample from N(2.5,0.5)",cex.main=1.7, cex.lab=1.4, cex.axis=1.7)
 lines(seq(-3,10, length=100),dnorm(seq(-3,10, length=100),mean=2.5,sd=1), col="blue")
 legend("topright", legend=c("Sample", "Prop. dist."),
-       col=c("black","blue"), lty=c(NA,1), pch=c(18,NA))
+       col=c("black","blue"), lty=c(NA,1), pch=c(18,NA),cex=0.9)
 dev.copy(pdf,'~/figures/Theory/LightsTailsSample.pdf') # Save the plot
 dev.off()
 
 light.tail.fit <- pnorm(norm.light.sample, mean=2.5,sd=1)
-hist(light.tail.fit, main="PIT diagram for sample with too light tails", xlab = "Quantiles")
+hist(light.tail.fit, main="PIT diagram for sample with too light tails", xlab = "Quantiles",cex.main=1.7, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Theory/LightsTails.pdf') # Save the plot
 dev.off()
 

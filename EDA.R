@@ -97,7 +97,7 @@ dev.off()
 ### spike 121 and 122 certain values for systolic 
 
 # check if systolic 3 is approx normal
-qqnorm(df.total$SystolicBP3, main="Normal QQ-plot of SystolicBP3", ylab="Systolic blood pressure [mmHg]")
+qqnorm(df.total$SystolicBP3, main="Normal QQ-plot of SystolicBP3", ylab="Systolic blood pressure [mmHg]", cex.main=1.3, cex.lab=1.4, cex.axis=1.7)
 qqline(df.total$SystolicBP3, col = "steelblue", lwd = 2)
 # seems like data have heavier right tail, and lighter left tail
 dev.copy(pdf,'~/figures/EDA/SysQQ.pdf') # Save the plot
