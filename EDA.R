@@ -79,6 +79,7 @@ res.p1 <- ggplot(data=df.total)+
         axis.title.x = element_text(size=16),
         axis.text = element_text(size=16),
         plot.title = element_text(size = 16))+
+  ylim(0,700)+
   labs(x="[mmHg]")+
   ggtitle("Systolic")
 res.p2 <- ggplot(data=df.total)+
@@ -89,6 +90,7 @@ res.p2 <- ggplot(data=df.total)+
         axis.text = element_text(size=16),
         plot.title = element_text(size = 16))+
   labs(x="[mmHg]")+
+  ylim(0,700)+
   ggtitle("Diastolic")
 grid.arrange(res.p1,res.p2,nrow=1, left=textGrob("#Participants", gp=gpar(fontsize=20,font=8), rot=90))
 dev.copy(pdf,'~/figures/EDA/SysDia3.pdf') # Save the plot
@@ -178,6 +180,7 @@ sys.med.p1 <-ggplot(data=df.total)+
         axis.text = element_text(size=16),
         plot.title = element_text(size = 16))+
   labs(x="[mmHg]")+
+  ylim(0,550)+
   ggtitle("Uncorrected")
 sys.med.p2 <-ggplot(data=df.total)+
   geom_histogram(mapping = aes(x=SystolicBP3, fill=BPMed3), binwidth=1)+
@@ -188,6 +191,7 @@ sys.med.p2 <-ggplot(data=df.total)+
         axis.text = element_text(size=16),
         plot.title = element_text(size = 16))+
   labs(x="[mmHg]")+
+  ylim(0,550)+
   ggtitle("Corrected")
 grid.arrange(sys.med.p1,sys.med.p2,nrow=1, left=textGrob("#Participants", gp=gpar(fontsize=20,font=8), rot=90),
              top=textGrob("Systolic blood pressure", gp=gpar(fontsize=16,font=8)))

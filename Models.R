@@ -147,7 +147,7 @@ const <- ggplot(data=data.frame(constant.pred.mod))+
   xlab("Observed systolic blood pressure HUNT2")+
   ylab(" ")
 
-grid.arrange(const,res, small, full, small.gamma, full.gamma, nrow=3, left="#Participants")
+grid.arrange(const,res, small, full, small.gamma, full.gamma, nrow=3, left=textGrob("#Participants", gp=gpar(fontsize=20,font=8), rot=90))
 dev.copy(pdf,'~/figures/Models/Present/FittedValues.pdf') # Save the plot
 dev.off()
 

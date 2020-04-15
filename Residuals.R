@@ -68,10 +68,11 @@ df.residual.small.gamma <- data.frame("Fitted"=small.pred.mod.gamma$fitted.value
 plot.residual.small.gamma <- 
   ggplot(data=df.residual.small.gamma) +
   geom_boxplot(aes(x=bin, y=Residuals ))+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=20),
+        axis.title.y = element_text(size=20),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
+        axis.text.y=element_text(size = 20),
+        plot.title=element_text(size=24))+
   xlab("Fitted systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
   ggtitle("Small gamma model")
 # Not homoscedastic variance in residuals
@@ -200,10 +201,11 @@ plot.res.sd.small.gamma <-ggplot(sd.res.small.gamma)+
   geom_point(aes(x=bin,y=Lower), shape=18, size=6,color="blue")+
   geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
   geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=20),
+        axis.title.y = element_text(size=20),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
+        axis.text.y=element_text(size = 20),
+        plot.title=element_text(size=24))+
   xlab("Fitted systolic blood pressure [mmHg]") + ylab("SD of residuals")+
   ggtitle("Small gamma model")+
   scale_x_discrete(name ="Fitted systolic blood pressure [mmHg]", 
@@ -230,11 +232,11 @@ plot.residual.sysBP2 <- df.residual.exp.var %>%
   mutate( bin=cut_width(x=SystolicBP2, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Systolic blood pressure HUNT2") + ylab("Residuals")
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
+  xlab("SystolicBP2") + ylab("Residuals")
 grid.arrange(plot.residual.sysBP2, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResSys2SmallGamma.pdf') # Save the plot
 dev.off()
@@ -246,11 +248,11 @@ plot.residual.diaBP2 <- df.residual.exp.var %>%
   mutate( bin=cut_width(x=DiastolicBP2, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Diastolic blood pressure BP2") + ylab("Residuals")
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
+  xlab("DiastolicBP2") + ylab("Residuals")
 grid.arrange(plot.residual.diaBP2, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResDia2SmallGamma.pdf') # Save the plot
 dev.off()
@@ -263,10 +265,10 @@ plot.residual.BMI <- df.residual.exp.var %>%
   mutate( bin=cut_width(x=BMI, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("BMI") + ylab("Residuals")
 grid.arrange(plot.residual.BMI, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResBMISmallGamma.pdf') # Save the plot
@@ -278,10 +280,10 @@ plot.residual.birthyear<- df.residual.exp.var %>%
   mutate( bin=cut_width(x=Birthyear, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("Birthyear") + ylab("Residuals")
 grid.arrange(plot.residual.birthyear, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResBYSmallGamma.pdf') # Save the plot
@@ -294,10 +296,10 @@ plot.residual.hdl<- df.residual.exp.var %>%
   mutate( bin=cut_width(x=HDLCholesterol, width=0.2, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("HDL Cholesterol") + ylab("Residuals")
 grid.arrange(plot.residual.hdl, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResHDLSmallGamma.pdf') # Save the plot
@@ -308,17 +310,29 @@ dev.off()
 
 ## INCLUDE EVEN IF NO EFFECT?
 ggplot(df.residual.exp.var)+
-  geom_boxplot(mapping = aes(x=PAI, y=Residuals))
+  geom_boxplot(mapping = aes(x=PAI, y=Residuals))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))
 dev.copy(pdf,'~/figures/Models/Residuals/ResPAISmallGamma.pdf') # Save the plot
 dev.off()
 
 ggplot(df.residual.exp.var)+
-  geom_boxplot(mapping = aes(x=BPHigPar, y=Residuals))
+  geom_boxplot(mapping = aes(x=BPHigPar, y=Residuals))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))
 dev.copy(pdf,'~/figures/Models/Residuals/ResBPHigParSmallGamma.pdf') # Save the plot
 dev.off()
 
 ggplot(df.residual.exp.var)+
-  geom_boxplot(mapping = aes(x=Education, y=Residuals))
+  geom_boxplot(mapping = aes(x=Education, y=Residuals))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))
 dev.copy(pdf,'~/figures/Models/Residuals/ResEducSmallGamma.pdf') # Save the plot
 dev.off()
 
@@ -338,10 +352,10 @@ plot.res.sd.by <-ggplot(sd.res.by)+
   geom_point(aes(x=bin, y=SD), color="red",size=6, shape=8)+
   geom_point(aes(x=bin,y=Lower), shape=18, size=6, color="blue")+
   geom_point(aes(x=bin,y=Upper), shape=18, size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("Birthyear") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.by$bin))
 plot.res.sd.by
@@ -359,10 +373,10 @@ plot.res.sd.bmi <-ggplot(sd.res.bmi)+
   geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
   geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("BMI") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.bmi$bin))
 plot.res.sd.bmi
@@ -381,11 +395,11 @@ plot.res.sd.sys2 <-ggplot(sd.res.sys2)+
   geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
   geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Systolic blood pressure HUNT2") + ylab("SD of residuals")+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
+  xlab("SystolicBP2") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.sys2$bin))
 plot.res.sd.sys2
 dev.copy(pdf,'~/figures/Models/Residuals/SDRessys2SmallGamma.pdf') # Save the plot
@@ -403,11 +417,11 @@ plot.res.sd.dia2 <-ggplot(sd.res.dia2)+
   geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
   geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Diastolic blood pressure HUNT2") + ylab("SD of residuals")+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
+  xlab("DiastolicBP2") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.dia2$bin))
 plot.res.sd.dia2
 dev.copy(pdf,'~/figures/Models/Residuals/SDResDia2SmallGamma.pdf') # Save the plot
@@ -425,10 +439,10 @@ plot.res.sd.hdl <-ggplot(sd.res.hdl)+
   geom_point(aes(x=bin, y=SD), color="red", size=6,shape=8)+
   geom_point(aes(x=bin,y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=bin,y=Upper), shape=18,size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("HDL Cholesterol") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.hdl$bin))
 plot.res.sd.hdl
@@ -463,10 +477,10 @@ plot.res.sd.pai <-ggplot(sd.pai.res.pai)+
   geom_point(aes(x=levels(df.residual.pai$PAI), y=SD), color="red", size=6, shape=8)+
   geom_point(aes(x=levels(df.residual.pai$PAI),y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=levels(df.residual.pai$PAI),y=Upper), shape=18,size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("PAI") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.pai$PAI))
 plot.res.sd.pai
@@ -501,10 +515,10 @@ plot.res.sd.edu <-ggplot(sd.edu.res.edu)+
   geom_point(aes(x=levels(df.residual.edu$Edu), y=SD), color="red", size=6, shape=8)+
   geom_point(aes(x=levels(df.residual.edu$Edu),y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=levels(df.residual.edu$Edu),y=Upper), shape=18,size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("Education level") + ylab("SD of residuals")+
   scale_x_discrete(limits=levels(df.residual.edu$Edu))
 plot.res.sd.edu
@@ -535,10 +549,10 @@ plot.res.sd.bphigpar <-ggplot(sd.res.bphigpar)+
   geom_point(aes(x=c(TRUE, FALSE), y=SD), color="red", size=6, shape=8)+
   geom_point(aes(x=c(TRUE, FALSE),y=Lower), shape=18,size=6, color="blue")+
   geom_point(aes(x=c(TRUE, FALSE),y=Upper), shape=18,size=6, color="blue")+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
+        axis.text.y=element_text(size = 24))+
   xlab("BPHigPar") + ylab("SD of residuals")
 plot.res.sd.bphigpar
 dev.copy(pdf,'~/figures/Models/Residuals/SDResBPHigParSmallGamma.pdf') # Save the plot
@@ -558,13 +572,13 @@ df.diff.res %>%
   mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y= DiffGauss)) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Observed systolic blood pressure HUNT3") + ylab("FM Gaussian res. - SM Gaussian res.")+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
+        axis.text.y=element_text(size = 24),
+        plot.title =element_text(size = 30))+
+  xlab("SystolicBP3") + ylab("FM - SM Gaussian res.")+
   ggtitle("Gaussian models ")
-
 dev.copy(pdf,'~/figures/Models/Residuals/DiffGauss.pdf') # Save the plot
 dev.off()
 
@@ -573,11 +587,12 @@ df.diff.res %>%
   mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y= DiffGamma)) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Observed systolic blood pressure HUNT3") + ylab("FM gamma res. - SM gamma res.")+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
+        axis.text.y=element_text(size = 24),
+        plot.title =element_text(size = 30))+
+  xlab("SystolicBP3") + ylab("FM - SM gamma res.")+
   ggtitle("Gamma models")
 dev.copy(pdf,'~/figures/Models/Residuals/DiffGamma.pdf') # Save the plot
 dev.off()
@@ -587,11 +602,12 @@ df.diff.res %>%
   mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y= DiffModSmall)) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Observed systolic blood pressure HUNT3") + ylab("SM  Gaussian res. - SM gamma res.")+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
+        axis.text.y=element_text( size = 24),
+        plot.title =element_text(size = 30))+
+  xlab("SystolicBP3") + ylab("SM  Gauss. - SM gamma res.")+
   ggtitle("Small models")
 dev.copy(pdf,'~/figures/Models/Residuals/DiffResSmall.pdf') # Save the plot
 dev.off()
@@ -601,11 +617,12 @@ df.diff.res %>%
   mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y= DiffModFull)) +
   geom_boxplot()+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 10, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Observed systolic blood pressure HUNT3") + ylab("FM  Gaussian  res.- FM gamma res.")+
+  theme(axis.title.x = element_text(size=28),
+        axis.title.y = element_text(size=28),
+        axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
+        axis.text.y=element_text(size = 24),
+        plot.title =element_text(size = 30))+
+  xlab("SystolicBP3") + ylab("FM  Gaussian  res.- FM gamma res.")+
   ggtitle("Full models")
 dev.copy(pdf,'~/figures/Models/Residuals/DiffResFull.pdf') # Save the plot
 dev.off()

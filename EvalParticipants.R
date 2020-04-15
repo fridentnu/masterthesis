@@ -77,9 +77,9 @@ abline(v=full.pred.mod$fitted.values[index.1], col="blue")
 legend("topright", legend=c("BP 2", "BP 3", "Pred 3"),
        col=c("green","red", "blue"),lty=1)
 
-
+par(mar=c(6.1, 5.1, 4.1, 2.1))
 plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.1], sd=full.sd.y[index.1]), type="l", col="blue",
-     ylab="Probability", xlab="Systolic blood pressure [mmHg]")
+     ylab="Probability", xlab="Systolic blood pressure [mmHg]",ylim=c(0,0.035),cex.main=1.7, cex.lab=1.8, cex.axis=1.7)
 lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.1], sd=small.sd.y[index.1]), col="green")
 lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.1]), col="brown")
 lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.1]), col="orange")
@@ -90,7 +90,7 @@ abline(v=small.pred.mod$fitted.values[index.1], col="green")
 abline(v=full.pred.mod.gamma$fitted.values[index.1], col="brown")
 abline(v=small.pred.mod.gamma$fitted.values[index.1], col="orange")
 legend("topright", legend=c("BP2", "BP3", "M1", "M2", "M3", "M4"),
-       col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=1, cex=1.2)
 dev.copy(pdf,'~/figures/Models/Eval/Participant1.pdf') # Save the plot
 dev.off()
 
@@ -292,9 +292,9 @@ df.total$Diabetes3[index.4]
 
 prob.hyp.full.pred[index.4]
 
-
+par(mar=c(6.1, 5.1, 4.1, 2.1))
 plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.4], sd=full.sd.y[index.4]), type="l", col="blue",
-     ylab="Probability", xlab="Systolic blood pressure [mmHg]", ylim=c(0,0.033))
+     ylab="Probability", xlab="Systolic blood pressure [mmHg]", ylim=c(0,0.035), cex.main=1.7, cex.lab=1.8, cex.axis=1.7)
 lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.4], sd=small.sd.y[index.4]), col="green")
 lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.4]), col="brown")
 lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.4]), col="orange")
@@ -305,7 +305,7 @@ abline(v=small.pred.mod$fitted.values[index.4], col="green")
 abline(v=full.pred.mod.gamma$fitted.values[index.4], col="brown")
 abline(v=small.pred.mod.gamma$fitted.values[index.4], col="orange")
 legend("topright", legend=c("BP2", "BP3", "M1", "M2", "M3", "M4"),
-       col=c("magenta","red", "blue", "green","brown","orange"),lty=1)
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=1,cex=1.2)
 dev.copy(pdf,'~/figures/Models/Eval/Participant4.pdf') # Save the plot
 dev.off()
 

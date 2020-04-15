@@ -303,9 +303,9 @@ dev.copy(pdf,'~/figures/Models/Eval/PITFullGauss.pdf') # Save the plot
 dev.off()
 
 ### SMALL MODEL
-
+par(mar=c(6.1, 5.1, 4.1, 2.1))
 prob.obs.small.pred <- pnorm(df.total$SystolicBP3, mean=small.pred.mod$fitted.values, sd=small.sd.y)
-hist(prob.obs.small.pred, xlab="Quantiles", main="PIT, Small Gaussian",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
+hist(prob.obs.small.pred, xlab="Quantiles", main="PIT, Small Gaussian",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITSmallGauss.pdf') # Save the plot
 dev.off()
 
@@ -316,8 +316,9 @@ dev.copy(pdf,'~/figures/Models/Eval/PITFullGamma.pdf') # Save the plot
 dev.off()
 
 ### SMALL GAMMA
+par(mar=c(6.1, 5.1, 4.1, 2.1))
 prob.obs.small.gamma.pred <- pgamma(df.total$SystolicBP3, shape=small.gamma.shape, rate=small.gamma.rate)
-hist(prob.obs.small.gamma.pred, xlab="Quantiles", main="PIT, Small Gamma",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
+hist(prob.obs.small.gamma.pred, xlab="Quantiles", main="PIT, Small Gamma",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITSmallGamma.pdf') # Save the plot
 dev.off()
 
