@@ -112,26 +112,26 @@ small.gamma.rate <- small.gamma.shape/small.pred.mod.gamma$fitted.values
 small <-ggplot(data=small.pred.mod)+
   geom_histogram(aes(small.pred.mod$fitted.values), binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
-  xlab("Fitted values, small Gaussian model")+
+  xlab("Predicted BP, small Gaussian model")+
   ylab(" ")
 
 
 full <-ggplot(data=full.pred.mod)+
   geom_histogram(aes(full.pred.mod$fitted.values),binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
-  xlab("Fitted values, full Gaussian model")+
+  xlab("Predicted BP, full Gaussian model")+
   ylab(" ")
 
 small.gamma <-ggplot(data=small.pred.mod.gamma)+
   geom_histogram(aes(small.pred.mod.gamma$fitted.values), binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
-  xlab("Fitted values, small gamma model")+
+  xlab("Predicted BP, small gamma model")+
   ylab(" ")
 
 full.gamma <-ggplot(data=full.pred.mod.gamma)+
   geom_histogram(aes(full.pred.mod.gamma$fitted.values),binwidth = 1)+
   coord_cartesian(xlim=c(0,200), ylim=c(0,800))+
-  xlab("Fitted values, full gamma model")+
+  xlab("Predicted BP, full gamma model")+
   ylab(" ")
 
 

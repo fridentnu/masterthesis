@@ -132,6 +132,18 @@ exp.prob.hyp.fram <- round(100*mean(fram.risk.ad.age),3)
 exp.prob.hyp.fram
 
 
+
+
+
+
+########################### HISTOGRAM PROBABILITY HYPERTENSION ##########################
+
+### SMALL GAMMA
+par(mar=c(6.1, 5.1, 4.1, 2.1))
+hist(prob.hyp.small.gamma.pred, xlab="Predicted probability of sys.hyp",main=" ",ylab="#Participants",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
+dev.copy(pdf,'~/figures/Models/Eval/HistHypSmallGamma.pdf') # Save the plot
+dev.off()
+
 ########################### QQPLOT ##################################
 
 

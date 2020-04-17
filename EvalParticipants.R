@@ -83,14 +83,14 @@ plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.1], sd=fu
 lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.1], sd=small.sd.y[index.1]), col="green")
 lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.1]), col="brown")
 lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.1]), col="orange")
-abline(v=df.total$SystolicBP2[index.1], col="magenta")
-abline(v=df.total$SystolicBP3[index.1], col="red")
-abline(v=full.pred.mod$fitted.values[index.1], col="blue")
-abline(v=small.pred.mod$fitted.values[index.1], col="green")
-abline(v=full.pred.mod.gamma$fitted.values[index.1], col="brown")
-abline(v=small.pred.mod.gamma$fitted.values[index.1], col="orange")
+abline(v=df.total$SystolicBP2[index.1], col="magenta",lwd=2,lty=2)
+abline(v=df.total$SystolicBP3[index.1], col="red",lwd=2,lty=6)
+abline(v=full.pred.mod$fitted.values[index.1], col="blue",lwd=2)
+abline(v=small.pred.mod$fitted.values[index.1], col="green",lwd=2)
+abline(v=full.pred.mod.gamma$fitted.values[index.1], col="brown",lwd=2)
+abline(v=small.pred.mod.gamma$fitted.values[index.1], col="orange",lwd=2)
 legend("topright", legend=c("BP2", "BP3", "M1", "M2", "M3", "M4"),
-       col=c("magenta","red", "blue", "green","brown","orange"),lty=1, cex=1.2)
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=c(2,6,1,1,1,1),lwd=2,cex=1.2)
 dev.copy(pdf,'~/figures/Models/Eval/Participant1.pdf') # Save the plot
 dev.off()
 
@@ -298,14 +298,14 @@ plot(c(50:220),dnorm(c(50:220), mean=full.pred.mod$fitted.values[index.4], sd=fu
 lines(c(50:220),dnorm(c(50:220), mean=small.pred.mod$fitted.values[index.4], sd=small.sd.y[index.4]), col="green")
 lines(c(50:220),dgamma(c(50:220),shape=full.gamma.shape,rate=full.gamma.rate[index.4]), col="brown")
 lines(c(50:220),dgamma(c(50:220),shape=small.gamma.shape,rate=small.gamma.rate[index.4]), col="orange")
-abline(v=df.total$SystolicBP2[index.4], col="magenta")
-abline(v=df.total$SystolicBP3[index.4], col="red")
-abline(v=full.pred.mod$fitted.values[index.4], col="blue")
-abline(v=small.pred.mod$fitted.values[index.4], col="green")
-abline(v=full.pred.mod.gamma$fitted.values[index.4], col="brown")
-abline(v=small.pred.mod.gamma$fitted.values[index.4], col="orange")
+abline(v=df.total$SystolicBP2[index.4], col="magenta", lty=2, lwd=2)
+abline(v=df.total$SystolicBP3[index.4], col="red", lty=6,lwd=2)
+abline(v=full.pred.mod$fitted.values[index.4], col="blue", lwd=2)
+abline(v=small.pred.mod$fitted.values[index.4], col="green", lwd=2)
+abline(v=full.pred.mod.gamma$fitted.values[index.4], col="brown", lwd=2)
+abline(v=small.pred.mod.gamma$fitted.values[index.4], col="orange", lwd=2)
 legend("topright", legend=c("BP2", "BP3", "M1", "M2", "M3", "M4"),
-       col=c("magenta","red", "blue", "green","brown","orange"),lty=1,cex=1.2)
+       col=c("magenta","red", "blue", "green","brown","orange"),lty=c(2,6,1,1,1,1),lwd=2,cex=1.2)
 dev.copy(pdf,'~/figures/Models/Eval/Participant4.pdf') # Save the plot
 dev.off()
 

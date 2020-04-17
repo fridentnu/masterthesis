@@ -73,7 +73,7 @@ plot.residual.small.gamma <-
         axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
         axis.text.y=element_text(size = 20),
         plot.title=element_text(size=24))+
-  xlab("Fitted systolic blood pressure HUNT3 [mmHg]") + ylab("Residuals")+
+  xlab("Predicted systolic blood pressure [mmHg]") + ylab("Residuals")+
   ggtitle("Small gamma model")
 # Not homoscedastic variance in residuals
 plot.residual.small.gamma
@@ -206,9 +206,9 @@ plot.res.sd.small.gamma <-ggplot(sd.res.small.gamma)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
         axis.text.y=element_text(size = 20),
         plot.title=element_text(size=24))+
-  xlab("Fitted systolic blood pressure [mmHg]") + ylab("SD of residuals")+
+  xlab("Predicted systolic blood pressure [mmHg]") + ylab("SD of residuals")+
   ggtitle("Small gamma model")+
-  scale_x_discrete(name ="Fitted systolic blood pressure [mmHg]", 
+  scale_x_discrete(name ="Predicted systolic blood pressure [mmHg]", 
                    limits=levels(df.residual.small.gamma$bin))
 plot.res.sd.small.gamma
 dev.copy(pdf,'~/figures/Models/Residuals/SDResSmallGamma.pdf') # Save the plot
@@ -357,6 +357,7 @@ plot.res.sd.by <-ggplot(sd.res.by)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
   xlab("Birthyear") + ylab("SD of residuals")+
+  ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.by$bin))
 plot.res.sd.by
 dev.copy(pdf,'~/figures/Models/Residuals/SDResBYSmallGamma.pdf') # Save the plot
@@ -378,6 +379,7 @@ plot.res.sd.bmi <-ggplot(sd.res.bmi)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
   xlab("BMI") + ylab("SD of residuals")+
+  ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.bmi$bin))
 plot.res.sd.bmi
 dev.copy(pdf,'~/figures/Models/Residuals/SDResBMISmallGamma.pdf') # Save the plot
@@ -400,6 +402,7 @@ plot.res.sd.sys2 <-ggplot(sd.res.sys2)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
   xlab("SystolicBP2") + ylab("SD of residuals")+
+  ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.sys2$bin))
 plot.res.sd.sys2
 dev.copy(pdf,'~/figures/Models/Residuals/SDRessys2SmallGamma.pdf') # Save the plot
@@ -422,6 +425,7 @@ plot.res.sd.dia2 <-ggplot(sd.res.dia2)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
   xlab("DiastolicBP2") + ylab("SD of residuals")+
+  ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.dia2$bin))
 plot.res.sd.dia2
 dev.copy(pdf,'~/figures/Models/Residuals/SDResDia2SmallGamma.pdf') # Save the plot
@@ -444,6 +448,7 @@ plot.res.sd.hdl <-ggplot(sd.res.hdl)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
   xlab("HDL Cholesterol") + ylab("SD of residuals")+
+  ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.hdl$bin))
 plot.res.sd.hdl
 dev.copy(pdf,'~/figures/Models/Residuals/SDResHDLSmallGamma.pdf') # Save the plot
@@ -482,6 +487,7 @@ plot.res.sd.pai <-ggplot(sd.pai.res.pai)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
   xlab("PAI") + ylab("SD of residuals")+
+  ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.pai$PAI))
 plot.res.sd.pai
 dev.copy(pdf,'~/figures/Models/Residuals/SDResPAISmallGamma.pdf') # Save the plot
@@ -520,6 +526,7 @@ plot.res.sd.edu <-ggplot(sd.edu.res.edu)+
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
   xlab("Education level") + ylab("SD of residuals")+
+  ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.edu$Edu))
 plot.res.sd.edu
 dev.copy(pdf,'~/figures/Models/Residuals/SDResEducSmallGamma.pdf') # Save the plot
@@ -553,6 +560,7 @@ plot.res.sd.bphigpar <-ggplot(sd.res.bphigpar)+
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
+  ylim(10,20)+
   xlab("BPHigPar") + ylab("SD of residuals")
 plot.res.sd.bphigpar
 dev.copy(pdf,'~/figures/Models/Residuals/SDResBPHigParSmallGamma.pdf') # Save the plot
