@@ -138,12 +138,27 @@ exp.prob.hyp.fram
 
 ########################### HISTOGRAM PROBABILITY HYPERTENSION ##########################
 
+### SMALL GAUSS
+par(mar=c(6.1, 5.1, 4.1, 2.1))
+hist(prob.hyp.small.pred, xlab="Predicted probability of sys.hyp",main="SM Gaussian",ylab="#Participants",ylim=c(0,6000),xlim=c(0,0.8),
+     cex.main=2.5, cex.lab=2.7, cex.axis=2.2)
+dev.copy(pdf,'~/figures/Models/Eval/HistHypSmallGauss.pdf') # Save the plot
+dev.off()
+
+
 ### SMALL GAMMA
 par(mar=c(6.1, 5.1, 4.1, 2.1))
-hist(prob.hyp.small.gamma.pred, xlab="Predicted probability of sys.hyp",main=" ",ylab="#Participants",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
+hist(prob.hyp.small.gamma.pred, xlab="Predicted probability of sys.hyp",main="SM gamma",ylab="#Participants",ylim=c(0,6000),xlim=c(0,0.8),
+     cex.main=2.5, cex.lab=2.7, cex.axis=2.2)
 dev.copy(pdf,'~/figures/Models/Eval/HistHypSmallGamma.pdf') # Save the plot
 dev.off()
 
+### Framingham
+par(mar=c(6.1, 5.1, 4.1, 2.1))
+hist(fram.risk.ad.age, xlab="Predicted probability of hyp",main="Framingham",ylab="#Participants",ylim=c(0,6000),xlim=c(0,0.8),
+     cex.main=2.5, cex.lab=2.7, cex.axis=2.2)
+dev.copy(pdf,'~/figures/Models/Eval/HistHypFram.pdf') # Save the plot
+dev.off()
 ########################### QQPLOT ##################################
 
 
@@ -379,6 +394,7 @@ small.gamma.spec <- round(100*sum(small.pred.mod.gamma$fitted.values<140 & !df.t
 # Sensitivity
 # Hypertensive and over 50% risk for hypertension
 fram.sens <- round(100*sum(fram.risk.ad.age>0.5&df.total$SystolicHyp)/sum(df.total$SystolicHyp),3)
+
 
 # Specificity
 # not hypertensive and under or equal to 50% risk for hypertension

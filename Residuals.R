@@ -340,7 +340,6 @@ dev.off()
 
 ################# Standard deviation of residuals, explanatory variables
 
-
 # Birthyear
 df.residual.by <-  data.frame("BirthYear"=df.total$BirthYear, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=BirthYear, width=10, boundary=0,dig.lab=5) )
