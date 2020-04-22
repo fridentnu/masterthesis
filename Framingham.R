@@ -1,18 +1,18 @@
-
-
-
 load("MyData/EDA.df.total.RData")
 
+# Based on article: https://www.ncbi.nlm.nih.gov/pubmed/18195335 
 
-# Framingham model 
+####### Framingham model ####################
 
+## Interpret variables on parental hypertension
 BPHigMothEv <-df.total$BPHigMoth2== "Mor - h\xf8yt BT"
 BPHigMothEv[is.na(df.total$BPHigMoth2)] <- FALSE
 
 BPHigFathEv <-df.total$BPHigFath2== "Far - h\xf8yt BT"
 BPHigFathEv[is.na(df.total$BPHigFath2)] <- FALSE
 
-
+## Implementation of pseudocode to find 4 year risk from Figure 2 in Framingham paper
+## Applied to our data set 
 fram.risk.fun <- function(){
   score <- rep(0,length(df.total$PID))
   risk <- rep(0,length(df.total$PID))
@@ -51,7 +51,6 @@ fram.risk.fun <- function(){
     
     
     # Step 4
-    
     if(df.total$BirthYear[i]>=1967){
       if(df.total$DiastolicBP2[i]<70){
         score[i]=score[i]-8
@@ -160,7 +159,10 @@ mean(fram.risk)
 hist(fram.risk)
 
 
-######## adjust age #######
+######## Modified Framingham model #######
+## Implementation of pseudocode to find 4 year risk from Figure 2 in Framingham paper
+## Applied to our data set 
+# Modified the age by adding 7 years
 fram.risk.ad.age.fun <- function(){
   score <- rep(0,length(df.total$PID))
   risk <- rep(0,length(df.total$PID))
@@ -198,8 +200,7 @@ fram.risk.ad.age.fun <- function(){
     }
     
     
-    # Step 4
-    
+    # Step 4, MODIFIED
     if((df.total$BirthYear[i]-7)>=1967){
       if(df.total$DiastolicBP2[i]<70){
         score[i]=score[i]-8

@@ -12,9 +12,6 @@ library(grid)
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
 # https://hunt-db.medisin.ntnu.no/hunt-db/#/ 
 
-# OBS: husk at man må bruke ctrl isteden for cmd på hurtigtastene
-# use viridis colours, colour-blind and printer friendly
-# save the random seed if use one!
 
 
 ########## LOAD DATA ###################

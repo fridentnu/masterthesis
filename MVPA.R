@@ -1,7 +1,6 @@
-# Script fra Emma Ingström
+### Script fra Emma Ingström ###
 
-
-#data <- read.spss("Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.frame=T)
+# Based on article: http://www.sciencedirect.com/science/article/pii/S000293431500786X 
 
 ## Exercise ##
 

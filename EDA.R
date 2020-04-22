@@ -568,7 +568,7 @@ ggplot(data=df.life)+
   theme(axis.title.y = element_text(size = 24),
         axis.title.x = element_text(size=24), 
         axis.text = element_text(size=16))+
-  labs(y="#Participants", x="BMI")
+  labs(y="#Participants", x="BMI [kg/m²]")
 dev.copy(pdf,'~/figures/EDA/Life/BMI.pdf') # Save the plot
 dev.off()
 ### Comment: long right tail, not symmetric, big variation
@@ -622,7 +622,7 @@ dev.off()
 cat("Correlation BMI and SystolicBP3: ",cor(df.total$BMI, df.total$SystolicBP3))
 ggplot(data=df.life.res)+
   geom_point(mapping = aes(x=BMI, y=SystolicBP3), alpha=1/7)+
-  labs(y="Systolic blood pressure [mmHg]")
+  labs(y="Systolic blood pressure [mmHg]", x="BMI [kg/m²]")
 #dev.copy(pdf,'~/figures/EDA/Life/CorrContBMIvsBP.pdf') # Save the plot
 #dev.off()
 
@@ -640,7 +640,7 @@ df.life.res %>%
         axis.text.y=element_text(size=16),
         axis.title.x = element_text(size = 24),
         axis.title.y = element_text(size = 24))+
-  labs(y="Systolic blood pressure [mmHg]", x="BMI")
+  labs(y="Systolic blood pressure [mmHg]", x="BMI [kg/m²]")
 dev.copy(pdf,'~/figures/EDA/Life/CorrContBMIvsBP.pdf') # Save the plot
 dev.off()
 

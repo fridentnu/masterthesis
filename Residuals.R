@@ -3,12 +3,7 @@ source("R code/Models.R")
 ################################### RESIDUALS ################################
 
 
-###### Full model #######
-ggplot(data=full.pred.mod)+
-  geom_point(mapping=aes(x=df.total$SystolicBP3, y=full.pred.mod$residuals))+
-  labs(x="Observed systolic blood pressure", y= "Residuals")
-
-
+###### Full Gaussian model 
 df.residual.full <-  data.frame("Fitted"=full.pred.mod$fitted.values, "Residuals"=full.pred.mod$residuals) %>%
   mutate( bin=cut_width(x=Fitted, width=10, boundary=0, ordered_result=T) )
 
@@ -23,9 +18,8 @@ plot.residual.full <-ggplot(data=df.residual.full) +
 plot.residual.full
 dev.copy(pdf,'~/figures/Models/Residuals/ResFitFullGauss.pdf') # Save the plot
 dev.off()
-# Not homoscedastic variance in residuals
 
-#### Small model 
+#### Small Gaussian model 
 df.residual.small <- data.frame("Fitted"=small.pred.mod$fitted.values, "Residuals"=small.pred.mod$residuals)%>%
   mutate( bin=cut_width(x=Fitted, width=10, boundary=0) )
 
@@ -37,14 +31,12 @@ plot.residual.small <- ggplot(data=df.residual.small) +
         axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
   xlab("Fitted systolic blood pressure [mmHg]") + ylab("Residuals")+
   ggtitle("Small Gaussian model")
-# Not homoscedastic variance in residuals
 plot.residual.small
 dev.copy(pdf,'~/figures/Models/Residuals/ResFitSmallGauss.pdf') # Save the plot
 dev.off()
-# not homoscedastic variance, residuals increasing the further you get from the mean
 
-###### Full gamma model #######
 
+###### Full gamma model
 df.residual.full.gamma <- data.frame("Fitted"=full.pred.mod.gamma$fitted.values, "Residuals"=full.pred.mod.gamma$residuals)%>%
   mutate( bin=cut_width(x=Fitted, width=10, boundary=0) )
 plot.residual.full.gamma <- ggplot(data=df.residual.full.gamma) +
@@ -58,8 +50,6 @@ plot.residual.full.gamma <- ggplot(data=df.residual.full.gamma) +
 plot.residual.full.gamma
 dev.copy(pdf,'~/figures/Models/Residuals/ResFitFullGamma.pdf') # Save the plot
 dev.off()
-# Not homoscedastic variance in residuals
-
 
 #### Small gamma model 
 df.residual.small.gamma <- data.frame("Fitted"=small.pred.mod.gamma$fitted.values, "Residuals"=small.pred.mod.gamma$residuals)%>%
@@ -75,35 +65,15 @@ plot.residual.small.gamma <-
         plot.title=element_text(size=24))+
   xlab("Predicted systolic blood pressure [mmHg]") + ylab("Residuals")+
   ggtitle("Small gamma model")
-# Not homoscedastic variance in residuals
 plot.residual.small.gamma
 dev.copy(pdf,'~/figures/Models/Residuals/ResFitSmallGamma.pdf') # Save the plot
 dev.off()
 
-
-### Constant model 
-
-df.residual.constant <- data.frame("Fitted"=df.total$SystolicBP2, "Residuals"=df.total$SystolicBP3-df.total$SystolicBP2) %>%
-  mutate( bin=cut_width(x=Fitted, width=10, boundary=0) )
-plot.residual.constant <- 
-  ggplot(df.residual.constant) +
-  geom_boxplot(aes(x=bin, y=Residuals ))+
-  theme(axis.title.x = element_text(size=14),
-        axis.title.y = element_text(size=14),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 12, hjust = 1),
-        axis.text.y=element_text(vjust = 1, size = 12, hjust = 1))+
-  xlab("Fitted systolic blood pressure") + ylab("Residuals")+
-  ggtitle("Constant model")
-# Not homoscedastic variance in 
-plot.residual.constant
-
-
-
-
-
 ############### Standard deviaton of residuals ############################
 
-# remove all intervals with less than 15 participants
+# NOTE: we remove all intervals with less than 15 participants
+
+# Function that calculates standard deviation of residuals
 sd.cont.res <- function(df.res){
   sd.res <- vector()
   upper.res <- vector()
@@ -126,11 +96,9 @@ sd.cont.res <- function(df.res){
 }
 
 
-### Full Gaussian
+### Full Gaussian model
 sd.res.full <- sd.cont.res(df.residual.full)
 sd.res.full
-
-#df.residual.full$bin <- factor(df.residual.full$bin , levels = levels(df.residual.full$bin))
 
 plot.res.sd.full <-ggplot(sd.res.full)+
   geom_point(aes(x=bin, y=SD), color="red", shape=8,size=6)+
@@ -147,11 +115,9 @@ plot.res.sd.full
 dev.copy(pdf,'~/figures/Models/Residuals/SDResFullGauss.pdf') # Save the plot
 dev.off()
 
-### Small Gaussian
+### Small Gaussian model
 sd.res.small <- sd.cont.res(df.residual.small)
 sd.res.small
-
-#df.residual.small$bin <- factor(df.residual.small$bin , levels = levels(df.residual.small$bin))
 
 plot.res.sd.small <-ggplot(sd.res.small)+
   geom_point(aes(x=bin, y=SD), color="red", size=6, shape=8)+
@@ -169,11 +135,9 @@ plot.res.sd.small
 dev.copy(pdf,'~/figures/Models/Residuals/SDResSmallGauss.pdf') # Save the plot
 dev.off()
 
-### Full Gamma
+### Full Gamma model
 sd.res.full.gamma <- sd.cont.res(df.residual.full.gamma)
 sd.res.full.gamma
-
-#df.residual.full.gamma$bin <- factor(df.residual.full.gamma$bin , levels = levels(df.residual.full.gamma$bin))
 
 plot.res.sd.full.gamma <-ggplot(sd.res.full.gamma)+
   geom_point(aes(x=bin, y=SD), color="red", size=6, shape=8)+
@@ -191,11 +155,9 @@ plot.res.sd.full.gamma
 dev.copy(pdf,'~/figures/Models/Residuals/SDResFullGamma.pdf') # Save the plot
 dev.off()
 
-### Small Gamma
+### Small Gamma model
 sd.res.small.gamma <- sd.cont.res(df.residual.small.gamma)
 sd.res.small.gamma
-
-#df.residual.small.gamma$bin <- factor(df.residual.small.gamma$bin , levels = levels(df.residual.small.gamma$bin))
 
 plot.res.sd.small.gamma <-ggplot(sd.res.small.gamma)+
   geom_point(aes(x=bin,y=Lower), shape=18, size=6,color="blue")+
@@ -213,11 +175,12 @@ plot.res.sd.small.gamma <-ggplot(sd.res.small.gamma)+
 plot.res.sd.small.gamma
 dev.copy(pdf,'~/figures/Models/Residuals/SDResSmallGamma.pdf') # Save the plot
 dev.off()
-###########  Residuals versus explanatory variables ###########
 
-##### Small gamma MODEL #########
 
-exp.var.small
+###########  Residuals versus explanatory variables ###############
+
+##### Small gamma model #########
+
 df.residual.exp.var <- data.frame("SystolicBP2"=df.total$SystolicBP2,
                                   "DiastolicBP2"=df.total$DiastolicBP2,
                                   "Birthyear"=df.total$BirthYear,
@@ -227,7 +190,7 @@ df.residual.exp.var <- data.frame("SystolicBP2"=df.total$SystolicBP2,
                                   "HDLCholesterol"=df.total$HDLCholesterol2,
                                   "Education"=df.total$Education2,
                                   "Residuals"=small.pred.mod.gamma$residuals)
-
+## SystolicBP2
 plot.residual.sysBP2 <- df.residual.exp.var %>%
   mutate( bin=cut_width(x=SystolicBP2, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
@@ -236,14 +199,12 @@ plot.residual.sysBP2 <- df.residual.exp.var %>%
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("SystolicBP2") + ylab("Residuals")
+  xlab("SystolicBP2 [mmHg]") + ylab("Residuals")
 grid.arrange(plot.residual.sysBP2, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResSys2SmallGamma.pdf') # Save the plot
 dev.off()
-# almost homoscedastic with zero mean, but more outliers for bigger systolic bp2
-# INCLUDE
 
-
+## DiastolicBP2
 plot.residual.diaBP2 <- df.residual.exp.var %>%
   mutate( bin=cut_width(x=DiastolicBP2, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
@@ -252,15 +213,12 @@ plot.residual.diaBP2 <- df.residual.exp.var %>%
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("DiastolicBP2") + ylab("Residuals")
+  xlab("DiastolicBP2 [mmHg]") + ylab("Residuals")
 grid.arrange(plot.residual.diaBP2, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResDia2SmallGamma.pdf') # Save the plot
 dev.off()
-# almost homoscedastic with zero mean, 
-# higher mean for low values
-# but more outliers for bigger diastolic bp2
-# INCLUDE, interesting that fewer outlier for highest categories
 
+## BMI
 plot.residual.BMI <- df.residual.exp.var %>%
   mutate( bin=cut_width(x=BMI, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
@@ -269,13 +227,12 @@ plot.residual.BMI <- df.residual.exp.var %>%
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("BMI") + ylab("Residuals")
+  xlab("BMI [kg/m²]") + ylab("Residuals")
 grid.arrange(plot.residual.BMI, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResBMISmallGamma.pdf') # Save the plot
 dev.off()
-# almost homoscedastic with zero mean, 
-# strange effects towrds upper end (where there are few people)
 
+## Birthyear
 plot.residual.birthyear<- df.residual.exp.var %>%
   mutate( bin=cut_width(x=Birthyear, width=5, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
@@ -288,10 +245,8 @@ plot.residual.birthyear<- df.residual.exp.var %>%
 grid.arrange(plot.residual.birthyear, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResBYSmallGamma.pdf') # Save the plot
 dev.off()
-# almost homoscedastic with zero mean, 
-# strange effects towrds upper end (where there are few people)
-# INCLUDE, interesting that many more positive outliers than negative
 
+## HDL Cholesterol
 plot.residual.hdl<- df.residual.exp.var %>%
   mutate( bin=cut_width(x=HDLCholesterol, width=0.2, boundary=0) ) %>%
   ggplot( aes(x=bin, y=Residuals )) +
@@ -300,15 +255,12 @@ plot.residual.hdl<- df.residual.exp.var %>%
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("HDL Cholesterol") + ylab("Residuals")
+  xlab("HDL Cholesterol [mmol/L]") + ylab("Residuals")
 grid.arrange(plot.residual.hdl, nrow=1)
 dev.copy(pdf,'~/figures/Models/Residuals/ResHDLSmallGamma.pdf') # Save the plot
 dev.off()
-# almost homoscedastic with zero mean, 
-# strange effects towrds upper end (where there are few people)
 
-
-## INCLUDE EVEN IF NO EFFECT?
+## PAI
 ggplot(df.residual.exp.var)+
   geom_boxplot(mapping = aes(x=PAI, y=Residuals))+
   theme(axis.title.x = element_text(size=28),
@@ -318,6 +270,7 @@ ggplot(df.residual.exp.var)+
 dev.copy(pdf,'~/figures/Models/Residuals/ResPAISmallGamma.pdf') # Save the plot
 dev.off()
 
+## BPHigPar
 ggplot(df.residual.exp.var)+
   geom_boxplot(mapping = aes(x=BPHigPar, y=Residuals))+
   theme(axis.title.x = element_text(size=28),
@@ -327,6 +280,7 @@ ggplot(df.residual.exp.var)+
 dev.copy(pdf,'~/figures/Models/Residuals/ResBPHigParSmallGamma.pdf') # Save the plot
 dev.off()
 
+## Education
 ggplot(df.residual.exp.var)+
   geom_boxplot(mapping = aes(x=Education, y=Residuals))+
   theme(axis.title.x = element_text(size=28),
@@ -338,9 +292,9 @@ dev.off()
 
 
 
-################# Standard deviation of residuals, explanatory variables
+################# Standard deviation of residuals versus explanatory variables ##########
 
-# Birthyear
+## Birthyear
 df.residual.by <-  data.frame("BirthYear"=df.total$BirthYear, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=BirthYear, width=10, boundary=0,dig.lab=5) )
 
@@ -377,15 +331,14 @@ plot.res.sd.bmi <-ggplot(sd.res.bmi)+
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("BMI") + ylab("SD of residuals")+
+  xlab("BMI [kg/m²]") + ylab("SD of residuals")+
   ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.bmi$bin))
 plot.res.sd.bmi
 dev.copy(pdf,'~/figures/Models/Residuals/SDResBMISmallGamma.pdf') # Save the plot
 dev.off()
 
-####### Sys2
-
+## SystolicBP2
 df.residual.sys2 <-  data.frame("Sys2"=df.total$SystolicBP2, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=Sys2, width=10, boundary=0, dig.lab=5) )
 
@@ -400,7 +353,7 @@ plot.res.sd.sys2 <-ggplot(sd.res.sys2)+
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("SystolicBP2") + ylab("SD of residuals")+
+  xlab("SystolicBP2 [mmHg]") + ylab("SD of residuals")+
   ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.sys2$bin))
 plot.res.sd.sys2
@@ -408,7 +361,7 @@ dev.copy(pdf,'~/figures/Models/Residuals/SDRessys2SmallGamma.pdf') # Save the pl
 dev.off()
 
 
-####### Dia2
+## DiastolicBP2
 df.residual.dia2 <-  data.frame("Dia2"=df.total$DiastolicBP2, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=Dia2, width=10, boundary=0, dig.lab=5) )
 
@@ -423,7 +376,7 @@ plot.res.sd.dia2 <-ggplot(sd.res.dia2)+
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("DiastolicBP2") + ylab("SD of residuals")+
+  xlab("DiastolicBP2 [mmHg]") + ylab("SD of residuals")+
   ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.dia2$bin))
 plot.res.sd.dia2
@@ -431,7 +384,7 @@ dev.copy(pdf,'~/figures/Models/Residuals/SDResDia2SmallGamma.pdf') # Save the pl
 dev.off()
 
 
-####### HDLChol
+## HDL Cholesterol
 df.residual.hdl <-  data.frame("hdl"=df.total$HDLCholesterol2, "Residuals"=small.pred.mod.gamma$residuals) %>%
   mutate( bin=cut_width(x=hdl, width=1, boundary=0, dig.lab=5) )
 
@@ -446,7 +399,7 @@ plot.res.sd.hdl <-ggplot(sd.res.hdl)+
         axis.title.y = element_text(size=28),
         axis.text.x = element_text(angle = 45, vjust = 1, size = 24, hjust = 1),
         axis.text.y=element_text(size = 24))+
-  xlab("HDL Cholesterol") + ylab("SD of residuals")+
+  xlab("HDL Cholesterol [mmol/L]") + ylab("SD of residuals")+
   ylim(10,20)+
   scale_x_discrete(limits=levels(df.residual.hdl$bin))
 plot.res.sd.hdl
@@ -454,7 +407,7 @@ dev.copy(pdf,'~/figures/Models/Residuals/SDResHDLSmallGamma.pdf') # Save the plo
 dev.off()
 
 
-#### PAI
+## PAI
 df.residual.pai <-  data.frame("PAI"=df.total$PAI2, "Residuals"=small.pred.mod.gamma$residuals)
 
 sd.pai.res <- function(df.res){
@@ -492,8 +445,7 @@ plot.res.sd.pai
 dev.copy(pdf,'~/figures/Models/Residuals/SDResPAISmallGamma.pdf') # Save the plot
 dev.off()
 
-########### Education level
-
+## Education 
 df.residual.edu <-  data.frame("Edu"=df.total$Education2, "Residuals"=small.pred.mod.gamma$residuals)
 
 sd.edu.res <- function(df.res){
@@ -532,7 +484,7 @@ dev.copy(pdf,'~/figures/Models/Residuals/SDResEducSmallGamma.pdf') # Save the pl
 dev.off()
 
 
-###### BPHigPar
+## BPHigPar
 df.residual.bphigpar <-  data.frame("BPHigPar"=df.total$BPHigPar2, "Residuals"=small.pred.mod.gamma$residuals)
 
 # TRUE
@@ -542,7 +494,7 @@ chi_l.T <-qchisq(0.025,length(df.residual.bphigpar$BPHigPar==TRUE)-1, lower.tail
 lower.res.T<- sqrt((length(df.residual.bphigpar$BPHigPar==TRUE)-1)*sd.res.T**2/chi_l.T)
 upper.res.T<- sqrt((length(df.residual.bphigpar$BPHigPar==TRUE)-1)*sd.res.T**2/chi_r.T)
  
-#FALSE
+# FALSE
 sd.res.F<- sd(df.residual.bphigpar$Residuals[df.residual.bphigpar$BPHigPar==FALSE])
 chi_r.F <-qchisq(0.025,length(df.residual.bphigpar$BPHigPar==FALSE)-1, lower.tail=TRUE)
 chi_l.F <-qchisq(0.025,length(df.residual.bphigpar$BPHigPar==FALSE)-1, lower.tail=FALSE)
@@ -564,7 +516,9 @@ plot.res.sd.bphigpar <-ggplot(sd.res.bphigpar)+
 plot.res.sd.bphigpar
 dev.copy(pdf,'~/figures/Models/Residuals/SDResBPHigParSmallGamma.pdf') # Save the plot
 dev.off()
-#################### COMPARE RESIDUALS
+
+
+#################### DIFFERENCE BETWEEN RESIDUALS ###################
 
 df.diff.res <- data.frame("DiffGauss"=full.pred.mod$residuals-small.pred.mod$residuals,
                           "DiffGamma"=full.pred.mod.gamma$residuals-small.pred.mod.gamma$residuals,
@@ -572,9 +526,7 @@ df.diff.res <- data.frame("DiffGauss"=full.pred.mod$residuals-small.pred.mod$res
                           "DiffModFull"=full.pred.mod$residuals-full.pred.mod.gamma$residuals, 
                           "Sys3"=sort(df.total$SystolicBP3))
 
-
-
-# Difference in residuals gauss
+# Difference in residuals, Gaussian models
 df.diff.res %>%
   mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y= DiffGauss)) +
@@ -584,12 +536,12 @@ df.diff.res %>%
         axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
         axis.text.y=element_text(size = 24),
         plot.title =element_text(size = 30))+
-  xlab("SystolicBP3") + ylab("FM - SM Gaussian res.")+
+  xlab("SystolicBP3 [mmHg]") + ylab("FM - SM Gaussian res.")+
   ggtitle("Gaussian models ")
 dev.copy(pdf,'~/figures/Models/Residuals/DiffGauss.pdf') # Save the plot
 dev.off()
 
-# Difference in residuals gamma
+# Difference in residuals, gamma models
 df.diff.res %>%
   mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y= DiffGamma)) +
@@ -599,12 +551,12 @@ df.diff.res %>%
         axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
         axis.text.y=element_text(size = 24),
         plot.title =element_text(size = 30))+
-  xlab("SystolicBP3") + ylab("FM - SM gamma res.")+
+  xlab("SystolicBP3 [mmHg]") + ylab("FM - SM gamma res.")+
   ggtitle("Gamma models")
 dev.copy(pdf,'~/figures/Models/Residuals/DiffGamma.pdf') # Save the plot
 dev.off()
 
-# Difference in residuals small gauss and small gamma
+# Difference in residuals, small gauss and small gamma model
 df.diff.res %>%
   mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
   ggplot( aes(x=bin, y= DiffModSmall)) +
@@ -614,24 +566,8 @@ df.diff.res %>%
         axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
         axis.text.y=element_text( size = 24),
         plot.title =element_text(size = 30))+
-  xlab("SystolicBP3") + ylab("SM  Gauss. - SM gamma res.")+
+  xlab("SystolicBP3 [mmHg]") + ylab("SM  Gauss. - SM gamma res.")+
   ggtitle("Small models")
 dev.copy(pdf,'~/figures/Models/Residuals/DiffResSmall.pdf') # Save the plot
 dev.off()
 
-# Difference in residuals full gauss and full gamma
-df.diff.res %>%
-  mutate( bin=cut_width(x=Sys3, width=10, boundary=0) ) %>%
-  ggplot( aes(x=bin, y= DiffModFull)) +
-  geom_boxplot()+
-  theme(axis.title.x = element_text(size=28),
-        axis.title.y = element_text(size=28),
-        axis.text.x = element_text(angle = 45, vjust = 1, size = 20, hjust = 1),
-        axis.text.y=element_text(size = 24),
-        plot.title =element_text(size = 30))+
-  xlab("SystolicBP3") + ylab("FM  Gaussian  res.- FM gamma res.")+
-  ggtitle("Full models")
-dev.copy(pdf,'~/figures/Models/Residuals/DiffResFull.pdf') # Save the plot
-dev.off()
-
-# mer likhet mellom modellene av samme størrelse enn modellene av samme type

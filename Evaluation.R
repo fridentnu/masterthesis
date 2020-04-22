@@ -138,13 +138,13 @@ exp.prob.hyp.fram
 
 ########################### HISTOGRAM PROBABILITY HYPERTENSION ##########################
 
+
 ### SMALL GAUSS
 par(mar=c(6.1, 5.1, 4.1, 2.1))
 hist(prob.hyp.small.pred, xlab="Predicted probability of sys.hyp",main="SM Gaussian",ylab="#Participants",ylim=c(0,6000),xlim=c(0,0.8),
      cex.main=2.5, cex.lab=2.7, cex.axis=2.2)
 dev.copy(pdf,'~/figures/Models/Eval/HistHypSmallGauss.pdf') # Save the plot
 dev.off()
-
 
 ### SMALL GAMMA
 par(mar=c(6.1, 5.1, 4.1, 2.1))
@@ -158,6 +158,27 @@ par(mar=c(6.1, 5.1, 4.1, 2.1))
 hist(fram.risk.ad.age, xlab="Predicted probability of hyp",main="Framingham",ylab="#Participants",ylim=c(0,6000),xlim=c(0,0.8),
      cex.main=2.5, cex.lab=2.7, cex.axis=2.2)
 dev.copy(pdf,'~/figures/Models/Eval/HistHypFram.pdf') # Save the plot
+dev.off()
+
+
+
+
+########################### HISTOGRAM STANDARD DEVIATION PREDICTION DIST ##########################
+
+### SMALL GAUSS
+par(mar=c(6.1, 5.1, 4.1, 2.1))
+hist(small.sd.y, xlab="SD of prediction distributions",main="SM Gaussian",ylab="#Participants",ylim=c(0,8000),
+     cex.main=2.5, cex.lab=2.7, cex.axis=2.2)
+dev.copy(pdf,'~/figures/Models/Eval/HistSDSmallGauss.pdf') # Save the plot
+dev.off()
+
+small.gamma.sd.y<-sqrt(small.gamma.shape/(small.gamma.rate**2))
+
+### SMALL GAMMA
+par(mar=c(6.1, 5.1, 4.1, 2.1))
+hist(small.gamma.sd.y, xlab="SD of prediction distributions",main="SM gamma",ylab="#Participants",ylim=c(0,3500),
+     cex.main=2.5, cex.lab=2.7, cex.axis=2.2)
+dev.copy(pdf,'~/figures/Models/Eval/HistSDSmallGamma.pdf') # Save the plot
 dev.off()
 ########################### QQPLOT ##################################
 
@@ -325,27 +346,27 @@ fram.brier
 ### FULL MODEL
 
 prob.obs.full.pred <- pnorm(df.total$SystolicBP3, mean=full.pred.mod$fitted.values, sd=full.sd.y)
-hist(prob.obs.full.pred,xlab="Quantiles", main="PIT, Full Gaussian",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
+hist(prob.obs.full.pred,xlab="CDF-values", main="PIT, Full Gaussian",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITFullGauss.pdf') # Save the plot
 dev.off()
 
 ### SMALL MODEL
 par(mar=c(6.1, 5.1, 4.1, 2.1))
 prob.obs.small.pred <- pnorm(df.total$SystolicBP3, mean=small.pred.mod$fitted.values, sd=small.sd.y)
-hist(prob.obs.small.pred, xlab="Quantiles", main="PIT, Small Gaussian",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
+hist(prob.obs.small.pred, xlab="CDF-values", main="PIT, Small Gaussian",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITSmallGauss.pdf') # Save the plot
 dev.off()
 
 ### FULL GAMMA
 prob.obs.full.gamma.pred <- pgamma(df.total$SystolicBP3, shape=full.gamma.shape, rate=full.gamma.rate)
-hist(prob.obs.full.gamma.pred, xlab="Quantiles", main="PIT, Full Gamma",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
+hist(prob.obs.full.gamma.pred, xlab="CDF-values", main="PIT, Full Gamma",cex.main=1.8, cex.lab=1.4, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITFullGamma.pdf') # Save the plot
 dev.off()
 
 ### SMALL GAMMA
 par(mar=c(6.1, 5.1, 4.1, 2.1))
 prob.obs.small.gamma.pred <- pgamma(df.total$SystolicBP3, shape=small.gamma.shape, rate=small.gamma.rate)
-hist(prob.obs.small.gamma.pred, xlab="Quantiles", main="PIT, Small Gamma",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
+hist(prob.obs.small.gamma.pred, xlab="CDF-values", main="PIT, Small Gamma",cex.main=1.8, cex.lab=1.8, cex.axis=1.7)
 dev.copy(pdf,'~/figures/Models/Eval/PITSmallGamma.pdf') # Save the plot
 dev.off()
 
@@ -445,26 +466,25 @@ cstat.small.gamma
 
 cstat.fram <- round(cstat.func(df.total,fram.risk.ad.age),5)
 cstat.fram 
-# 0.7748346
 
 
 
 # Expected % hypertensive, RMSE, Brier, CRPS, Sensitivity, specificity, c-stat, auc, hoslem p
 
 full.eval <- c(exp.prob.hyp.full.pred, full.rmse, full.brier, 
-               full.crps, full.sens, full.spec, cstat.full)
+               full.crps, full.sens, full.spec, 100*cstat.full)
 
 small.eval <-c(exp.prob.hyp.small.pred, small.rmse, small.brier, small.crps,
-               small.sens, small.spec,cstat.small)
+               small.sens, small.spec,100*cstat.small)
 
 full.gamma.eval <-c(exp.prob.hyp.full.gamma.pred, full.gamma.rmse, full.gamma.brier,
-                    full.gamma.crps, full.gamma.sens, full.gamma.spec, cstat.full.gamma)
+                    full.gamma.crps, full.gamma.sens, full.gamma.spec, 100*cstat.full.gamma)
 
 small.gamma.eval <-c(exp.prob.hyp.small.gamma.pred, small.gamma.rmse, small.gamma.brier, 
-                     small.gamma.crps, small.gamma.sens, small.gamma.spec, cstat.small.gamma)
+                     small.gamma.crps, small.gamma.sens, small.gamma.spec, 100*cstat.small.gamma)
 
 fram.eval <-c(exp.prob.hyp.fram, "NA", fram.brier, "NA", fram.sens,
-              fram.spec, cstat.fram)
+              fram.spec,100*cstat.fram)
 
 
 eval.methods <- c("Exp. Hyp", "RMSE", "BrierScore", "CRPS",
