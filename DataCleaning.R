@@ -1,14 +1,11 @@
 ############ LOAD PACKAGES ################
-library(foreign) 
-library(tibble)  
-library(DataExplorer) 
-library(gridExtra)
-library(tidyverse) 
-library(viridis)
-library(grid)
+library(foreign) # read data
+library(DataExplorer) # EDA package
+library(gridExtra) # arrange multiple plots in one figure
+library(tidyverse) # ggplot2
+library(grid) # change text sizes in grid.arrange
 
-
-##### Some inspiration from the webpages
+##### Code inspired by and/or based on information from these sources
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
 # https://hunt-db.medisin.ntnu.no/hunt-db/#/ 
 
@@ -322,6 +319,11 @@ introduce(data.3)
 # Now 17365 participants
 
 
+##### PEOPLE WITH SYSTOLIC HYPERTENSION AT HUNT3
+# Add new column with logical values which is true if have systolic hypertension at HUNT3
+data.3$SystolicHyp.NT3 <- data.3$BPSystMn23.NT3BLM>=140
+
+
 #### PEOPLE WITH DIABETES AT HUNT3
 # Add new column with logical values which is true if have diabetes at HUNT3
 data.3$DiaCurr.NT3 <- data.3$DiaEv.NT3BLQ1=="Ja" | data.3$SeGluNonFast.NT3BLM>=11.1
@@ -345,7 +347,7 @@ df.total <- data.frame("PID"=data.3$PID.108676, "BirthYear"=data.3$BirthYear, "S
                       "Cholesterol2"=data.3$SeChol.NT2BLM, "HDLCholesterol2"=data.3$SeHDLChol.NT2BLM, "Glucose2"= data.3$SeGluNonFast.NT2BLM, 
                       "GFR2"=data.3$GFREstStag.NT2BLM, "Creatinine2"=data.3$SeCreaCorr.NT2BLM, "Education2"=data.3$Educ.NT2BLQ1, 
                       "SystolicBP3"=data.3$BPSystMn23.NT3BLM,"DiastolicBP3"=data.3$BPDiasMn23.NT3BLM,"Diabetes3"=data.3$DiaCurr.NT3,
-                      "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3)
+                      "CVD3"= data.3$CVD.NT3, "BPMed3"=data.3$BPMed.NT3, "SystolicHyp"=data.3$SystolicHyp.NT3)
 plot_missing(df.total[,-c(10,11)], title = "Missing values in relevant data set") 
 dev.copy(pdf,'~/figures/DataCleaning/MissingValuesDF.pdf') 
 dev.off()
