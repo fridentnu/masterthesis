@@ -7,7 +7,7 @@ library(tidyverse) # ggplot2, dplyr etc.
 # Load Framingham model
 load("MyData/Framingham.RData")
 
-# Run Models-R to access models and the estimated parameters of the prediction distributions
+# Run Models.R to access models and the estimated parameters of the prediction distributions
 source("R code/Models.R")
 
 ###### OBSERVED HYPERTENSION #######
