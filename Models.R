@@ -4,6 +4,9 @@ library(DataExplorer) # EDA package
 library(gridExtra) # arrange multiple plots in one figure
 library(grid) # text size in grid.arrange
 
+# References can be found in Chapter 3 and 4 in the master thesis
+
+# Load the data set from EDA
 load("MyData/EDA.df.total.RData")
 
 ############################## STANDARDIZATION ###############################################
