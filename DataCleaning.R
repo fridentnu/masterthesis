@@ -5,9 +5,9 @@ library(gridExtra) # arrange multiple plots in one figure
 library(tidyverse) # ggplot2
 library(grid) # change text sizes in grid.arrange
 
-##### Code inspired by and/or based on information from these sources
+##### Code inspired by and/or based on information from references mentioned in Chapter 2 in master thesis, in addition to
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
-# https://hunt-db.medisin.ntnu.no/hunt-db/#/ 
+
 
 
 
