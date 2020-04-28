@@ -3,6 +3,9 @@ library(tidyverse) # ggplot2, dplyr etc.
 library(gridExtra) # arrange multiple plots in one figure
 library(grid) # text size in grid.arrange
 
+
+# References can be found in Chapter 3 and 4 in the master thesis
+
 # Run Models.R to access models and the estimated parameters of the prediction distributions
 source("R code/Models.R")
 
