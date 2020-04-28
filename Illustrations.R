@@ -1,3 +1,4 @@
+# References for PIT can be found in Chapter 3 in master thesis
 
 ################ PIT ###########################
 ### True cdf
