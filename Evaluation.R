@@ -3,6 +3,7 @@ library(scoringRules) # crps
 library(DescTools) # brier score
 library(tidyverse) # ggplot2, dplyr etc.
 
+# References for the evaluation methods can be found in Chapter 3 in the master thesis
 
 # Load Framingham model
 load("MyData/Framingham.RData")
