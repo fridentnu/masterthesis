@@ -9,4 +9,4 @@ The code files used to clean and explore the data are named DataCleaning.R and E
 
 Note that due to privacy reasons the data used in this thesis is not available on the github-webpage. However, the format of the original data is described in DataCleaning.R. 
 
-All references for the models and methods used in the code can be found in Chapter 3 and 4 in the master thesis. 
+All references for the models and methods used in the code can be found in Chapter 2, 3, or 4 in the master thesis. 
