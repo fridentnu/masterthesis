@@ -14,7 +14,7 @@ library(grid) # change text sizes in grid.arrange
 ########## LOAD DATA ###################
 
 # Data Study Cohort I (all participants from HUNT2 and/or HUNT3)
-data <- read.spss("/mnt/work/Data/2019-03-26_108676_Data Study I Cohort.sav", to.data.frame=T)
+data <- read.spss("filepath", to.data.frame=T)
 
 ###### Quick overview #######
 str(data)
@@ -252,7 +252,7 @@ introduce(data.2)
 # Data tillegg contains an extra variable, BPMedSiEffEv.NT3CvdQ, 
 # which can be used in combination with BPMedEv.NT3BLQ1
 # to figure out who uses bp med at time of HUNT3
-data.bp.med <- read.spss("/mnt/work/Data/2019-12-19_108676_Data_tillegg.sav", to.data.frame=T)
+data.bp.med <- read.spss("filepath", to.data.frame=T)
 
 ## Data format 
 str(data.bp.med)
