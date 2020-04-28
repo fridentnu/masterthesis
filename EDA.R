@@ -7,9 +7,8 @@ library(reshape2) # melt function
 
 
 
-##### Code inspired by and/or based on information from these sources
+##### Code inspired by and/or based on information from sources mentioned in Chapter 2 in masther thesis, in addition to
 # https://towardsdatascience.com/simple-fast-exploratory-data-analysis-in-r-with-dataexplorer-package-e055348d9619 Data explorer
-# https://hunt-db.medisin.ntnu.no/hunt-db/#/ 
 # https://blog.datascienceheroes.com/exploratory-data-analysis-in-r-intro/
 # https://r4ds.had.co.nz/exploratory-data-analysis.html 
 # http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization 
